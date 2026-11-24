@@ -221,13 +221,7 @@
 <div id="maintenance" role="status" aria-live="polite"><div><h1>Site Bakımda</h1><p id="maintenanceMsg"></p></div></div>
 <div id="toast"></div>
 
-<script src="/site-app.js" defer></script>
-</body>
-</html>
-
-
-======================== site-app.js ========================
-
+<script>
 'use strict';
 
 const $ = selector => document.querySelector(selector);
@@ -567,6 +561,10 @@ window.addEventListener('focus', syncState);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) syncState(); });
 setInterval(syncState, 3000);
 syncState();
+
+</script>
+</body>
+</html>
 
 
 ======================== server.js ========================
