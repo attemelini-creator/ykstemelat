@@ -305,7 +305,10 @@ async function syncState() {
     if ($('#profOv').classList.contains('show')) renderProfile();
   } catch (error) {
     if (!app._connectionError) {
-      toast(`Sunucuya bağlanılamadı: ${error.message}`);
+      const help = location.protocol === 'file:'
+        ? ' Sayfayı dosyadan açmayın; start.bat dosyasını çalıştırın, site otomatik açılsın.'
+        : ' start.bat dosyasını çalıştırıp açılan localhost sayfasını kullanın.';
+      toast(`Sunucuya bağlanılamadı.${help}`);
       app._connectionError = true;
     }
   } finally {
@@ -575,6 +578,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const { spawn } = require('node:child_process');
 
 const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, 'data');
@@ -887,16 +891,43 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+server.on('error', error => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} kullanımda. Başka bir uygulamayı kapatın veya PORT ortam değişkeniyle farklı bir port seçin.`);
+  } else {
+    console.error(`Sunucu başlatılamadı: ${error.message}`);
+  }
+  process.exitCode = 1;
+});
+
 server.listen(PORT, HOST, () => {
-  console.log(`YKS site sunucusu hazır: http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
+  const siteUrl = `http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`;
+  console.log(`YKS site sunucusu hazır: ${siteUrl}`);
   console.log(`Veri dosyası: ${DATA_FILE}`);
   if (process.env.NODE_ENV === 'production') console.log('Production modu: oturum çerezinde Secure etkin. HTTPS proxy arkasında çalıştırın.');
+  if (process.env.OPEN_BROWSER === '1') {
+    const browser = spawn('cmd.exe', ['/c', 'start', '', siteUrl], { detached: true, stdio: 'ignore', windowsHide: true });
+    browser.on('error', error => console.error(`Tarayıcı otomatik açılamadı: ${error.message}`));
+    browser.unref();
+  }
 });
 
 
 ======================== start.bat ========================
 
 @echo off
+setlocal
 cd /d "%~dp0"
+where node >nul 2>nul
+if errorlevel 1 (
+  echo Node.js bulunamadi. Node.js 18 veya uzeri kurup bu dosyayi tekrar calistirin.
+  echo Indirme: https://nodejs.org/
+  pause
+  exit /b 1
+)
+set "OPEN_BROWSER=1"
 node server.js
-pause
+if errorlevel 1 (
+  echo Sunucu baslatilamadi. Yukaridaki hata mesajini kontrol edin.
+  pause
+)
