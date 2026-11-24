@@ -93,10 +93,6 @@
     </form>
   </section></div>
 
-  <div class="overlay" id="setupOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="setupTitle"><p class="modal-kicker">İLK KURULUM</p><h2 id="setupTitle">Yerel yönetici hesabı oluştur.</h2><p class="setup-note">Bu dosya verileri sadece bu tarayıcıda tutar. Yönetici adı <strong>YigitKag</strong> olacak. İlk kurulumda istediğin yönetici şifresini gir; parola tarayıcıda özet olarak saklanır.</p>
-    <form class="form" id="setupForm"><label>Yönetici kullanıcı adı<input value="YigitKag" disabled></label><label>Yönetici şifresi<input name="password" type="password" minlength="10" maxlength="200" required autocomplete="new-password"></label><label>Şifreyi tekrar yaz<input name="confirm" type="password" minlength="10" maxlength="200" required autocomplete="new-password"></label><button class="submit">Yönetici hesabını oluştur <span>→</span></button><p class="msg" id="setupMessage" aria-live="polite"></p></form>
-  </section></div>
-
   <div class="overlay" id="legalOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="legalTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">BİLGİLENDİRME</p><h2 id="legalTitle"></h2><div class="legal-copy" id="legalCopy"></div><button class="outline" data-close>Kapat</button></section></div>
 
   <div class="overlay" id="adminOverlay" hidden><section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="adminTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">YÖNETİM</p><h2 id="adminTitle">Kontrol paneli</h2><nav class="admin-tabs" id="adminTabs"><button class="active" data-admin-tab="overview">Genel Bakış</button><button data-admin-tab="users">Kullanıcılar</button><button data-admin-tab="feedback">Geri Bildirimler</button><button data-admin-tab="announcements">Duyurular</button><button data-admin-tab="settings">Site Ayarları</button><button data-admin-tab="security">Güvenlik</button><button data-admin-tab="audit">İşlem Geçmişi</button></nav><div class="admin-panel" id="adminPanel"></div></section></div>
@@ -108,6 +104,7 @@
     'use strict';
     const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
     const DB_KEY='yks-standalone-v1';
+    const BUILTIN_ADMIN={username:'YigitKag',salt:'yks-standalone-admin-v1',hash:'e45eff63808e10f8f2ca2cef1e49018067904b5100815c9a42069606c500e2b5',fallbackHash:'fallback-20cc21bb'};
     const app={db:null,user:null,adminTab:'overview',toastTimer:null,returnToAuth:false};
     const legal={
       kvkk:{title:'KVKK Aydınlatma Metni',html:`<p><b>Veri sorumlusu:</b> Canlı kullanımda siteyi işleten kişi/kurumun unvanı ve iletişim bilgileri buraya eklenmelidir.</p><p><b>İşlenen veriler:</b> Bu tek dosya sürümünde kayıt bilgileri yalnızca bu tarayıcının yerel depolamasında tutulur: ad, soyad, yaş, kullanıcı adı ve e-posta. Parolalar düz metin olarak saklanmaz.</p><p><b>Amaç ve saklama:</b> Hesabı bu tarayıcıda oluşturup yönetmek amacıyla kullanılır. Tarayıcı verilerini temizlemek kayıtları siler. Canlı hizmet için gerçek saklama süresi, aktarım alıcıları ve başvuru kanalı açıklanmalıdır.</p><p><b>Haklarınız:</b> 6698 sayılı Kanun’un 11. maddesi kapsamındaki haklarınız için gerçek veri sorumlusunun canlı sitede açıklayacağı başvuru yolunu kullanabilirsiniz.</p><p class="legal-note">Bu örnek bilgilendirme taslağıdır. Gerçek işletmeci ve veri akışına göre düzenlenmeden canlı sitede kullanılmamalıdır.</p>`},
@@ -117,8 +114,8 @@
     const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const date=v=>v?new Intl.DateTimeFormat('tr-TR',{dateStyle:'medium',timeStyle:'short'}).format(new Date(v)):'—';
     const now=()=>new Date().toISOString();
-    function blankDB(){return {admin:null,users:[],feedback:[],announcements:[],audit:[],settings:{registrationsOpen:true,maintenance:false,maintenanceMessage:'Site bakımda. Lütfen daha sonra tekrar deneyin.'}}}
-    function loadDB(){try{return Object.assign(blankDB(),JSON.parse(localStorage.getItem(DB_KEY)||'{}'))}catch{return blankDB()}}
+    function blankDB(){return {admin:{...BUILTIN_ADMIN},users:[],feedback:[],announcements:[],audit:[],settings:{registrationsOpen:true,maintenance:false,maintenanceMessage:'Site bakımda. Lütfen daha sonra tekrar deneyin.'}}}
+    function loadDB(){let stored={};try{stored=JSON.parse(localStorage.getItem(DB_KEY)||'{}')||{}}catch{}const db=Object.assign(blankDB(),stored);if(!db.admin?.hash)db.admin={...BUILTIN_ADMIN};return db}
     function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(app.db));window.dispatchEvent(new Event('yks-local-change'))}
     function log(action,actor='system',detail=''){app.db.audit.unshift({id:crypto.randomUUID(),at:now(),action,actor,detail:String(detail).slice(0,140)});app.db.audit=app.db.audit.slice(0,300)}
     function showToast(text){const el=$('#toast');el.textContent=text;el.classList.add('show');clearTimeout(app.toastTimer);app.toastTimer=setTimeout(()=>el.classList.remove('show'),2800)}
@@ -135,8 +132,7 @@
     function openAuth(tab='login'){ $('#accountPop').hidden=true;showOverlay('authOverlay');setAuthTab(tab) }
     async function hashPassword(password,salt){const bytes=new TextEncoder().encode(password);if(globalThis.crypto?.subtle){const key=await crypto.subtle.importKey('raw',bytes,'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:120000,hash:'SHA-256'},key,256);return [...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join('')}let h=2166136261;for(const c of `${salt}:${password}`){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return `fallback-${(h>>>0).toString(16)}`}
     async function createCredential(password){const salt=[...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,'0')).join('');return{salt,hash:await hashPassword(password,salt)}}
-    async function matches(password,record){if(!record?.salt||!record?.hash)return false;return(await hashPassword(password,record.salt))===record.hash}
-    function ensureSetup(){if(!app.db.admin){showOverlay('setupOverlay');return false}return true}
+    async function matches(password,record){if(!record?.salt||!record?.hash)return false;const candidate=await hashPassword(password,record.salt);return candidate===record.hash||candidate===record.fallbackHash}
     function updateHeader(){const label=app.user?(app.user.role==='admin'?'YigitKag':app.user.username):'Giriş Yap';$('#accountButton').textContent=label;$('#adminOpen').hidden=!isAdmin();$('#logout').hidden=!app.user;$$('[data-auth]').forEach(el=>el.hidden=!!app.user);if(app.db.settings.maintenance&&!isAdmin()){$('#maintenance').hidden=false;$('#maintenanceMessage').textContent=app.db.settings.maintenanceMessage||'Site bakımda. Lütfen daha sonra tekrar deneyin.'}else $('#maintenance').hidden=true;const announcement=app.db.announcements[0];$('#announcement').hidden=!announcement||!!app.db.settings.maintenance;$('#announcement').textContent=announcement?`DUYURU · ${announcement.title} — ${announcement.message}`:''}
     function refresh(){updateHeader();if(!$('#adminOverlay').hidden)renderAdmin()}
     function signIn(user){app.user={id:user.id,role:user.role,username:user.username,firstName:user.firstName||'Yönetici'};updateHeader()}
@@ -156,7 +152,7 @@
     document.addEventListener('click',async e=>{
       if(!e.target.closest('#drawer')&&!e.target.closest('#menuButton'))hideDrawer();
       if(!e.target.closest('#accountPop')&&!e.target.closest('#accountButton'))$('#accountPop').hidden=true;
-      const auth=e.target.closest('[data-auth]');if(auth){if(!ensureSetup())return;openAuth(auth.dataset.auth);return}
+      const auth=e.target.closest('[data-auth]');if(auth){openAuth(auth.dataset.auth);return}
       if(e.target.closest('#accountButton')){$('#accountPop').hidden=!$('#accountPop').hidden;return}
       if(e.target.closest('#drawerClose,#scrim'))return hideDrawer();
       const coming=e.target.closest('[data-coming]');if(coming)return openComing(coming.dataset.coming);
@@ -175,23 +171,22 @@
     document.addEventListener('change',e=>{const s=e.target.closest('[data-feedback-status]');if(s){const f=app.db.feedback.find(x=>x.id===s.dataset.feedbackStatus);if(f){f.status=s.value;log('Geri bildirim güncellendi','YigitKag',f.status);saveDB();renderAdmin()}return}const setting=e.target.closest('[data-setting]');if(setting){app.db.settings[setting.dataset.setting]=setting.checked;log('Site ayarı güncellendi','YigitKag',setting.dataset.setting);saveDB();refresh()}});
     document.addEventListener('input',e=>{if(e.target.id==='userSearch'){const q=e.target.value.toLocaleLowerCase('tr-TR');$$('#userRows .admin-row').forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase('tr-TR').includes(q))}});
     document.addEventListener('submit',async e=>{
-      const form=e.target;if(!['loginForm','registerForm','setupForm','feedbackForm','announcementForm','maintenanceForm','passwordForm'].includes(form.id))return;e.preventDefault();
+      const form=e.target;if(!['loginForm','registerForm','feedbackForm','announcementForm','maintenanceForm','passwordForm'].includes(form.id))return;e.preventDefault();
       try{
-        if(form.id==='setupForm'){const d=new FormData(form),password=String(d.get('password')),confirmPassword=String(d.get('confirm'));if(password.length<10)throw Error('Şifre en az 10 karakter olmalı.');if(password!==confirmPassword)throw Error('Şifreler eşleşmiyor.');app.db.admin={username:'YigitKag',...(await createCredential(password))};log('Yönetici hesabı oluşturuldu','YigitKag');saveDB();app.user={role:'admin',username:'YigitKag',firstName:'Yönetici'};closeOverlays();refresh();showToast('Yönetici hesabı oluşturuldu.');return}
         if(form.id==='loginForm'){const d=new FormData(form),identity=String(d.get('identity')).trim().toLocaleLowerCase('tr-TR'),password=String(d.get('password'));if(identity===app.db.admin.username.toLocaleLowerCase('tr-TR')&&await matches(password,app.db.admin)){app.user={role:'admin',username:'YigitKag',firstName:'Yönetici'};log('Yönetici giriş yaptı','YigitKag');saveDB();closeOverlays();refresh();showToast('Yönetici girişi başarılı.');return}const user=app.db.users.find(u=>u.username.toLocaleLowerCase('tr-TR')===identity||u.email.toLocaleLowerCase('tr-TR')===identity);if(!user||!await matches(password,user))throw Error('Kullanıcı bilgileri hatalı.');if(!user.active)throw Error('Hesap devre dışı bırakılmış.');app.user={role:'user',id:user.id,username:user.username,firstName:user.firstName};log('Üye giriş yaptı',user.username);saveDB();closeOverlays();refresh();showToast(`Hoş geldin, ${user.firstName}.`);return}
         if(form.id==='registerForm'){if(!app.db.settings.registrationsOpen)throw Error('Kayıtlar şu anda kapalı.');const d=new FormData(form),v=Object.fromEntries(d);const username=String(v.username).trim(),email=String(v.email).trim().toLowerCase(),age=Number(v.age);if(username.length<3||username.length>24)throw Error('Kullanıcı adı 3–24 karakter olmalı.');if(app.db.admin.username.toLowerCase()===username.toLowerCase()||app.db.users.some(u=>u.username.toLowerCase()===username.toLowerCase()))throw Error('Bu kullanıcı adı alınmış.');if(app.db.users.some(u=>u.email===email))throw Error('Bu e-posta ile hesap zaten var.');if(!Number.isInteger(age)||age<1||age>120)throw Error('Yaşınızı 1–120 arasında girin.');const record={id:crypto.randomUUID(),username,email,firstName:String(v.firstName).trim(),lastName:String(v.lastName).trim(),age,active:true,createdAt:now(),noticeAcknowledgedAt:now(),marketingConsent:d.has('marketingConsent'),...(await createCredential(String(v.password)))};app.db.users.push(record);log('Yeni üye kaydı',username);saveDB();app.user={role:'user',id:record.id,username,firstName:record.firstName};form.reset();closeOverlays();refresh();showToast('Hesabın oluşturuldu. Hoş geldin!');return}
         if(form.id==='feedbackForm'){const d=new FormData(form),message=String(d.get('message')).trim(),subject=String(d.get('subject')).trim(),email=String(d.get('email')).trim().toLowerCase();if(subject.length<3)throw Error('Konu başlığı en az 3 karakter olmalı.');if(message.length<10)throw Error('Mesaj en az 10 karakter olmalı.');app.db.feedback.unshift({id:crypto.randomUUID(),category:String(d.get('category')),subject,email,message,status:'Yeni',createdAt:now(),username:app.user?.username||'Misafir'});log('Yeni geri bildirim',app.user?.username||'Misafir',subject);saveDB();form.reset();closeComing();showToast('Görüşün için teşekkürler.');return}
         if(form.id==='announcementForm'){const d=new FormData(form);app.db.announcements.unshift({id:crypto.randomUUID(),title:String(d.get('title')).trim(),message:String(d.get('message')).trim(),author:'YigitKag',createdAt:now()});log('Duyuru yayınlandı','YigitKag',String(d.get('title')).trim());saveDB();renderAdmin();showToast('Duyuru yayınlandı.');return}
         if(form.id==='maintenanceForm'){app.db.settings.maintenanceMessage=String(new FormData(form).get('message')).trim()||'Site bakımda. Lütfen daha sonra tekrar deneyin.';saveDB();refresh();showToast('Bakım mesajı güncellendi.');return}
         if(form.id==='passwordForm'){const d=new FormData(form);if(!await matches(String(d.get('current')),app.db.admin))throw Error('Mevcut şifre yanlış.');if(String(d.get('next')).length<12)throw Error('Yeni şifre en az 12 karakter olmalı.');const credential=await createCredential(String(d.get('next')));app.db.admin={username:'YigitKag',...credential};log('Yönetici şifresi değiştirildi','YigitKag');saveDB();form.reset();showToast('Yönetici şifresi güncellendi.');return}
-      }catch(error){const target={loginForm:'#loginMessage',registerForm:'#registerMessage',setupForm:'#setupMessage'}[form.id];if(target)$(target).textContent=error.message;else showToast(error.message)}
+      }catch(error){const target={loginForm:'#loginMessage',registerForm:'#registerMessage'}[form.id];if(target)$(target).textContent=error.message;else showToast(error.message)}
     });
-    $$('.overlay').forEach(overlay=>overlay.addEventListener('click',e=>{if(e.target!==overlay)return;if(overlay.id==='setupOverlay')return;if(overlay.id==='legalOverlay')closeLegal();else closeOverlays()}));
+    $$('.overlay').forEach(overlay=>overlay.addEventListener('click',e=>{if(e.target!==overlay)return;if(overlay.id==='legalOverlay')closeLegal();else closeOverlays()}));
     $('#comingView').addEventListener('click',e=>{if(e.target===$('#comingView'))closeComing()});
     $('#menuButton').addEventListener('click',()=>$('#drawer').classList.contains('open')?hideDrawer():showDrawer());
     document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideDrawer();closeComing();closeLegal();closeOverlays();$('#accountPop').hidden=true}});
     window.addEventListener('storage',e=>{if(e.key===DB_KEY){app.db=loadDB();if(app.user?.role==='admin'&&!app.db.admin)app.user=null;refresh()}});
-    app.db=loadDB();updateHeader();if(!app.db.admin)ensureSetup();
+    app.db=loadDB();updateHeader();
   </script>
 </body>
 </html>
