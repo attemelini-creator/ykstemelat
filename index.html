@@ -1,933 +1,197 @@
-
-======================== index.html ========================
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YKS Temelini Sağlam At</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;background:#000;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-  button{font:inherit;cursor:pointer;transition:background .3s ease,color .3s ease,opacity .3s ease,transform .3s cubic-bezier(.22,.61,.36,1),letter-spacing .3s ease}
-  button:active{transform:scale(.97)}
-
-  /* ÜST BAR (sabit, bölünmüş ekranın dışında) */
-  .topbar{position:fixed;top:0;left:0;right:0;height:56px;background:#000;border-bottom:1px solid #333;
-    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}
-  .menu-btn{background:none;border:1px solid #fff;color:#fff;font-size:18px;width:36px;height:36px;border-radius:8px}
-  .menu-btn:hover,.auth button:hover{background:#fff;color:#000}
-  .drawer button:hover{transform:translateX(4px)}
-  .submit:not(:disabled):hover{transform:translateY(-1px);opacity:.9}
-  .tabs button:hover:not(.on){background:#fff;color:#000}
-  .title{position:absolute;left:50%;top:0;height:56px;transform:translateX(-50%);display:flex;align-items:center;
-    font-weight:800;font-size:clamp(12px,2vw,20px);text-align:center;width:50%;justify-content:center;pointer-events:none}
-  .auth{display:flex;align-items:center}
-  #who{display:none;font-size:13px;margin-right:10px;white-space:nowrap}
-  @media(max-width:640px){#who{display:none!important}}
-  .auth button{background:none;border:1px solid #fff;color:#fff;border-radius:6px;padding:6px 12px;font-size:13px}
-
-  /* BÖLÜNMÜŞ ANA EKRAN */
-  .split{position:fixed;top:56px;left:0;right:0;bottom:0;display:flex}
-  .half{flex:1;position:relative}
-  .half:first-child{border-right:1px solid #fff}
-  .half-main{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;color:#fff;border:0;
-    font-size:clamp(40px,9vw,120px);font-weight:900;letter-spacing:4px}
-  .half-main:hover{background:#fff;color:#000}
-  .sub{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;z-index:5;
-    opacity:0;visibility:hidden;transform:scale(.97);
-    transition:opacity .4s ease,transform .4s cubic-bezier(.22,.61,.36,1),visibility 0s linear .4s}
-  .sub.show{opacity:1;visibility:visible;transform:none;transition-delay:0s}
-  .sub h2,.sub .center{opacity:0;transform:translateY(12px);transition:opacity .45s ease .12s,transform .45s ease .12s}
-  .sub.show h2,.sub.show .center{opacity:1;transform:none}
-  .sub h2{margin-top:56px;width:100%;padding:0 16px;text-align:center;line-height:1.2;overflow-wrap:anywhere;font-size:clamp(24px,4.2vw,48px);font-weight:900;letter-spacing:2px}
-  .sub .center{flex:1;display:flex;align-items:center;justify-content:center;font-size:clamp(20px,3.2vw,36px);font-weight:700;text-align:center;padding:0 12px}
-.lessons{width:100%;max-width:520px;flex:1;min-height:0;overflow-y:auto;padding:24px 16px 28px;display:flex;flex-direction:column;gap:10px}
-  .lessons button{width:100%;display:flex;justify-content:center;align-items:center;text-align:center;position:relative;padding:14px 36px;
-    background:none;border:1px solid #fff;color:#fff;border-radius:8px;font-size:16px}
-  .lessons button:hover{background:#fff;color:#000}
-  .lessons .arr{position:absolute;right:14px;top:50%;margin-top:-8px;line-height:16px;transition:transform .35s ease;font-size:12px}
-  .acc.open>button .arr{transform:rotate(180deg)}
-  .acc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.22,.61,.36,1)}
-  .acc.open>.acc-body{grid-template-rows:1fr}
-  .acc-body>div{overflow:hidden;min-height:0}
-  .acc-body .in{display:flex;flex-direction:column;gap:8px;padding:10px 0 2px 16px}
-  .lessons button.lesson{font-size:15px;border-color:#666}
-  .back{position:absolute;top:12px;left:14px;background:none;border:0;color:#fff;padding:4px 2px;font-size:15px;opacity:.7}
-  .back:hover{background:none;color:#fff;opacity:1;transform:translateX(-3px)}
-
-  /* MENÜ */
-  .drawer{position:fixed;top:0;left:0;bottom:0;width:280px;max-width:85vw;background:#000;border-right:1px solid #fff;
-    padding:72px 16px 16px;transform:translateX(-100%);transition:transform .4s cubic-bezier(.22,.61,.36,1);z-index:40;overflow:hidden}
-  .drawer.open{transform:none}
-  .drawer .list{display:flex;flex-direction:column;gap:10px}
-  .drawer .sub{z-index:1;top:56px;justify-content:center;gap:14px;padding:0 20px;text-align:center}
-  .drawer .sub h2{margin:0;width:100%;font-size:22px;line-height:1.3;letter-spacing:1px;text-align:center;overflow-wrap:anywhere}
-  .drawer .sub .center{flex:none;width:100%;font-size:24px;text-align:center;padding:0}
-  .drawer button{background:none;border:1px solid #fff;color:#fff;text-align:center;padding:14px;border-radius:8px;font-size:16px}
-  .drawer button:hover{background:#fff;color:#000}
-
-  /* MODAL */
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;
-    opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s}
-  .overlay.show{opacity:1;visibility:visible;transition-delay:0s}
-  .overlay .modal{transform:translateY(20px) scale(.98);transition:transform .4s cubic-bezier(.22,.61,.36,1)}
-  .overlay.show .modal{transform:none}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  #loginForm,#regForm{animation:fadeIn .35s ease}
-  .modal{background:#000;border:1px solid #fff;border-radius:12px;padding:24px;width:100%;max-width:440px;max-height:90vh;overflow:auto;position:relative}
-  .modal{padding-top:68px}
-  .modal h2{margin-bottom:14px}
-  .modal .close{position:absolute;top:14px;right:16px;background:none;border:0;color:#fff;font-size:26px;opacity:.7;line-height:1}
-  .modal .close:hover{background:none;color:#fff;opacity:1;transform:rotate(90deg)}
-.tabs{display:flex;gap:8px;margin:0 0 16px}
-  .tabs button{flex:1;padding:10px;background:none;border:1px solid #fff;color:#fff;border-radius:8px;font-weight:700}
-  .tabs button.on{background:#fff;color:#000}
-.modal.wide{max-width:760px}
-  .stats{display:flex;gap:16px;margin-bottom:12px;font-size:14px}
-  .dim{opacity:.65;font-size:13px}
-  #adminBody h3{margin:18px 0 6px;font-size:16px}
-  #adminBody input[type=text]{margin:0 0 10px}
-  .ulist{max-height:44vh;overflow:auto;margin:10px 0 12px}
-  .urow{border:1px solid #444;border-radius:8px;margin-bottom:8px;overflow:hidden}
-  .uhead{width:100%;display:flex;justify-content:space-between;gap:10px;padding:10px 12px;background:none;border:0;color:#fff;text-align:left}
-  .uhead:hover{background:#fff;color:#000}
-  .udet{padding:10px 12px;border-top:1px solid #444;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
-  .uact{display:flex;gap:8px;margin-top:8px}
-  .uact button,.sw{padding:8px 12px;background:none;border:1px solid #fff;color:#fff;border-radius:6px}
-  .uact button:hover,.sw:hover{background:#fff;color:#000}
-  .sw.on{background:#fff;color:#000}
-  .krow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222}
-  #annBar{position:fixed;left:0;right:0;bottom:0;background:#fff;color:#000;text-align:center;padding:8px 12px;font-size:14px;font-weight:600;z-index:60;transform:translateY(100%);transition:transform .4s ease}
-  #annBar.show{transform:none}
-  #toast{position:fixed;left:50%;bottom:60px;transform:translate(-50%,20px);background:#fff;color:#000;padding:10px 18px;border-radius:8px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:200}
-  #toast.show{opacity:1;transform:translate(-50%,0)}
-  .off{opacity:.35}
-  .new{background:#fff;color:#000;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:6px}
-  .avatar-big{width:96px;height:96px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:52px;margin:0 auto 12px}
-  .pname{text-align:center;font-size:22px;font-weight:800;overflow-wrap:anywhere}
-  .plabel{text-align:center;opacity:.65;font-size:13px;margin:2px 0 14px}
-  .pinfo{font-size:14px;line-height:1.8;border-top:1px solid #333;padding-top:10px;overflow-wrap:anywhere}
-  #profBody h3{margin:16px 0 4px;font-size:16px}
-  .avgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:10px}
-  .avgrid button{aspect-ratio:1;font-size:24px;padding:0;background:none;border:1px solid #555;border-radius:50%;color:#fff}
-  .avgrid button:hover{transform:scale(1.12);background:#222}
-  .avgrid button.on{border-color:#fff;background:#333}
-  .soon{text-align:center;font-size:26px;font-weight:700;padding:20px 0}
-  label.f{display:block;margin-bottom:10px;font-size:14px}
-  input[type=text],input[type=email],input[type=number],input[type=password]{width:100%;margin-top:4px;padding:10px;border-radius:6px;
-    border:1px solid #fff;background:#000;color:#fff;font-size:15px}
-  .row{display:flex;gap:10px}.row>*{flex:1}
-  .chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin:8px 0;line-height:1.35}
-  .chk input{margin-top:3px;flex:none}
-  .chk a{color:#fff;text-decoration:underline}
-  .submit{width:100%;margin-top:14px;padding:12px;border-radius:8px;border:1px solid #fff;background:#fff;color:#000;font-weight:700}
-  .submit:disabled{opacity:.35;cursor:not-allowed}
-  .msg{margin-top:10px;font-size:14px;text-align:center}
-
-  #maintenance{position:fixed;inset:0;z-index:9999;background:#000;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;padding:24px}
-  #maintenance.show{display:flex}
-  #maintenance>div{max-width:640px}
-  #maintenance h1{font-size:clamp(28px,6vw,52px);margin-bottom:16px}
-  #maintenance p{font-size:clamp(16px,3vw,21px);line-height:1.6;overflow-wrap:anywhere}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>YKS Temelini Sağlam At</title>
+  <style>
+    :root{color-scheme:dark;--black:#090909;--white:#f5f5f2;--muted:#a5a5a1;--line:rgba(245,245,242,.2);--panel:#111;--panel-raised:#181818;--serif:Georgia,"Times New Roman",serif;--sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-family:var(--sans)}
+    *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--fg)}body{overflow:hidden}button,input,textarea,select{font:inherit}button{color:inherit;cursor:pointer;transition:background .2s,color .2s,transform .2s,border-color .2s}button:active{transform:scale(.98)}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #fff;outline-offset:2px}[hidden]{display:none!important}
+    .topbar{position:fixed;z-index:30;inset:0 0 auto;height:62px;padding:0 14px;background:#000;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+    .menu-button,.account-button{height:38px;border:1px solid #eee;background:#000;color:#fff;border-radius:7px}.menu-button{width:40px;font-size:19px}.menu-button:hover,.account-button:hover{background:#fff;color:#000}
+    .title{position:absolute;left:50%;transform:translateX(-50%);width:54%;text-align:center;font-weight:800;font-size:clamp(11px,2vw,19px);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .account{position:relative;margin-left:auto}.account-button{padding:0 13px;font-size:13px}.account-pop{position:absolute;right:0;top:47px;width:210px;padding:12px;background:#080808;border:1px solid #555;border-radius:9px;box-shadow:0 16px 48px #000;z-index:40}.account-pop button{display:block;width:100%;padding:10px;margin:3px 0;text-align:left;border:1px solid #444;border-radius:6px;background:#000}.account-pop button:hover{background:#fff;color:#000}
+    .split{position:fixed;inset:62px 0 0;display:flex}.half{position:relative;flex:1;min-width:0}.half:first-child{border-right:1px solid #fff}.half-main{width:100%;height:100%;border:0;background:#000;color:#fff;font-size:clamp(48px,10vw,128px);font-weight:900;letter-spacing:.04em}.half-main:hover{background:#fff;color:#000}
+    .view{position:fixed;inset:62px 0 0;background:#000;z-index:20;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transform:translateY(6px);transition:.22s}.view.show{opacity:1;visibility:visible;transform:none}.view-back{position:absolute;left:16px;top:15px;border:0;background:none;color:#ddd;font-size:14px}.coming{text-align:center;padding:28px}.coming small{color:#999;letter-spacing:.18em;font-size:10px}.coming h1{margin:14px 0;font-size:clamp(34px,7vw,70px);letter-spacing:-.04em}.coming p{color:#aaa;font-size:14px}.outline{padding:10px 18px;background:#000;border:1px solid #ddd;border-radius:7px;margin-top:12px}.outline:hover{background:#fff;color:#000}
+    .drawer{position:fixed;z-index:50;inset:0 auto 0 0;width:min(290px,86vw);padding:20px 16px;background:#050505;border-right:1px solid #666;transform:translateX(-102%);transition:transform .25s}.drawer.open{transform:none}.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:35px;color:#aaa;font-size:10px;letter-spacing:.16em}.close{width:34px;height:34px;background:none;border:1px solid #555;border-radius:6px;font-size:23px}.drawer-link{display:flex;align-items:center;gap:12px;width:100%;padding:17px 8px;background:none;border:0;border-bottom:1px solid #292929;text-align:left;font-size:17px}.drawer-link:hover{padding-left:14px;color:#ccc}.drawer-number{color:#777;font-size:10px}.drawer-foot{position:absolute;bottom:18px;left:20px;color:#666;font-size:9px;letter-spacing:.1em}.scrim{position:fixed;z-index:45;inset:0;border:0;background:#000a}
+    .overlay{position:fixed;z-index:80;inset:0;padding:16px;display:grid;place-items:center;background:#000d;backdrop-filter:blur(3px)}.modal{position:relative;width:min(100%,460px);max-height:calc(100vh - 32px);overflow:auto;padding:28px 25px 24px;background:#050505;border:1px solid #aaa;border-radius:11px;box-shadow:0 20px 80px #000}.modal.wide{width:min(100%,920px)}.modal-close{position:absolute;right:13px;top:12px}.modal h2{margin:0 42px 17px 0;font-size:23px}.modal-kicker{margin:0 0 5px;color:#999;font-size:10px;letter-spacing:.15em}.tabs{display:flex;gap:8px;margin:0 0 16px}.tabs button{flex:1;padding:9px;background:#000;border:1px solid #ddd;border-radius:7px}.tabs button.active{background:#fff;color:#000;font-weight:700}.form{display:flex;flex-direction:column;gap:12px}.form label{display:block;color:#bbb;font-size:12px}.form input,.form textarea,.form select,.search{display:block;width:100%;margin-top:5px;padding:10px;background:#000;border:1px solid #666;border-radius:6px;color:#fff;font-size:14px}.form textarea{resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.check{display:flex;align-items:flex-start;gap:8px;color:#bbb;font-size:12px;line-height:1.45}.check input{margin-top:2px;accent-color:#fff}.check a,.text-link{color:#fff;text-decoration:underline;text-underline-offset:2px}.text-link{display:block;margin-top:9px;padding:0;border:0;background:none;font-size:12px}.fine{color:#777;font-size:10px;line-height:1.5}.submit{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px 14px;background:#fff;color:#000;border:1px solid #fff;border-radius:7px;font-weight:700}.submit:hover{background:#ddd}.submit:disabled{opacity:.35;cursor:not-allowed}.msg{min-height:16px;margin:2px 0 0;color:#ffaba4;font-size:12px;line-height:1.5}.legal-copy{color:#bbb;font-size:13px;line-height:1.7}.legal-copy p{margin:0 0 13px}.legal-note{padding:10px;border:1px solid #66583b;color:#dbc791;font-size:11px}
+    .admin-tabs{display:flex;gap:7px;overflow:auto;padding:0 0 12px;border-bottom:1px solid #333;margin-bottom:15px}.admin-tabs button{flex:none;padding:8px 11px;border:1px solid #555;border-radius:6px;background:#000;font-size:11px}.admin-tabs button.active{background:#fff;color:#000}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}.stat{border:1px solid #444;padding:12px;border-radius:7px}.stat span{display:block;color:#aaa;font-size:10px}.stat strong{display:block;margin-top:6px;font-size:22px}.admin-panel{max-height:min(57vh,560px);overflow:auto}.admin-row,.feedback-row,.announcement-row,.audit-row{padding:11px;border:1px solid #3d3d3d;border-radius:7px;margin-bottom:8px;background:#050505}.admin-row-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.admin-row-head strong{overflow-wrap:anywhere}.admin-row small,.feedback-meta,.audit-row small{display:block;color:#999;font-size:10px;margin-top:4px}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.small-btn{padding:7px 9px;background:#000;border:1px solid #aaa;border-radius:5px;font-size:10px}.small-btn:hover{background:#fff;color:#000}.small-btn.danger{border-color:#9b5953;color:#ffb0a8}.empty{padding:20px;text-align:center;color:#999;font-size:12px}.setting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #292929}.setting strong{display:block;font-size:12px}.setting small{color:#999;font-size:10px}.setting input{width:18px;height:18px;accent-color:#fff}.admin-form{display:grid;gap:10px;margin:10px 0 16px;padding:13px;border:1px solid #444;border-radius:7px}.admin-form label{font-size:11px;color:#aaa}.admin-form input,.admin-form textarea,.admin-form select{width:100%;padding:9px;margin-top:4px;color:#fff;background:#000;border:1px solid #666;border-radius:5px}.announcement{position:fixed;z-index:35;left:0;right:0;bottom:0;padding:10px;background:#fff;color:#000;text-align:center;font-size:12px;font-weight:700}.toast{position:fixed;z-index:120;bottom:22px;left:50%;transform:translate(-50%,15px);padding:11px 16px;background:#fff;color:#000;border-radius:7px;opacity:0;pointer-events:none;transition:.2s;font-size:12px;max-width:calc(100vw - 24px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.maintenance{position:fixed;z-index:200;inset:0;display:grid;place-items:center;padding:24px;background:#000;text-align:center}.maintenance h1{font-size:clamp(30px,7vw,64px)}.maintenance p{color:#aaa}
+    .setup-note{padding:11px;border:1px solid #555;border-radius:7px;color:#aaa;font-size:11px;line-height:1.55;margin:0 0 14px}.foot{position:fixed;bottom:12px;left:12px;right:12px;display:flex;justify-content:space-between;color:#666;font-size:9px;pointer-events:none}
+    @media(max-width:640px){.topbar{height:58px;padding:0 9px}.title{width:52%;font-size:clamp(10px,2.7vw,14px)}.account-button{padding:0 9px;font-size:11px}.split{inset:58px 0 0;flex-direction:column}.half{min-height:0}.half:first-child{border-right:0;border-bottom:1px solid #fff}.half-main{font-size:clamp(60px,20vw,100px)}.view{inset:58px 0 0}.stats{grid-template-columns:repeat(2,1fr)}.modal{padding:25px 17px 18px}.two{gap:7px}.foot{font-size:7px}.drawer{padding-top:15px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+  </style>
+  <style>
+    /* Visual language matched to the supplied YKS reference page. */
+    html,body{height:auto;min-height:100%;background:var(--black);color:var(--white)}body{overflow-x:hidden;overflow-y:auto}
+    .topbar{min-height:86px;height:auto;padding:10px clamp(20px,4vw,64px);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;background:linear-gradient(180deg,rgba(9,9,9,.98) 58%,rgba(9,9,9,.86));border-bottom:1px solid rgba(245,245,242,.08);backdrop-filter:blur(14px)}
+    .menu-button{grid-column:1;justify-self:start;width:40px;min-height:40px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--white);font-size:0}.menu-button::before{content:"";width:17px;height:11px;border-top:1px solid currentColor;border-bottom:1px solid currentColor}.menu-button:hover,.account-button:hover{background:var(--white);color:var(--black);border-color:var(--white)}
+    .title{position:static;grid-column:2;grid-row:1;width:auto;margin:0;transform:translateY(-3px);font-family:var(--serif);font-size:clamp(19px,2vw,26px);font-weight:400;letter-spacing:.035em;text-align:center;white-space:nowrap;overflow:visible;text-overflow:clip}
+    .account{grid-column:3;justify-self:end;position:relative;margin:0}.account-button{min-height:40px;padding:0 17px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--white);font-size:13px;letter-spacing:.02em}
+    .account-pop{position:absolute;top:calc(100% + 10px);right:0;z-index:40;width:220px;padding:8px;border:1px solid var(--line);border-radius:16px;background:#101010;box-shadow:0 24px 70px rgba(0,0,0,.48)}.account-pop button{display:block;width:100%;padding:13px 12px;margin:0;border:0;border-radius:10px;background:transparent;color:var(--white);text-align:left}.account-pop button:hover{background:rgba(255,255,255,.1);color:var(--white)}.account-pop button:first-child{background:var(--white);color:var(--black)}.account-pop button:first-child:hover{background:#deded9;color:var(--black)}
+    main{min-height:100svh;padding-top:86px}.landing{position:relative;isolation:isolate;min-height:calc(100svh - 86px);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}.landing::before{content:"";position:absolute;z-index:-1;top:7%;bottom:7%;left:50%;width:1px;background:linear-gradient(transparent,var(--line) 12%,var(--line) 88%,transparent)}
+    .side{position:relative;min-height:540px;padding:36px;display:grid;place-items:center;border:0;background:transparent;text-align:center}.side::after{content:"";position:absolute;z-index:-1;inset:7% 6%;border:1px solid transparent;border-radius:4px;transition:border-color .25s,background .25s}.side:hover::after,.side:focus-visible::after{border-color:rgba(245,245,242,.16);background:radial-gradient(ellipse at center,rgba(245,245,242,.045),transparent 68%)}.side-content{position:relative;z-index:1;display:grid;justify-items:center;gap:12px;transform:translateY(-2vh)}.side-label{font-family:var(--serif);font-size:clamp(80px,15vw,210px);font-weight:400;letter-spacing:-.06em;line-height:.9}.side-caption{color:var(--muted);font-size:11px;letter-spacing:.24em;text-transform:uppercase}.enter-mark{width:44px;height:44px;margin-top:25px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;color:var(--muted);transition:background .2s,color .2s,transform .2s}.side:hover .enter-mark{background:var(--white);color:var(--black);transform:translateY(3px)}.center-note{position:absolute;z-index:0;top:10%;left:50%;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:7px;padding:14px 18px;opacity:.42;pointer-events:none}.center-note span:first-child{color:var(--muted);font-size:9px;letter-spacing:.23em;text-transform:uppercase;white-space:nowrap}.center-note span:last-child{font-family:var(--serif);font-size:clamp(14px,1.5vw,19px);white-space:nowrap}.bottom-note{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:#777;font-size:10px;letter-spacing:.08em;white-space:nowrap}
+    .drawer{position:fixed;z-index:50;inset:auto auto auto clamp(20px,4vw,64px);top:74px;bottom:auto;width:min(300px,calc(100vw - 40px));padding:8px;border:1px solid var(--line);border-radius:18px;background:#101010;box-shadow:0 24px 70px rgba(0,0,0,.48);opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .18s,transform .18s}.drawer.open{top:74px;opacity:1;transform:translateY(0);pointer-events:auto}.drawer-head,.drawer-foot{display:none}.drawer-link{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:15px 14px;border:0;border-radius:12px;background:transparent;text-align:left;font-size:14px}.drawer-link:first-of-type{background:var(--white);color:var(--black)}.drawer-link:hover{background:rgba(255,255,255,.1);color:var(--white);padding-left:14px}.drawer-link:first-of-type:hover{background:#deded9;color:var(--black)}.drawer-number{color:var(--muted);font-size:11px}.drawer-link:first-of-type .drawer-number{color:#575752}.scrim{display:none!important}
+    .view{position:fixed;z-index:70;inset:0;padding:20px;display:grid;place-items:center;background:rgba(0,0,0,.76);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transform:none;transition:opacity .2s,visibility .2s}.view.show{opacity:1;visibility:visible;transform:none}.coming{position:relative;width:min(100%,510px);max-height:min(88svh,850px);overflow:auto;padding:clamp(25px,5vw,42px);border:1px solid rgba(245,245,242,.18);border-radius:22px;background:var(--panel);box-shadow:0 30px 100px rgba(0,0,0,.65);text-align:left}.view-back{position:absolute;top:17px;right:17px;left:auto;width:38px;height:38px;padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--white);font-size:21px;line-height:1}.view-back:hover{background:var(--white);color:var(--black)}.coming small,.coming .eyebrow{color:var(--muted);font-size:10px;letter-spacing:.22em;text-transform:uppercase}.coming h1{margin:0 38px 10px 0;font-family:var(--serif);font-size:clamp(29px,5vw,39px);font-weight:400;letter-spacing:-.02em}.coming>p:not(.eyebrow){margin:0 0 22px;color:#aaa;font-size:13px;line-height:1.65}.coming-soon{min-height:145px;margin:18px 0;display:grid;align-content:center;justify-items:center;gap:12px;border-block:1px solid var(--line);text-align:center}.coming-soon strong{font-family:var(--serif);font-size:clamp(25px,6vw,38px);font-weight:400}.coming-soon span{color:var(--muted);font-size:12px}.outline{min-height:42px;padding:0 17px;margin-top:8px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--white);font-size:12px}.outline:hover{background:var(--white);color:var(--black)}
+    .overlay{position:fixed;z-index:80;inset:0;padding:20px;display:grid;place-items:center;background:rgba(0,0,0,.76);backdrop-filter:blur(8px)}.modal{position:relative;width:min(100%,510px);max-height:min(88svh,850px);overflow:auto;padding:clamp(25px,5vw,42px);border:1px solid rgba(245,245,242,.18);border-radius:22px;background:var(--panel);box-shadow:0 30px 100px rgba(0,0,0,.65)}.modal.wide{width:min(100%,780px)}.modal-close{position:absolute;top:17px;right:17px;width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:transparent;font-size:21px;line-height:1}.modal-close:hover{background:var(--white);color:var(--black)}.modal h2{margin:0 42px 10px 0;font-family:var(--serif);font-size:clamp(29px,5vw,39px);font-weight:400;letter-spacing:-.02em}.modal-kicker{margin:0 0 9px;color:var(--muted);font-size:10px;letter-spacing:.22em;text-transform:uppercase}.tabs{display:flex;gap:8px;margin:0 0 18px;padding-bottom:11px;border-bottom:1px solid #303030}.tabs button{flex:1;min-height:40px;padding:9px 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--white);font-size:12px}.tabs button.active{background:var(--white);color:var(--black);font-weight:600}.form{display:flex;flex-direction:column;gap:13px}.form>label:not(.check){display:block;color:#d6d6d2;font-size:12px}.form input:not([type=checkbox]),.form textarea,.form select,.search{display:block;width:100%;min-height:46px;margin-top:6px;padding:0 13px;border:1px solid #383838;border-radius:10px;background:#0b0b0b;color:var(--white);font-size:13px}.form textarea{padding:12px;resize:vertical}.form input:focus,.form textarea:focus,.form select:focus{border-color:#aaa;outline:none;box-shadow:0 0 0 3px rgba(255,255,255,.08)}.form input::placeholder{color:#666}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.two label{display:block;color:#d6d6d2;font-size:12px}.check{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;color:#c7c7c2;font-size:12px;line-height:1.5}.check input{accent-color:var(--white);margin:3px 0 0;width:15px;height:15px}.check a,.text-link{color:var(--white);text-decoration:underline;text-decoration-color:#73736e;text-underline-offset:3px}.text-link{display:block;align-self:flex-start;margin-top:0;padding:0;border:0;background:none;font-size:12px}.fine{color:#888;font-size:10px;line-height:1.55}.submit{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;min-height:49px;margin-top:5px;padding:12px 16px;border:1px solid var(--white);border-radius:999px;background:var(--white);color:var(--black);font-weight:600}.submit:hover{background:#d9d9d4}.submit:disabled{opacity:.35;cursor:not-allowed}.msg{min-height:16px;margin:0;color:#ffaaa5;font-size:12px;line-height:1.45}.legal-copy{color:#c2c2bd;font-size:13px;line-height:1.75}.legal-copy p{margin:0 0 13px}.legal-note{margin-top:18px!important;padding:13px;border-left:2px solid #8e8e87;background:#191919;color:#eee}
+    .admin-tabs{display:flex;gap:7px;overflow:auto;padding:0 0 12px;border-bottom:1px solid #333;margin:12px 0 15px}.admin-tabs button{flex:none;padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:transparent;font-size:11px}.admin-tabs button.active{background:var(--white);color:var(--black)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}.stat{padding:14px;border:1px solid var(--line);border-radius:14px;background:#0d0d0d}.stat span{display:block;color:var(--muted);font-size:10px}.stat strong{display:block;margin-top:6px;font-family:var(--serif);font-size:25px;font-weight:400}.admin-panel{max-height:min(57vh,560px);overflow:auto}.admin-row,.feedback-row,.announcement-row,.audit-row{padding:13px;border:1px solid #303030;border-radius:13px;margin-bottom:9px;background:#0d0d0d}.admin-row-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.admin-row-head strong{overflow-wrap:anywhere;font-weight:500}.admin-row small,.feedback-meta,.audit-row small{display:block;color:#999;font-size:10px;margin-top:5px}.actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}.small-btn{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:transparent;font-size:10px}.small-btn:hover{background:var(--white);color:var(--black)}.small-btn.danger{border-color:#79534f;color:#ffb0a8}.empty{padding:20px;text-align:center;color:#999;font-size:12px}.setting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid #292929}.setting strong{display:block;font-size:12px;font-weight:500}.setting small{color:#999;font-size:10px}.setting input{width:18px;height:18px;accent-color:#fff}.admin-form{display:grid;gap:10px;margin:10px 0 16px;padding:15px;border:1px solid #303030;border-radius:14px}.admin-form label{font-size:11px;color:#aaa}.admin-form input,.admin-form textarea,.admin-form select{width:100%;min-height:42px;padding:9px;margin-top:5px;color:#fff;background:#0b0b0b;border:1px solid #444;border-radius:9px}.announcement{position:fixed;z-index:35;left:0;right:0;bottom:0;padding:10px;background:var(--white);color:var(--black);text-align:center;font-size:12px;font-weight:600}.toast{position:fixed;z-index:120;bottom:24px;left:50%;transform:translate(-50%,15px);padding:13px 18px;border:1px solid var(--line);background:#eee;color:#111;border-radius:999px;opacity:0;pointer-events:none;transition:.2s;font-size:13px;max-width:calc(100vw - 24px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.maintenance{position:fixed;z-index:200;inset:0;display:grid;place-items:center;padding:24px;background:#000;text-align:center}.maintenance h1{font-family:var(--serif);font-size:clamp(30px,7vw,64px);font-weight:400}.maintenance p{color:#aaa}.setup-note{padding:13px;border:1px solid #303030;border-radius:13px;color:#aaa;font-size:12px;line-height:1.65;margin:0 0 17px}
+    @media(max-width:700px){.topbar{min-height:74px;padding:8px 16px;grid-template-columns:38px 1fr auto;gap:8px}.title{grid-column:2;font-size:clamp(14px,4vw,18px);letter-spacing:0}.menu-button{width:36px;min-height:36px}main{padding-top:74px}.landing{min-height:calc(100svh - 74px)}.side{min-height:440px;padding:18px 6px}.side-label{font-size:clamp(65px,19vw,130px)}.side-caption{font-size:8px;letter-spacing:.14em}.center-note{padding:9px 7px}.center-note span:first-child{font-size:7px;letter-spacing:.11em}.center-note span:last-child{font-size:12px}.enter-mark{width:36px;height:36px;margin-top:18px}.bottom-note{bottom:16px;font-size:8px}.drawer{left:16px}.drawer.open{top:66px}.stats{grid-template-columns:repeat(2,1fr)}.modal{padding:25px 20px}.two{gap:8px}}
+    @media(max-width:400px){.topbar{padding-inline:11px}.title{font-size:13px;letter-spacing:0}.two{grid-template-columns:1fr}}
+  </style>
+  <style>
+    .drawer,.drawer.open{top:99px}.drawer.open{top:99px}
+    .menu-button::before{display:none}.hamburger{width:17px;display:grid;gap:5px}.hamburger span{display:block;width:17px;height:1px;background:currentColor;transition:transform .25s ease,width .25s ease}.menu-button[aria-expanded="true"] .hamburger span:first-child{transform:translateY(3px) rotate(45deg)}.menu-button[aria-expanded="true"] .hamburger span:last-child{transform:translateY(-3px) rotate(-45deg)}
+    @media(max-width:700px){.drawer,.drawer.open{top:87px}}
+  </style>
 </head>
 <body>
+  <header class="topbar">
+    <button class="menu-button" id="menuButton" type="button" aria-label="Menüyü aç" aria-expanded="false"><span class="hamburger" aria-hidden="true"><span></span><span></span></span></button>
+    <div class="title">YKS Temelini Sağlam At</div>
+    <div class="account"><button class="account-button" id="accountButton">Giriş Yap</button>
+      <div class="account-pop" id="accountPop" hidden><button data-auth="login">Giriş Yap</button><button data-auth="register">Kayıt Ol</button><button id="adminOpen" hidden>Admin Paneli</button><button id="logout" hidden>Çıkış Yap</button></div>
+    </div>
+  </header>
 
-<!-- SABİT ÜST BAR -->
-<header class="topbar">
-  <button class="menu-btn" id="menuBtn" aria-label="Menü">☰</button>
-  <div class="title">YKS Temelini Sağlam At</div>
-  <div class="auth"><span id="who"></span><button id="authBtn">Giriş Yap</button></div>
-</header>
+  <main id="landing">
+    <section class="landing" aria-label="Sınav seçimi">
+      <button class="side" type="button" data-coming="TYT"><span class="side-content"><span class="side-label">TYT</span><span class="side-caption">Temel Yeterlilik Testi</span><span class="enter-mark" aria-hidden="true">↗</span></span></button>
+      <button class="side" type="button" data-coming="AYT"><span class="side-content"><span class="side-label">AYT</span><span class="side-caption">Alan Yeterlilik Testleri</span><span class="enter-mark" aria-hidden="true">↗</span></span></button>
+      <div class="center-note" aria-hidden="true"><span>Yolculuğuna buradan başla</span><span>Birlikte başaracağız.</span></div>
+      <p class="bottom-note">KENDİ TEMELİNİ KENDİ TEMPOYLA KUR</p>
+    </section>
+  </main>
 
-<!-- SOL MENÜ -->
-<nav class="drawer" id="drawer">
-  <div class="list">
-    <button data-sub="Liderlik Tablosu" data-key="liderlik">🏆 Liderlik Tablosu</button>
-    <button data-sub="Şikayet ve Önerileriniz" data-key="sikayet">💬 Şikayet ve Önerileriniz</button>
-    <button id="profileBtn" data-key="profil">👤 Profil</button>
-    <button id="adminMenuBtn" style="display:none">🛠️ Admin Paneli</button>
-  </div>
-  <div class="sub" id="drawerSub">
-    <button class="back">← Geri</button>
-    <h2 id="drawerTitle"></h2>
-    <div class="center">Çok Yakında...</div>
-  </div>
-</nav>
+  <nav class="drawer" id="drawer" aria-label="Ana menü" aria-hidden="true">
+    <div class="drawer-head"><span>KEŞFET</span><button class="close" id="drawerClose" aria-label="Menüyü kapat">×</button></div>
+    <button class="drawer-link" data-coming="Liderlik Tablosu"><span class="drawer-number">01</span><span>Liderlik Tablosu</span></button>
+    <button class="drawer-link" data-coming="Şikayet ve Önerileriniz"><span class="drawer-number">02</span><span>Şikayet ve Önerileriniz</span></button>
+    <div class="drawer-foot">YKS TEMELİNİ SAĞLAM AT</div>
+  </nav>
+  <button class="scrim" id="scrim" aria-label="Kapat" hidden></button>
 
-<!-- ORTADAN İKİYE AYRILMIŞ ANA EKRAN -->
-<main class="split">
-  <div class="half">
-    <button class="half-main" data-open data-key="tyt">TYT</button>
-    <div class="sub"><button class="back">← Geri</button><h2>TYT</h2><div class="lessons" data-lessons="TYT"></div></div>
-  </div>
-  <div class="half">
-    <button class="half-main" data-open data-key="ayt">AYT</button>
-    <div class="sub"><button class="back">← Geri</button><h2>AYT</h2><div class="lessons" data-lessons="AYT"></div></div>
-  </div>
-</main>
+  <section class="view" id="comingView" aria-hidden="true">
+    <div class="coming"><button class="view-back" id="viewBack" aria-label="Pencereyi kapat">×</button><p class="eyebrow" id="comingLabel">YAKINDA</p><h1 id="comingTitle">Çok Yakında...</h1><p id="comingDescription">Bu alan için hazırlıklarımız devam ediyor.</p>
+      <div class="coming-soon" id="comingSoon"><strong>Çok Yakında...</strong><span>Hazırlıklarımız devam ediyor.</span></div>
+      <form id="feedbackForm" class="form" hidden><label>Görüş türü<select name="category" required><option value="Öneri">Öneri</option><option value="Şikayet">Şikayet</option><option value="Diğer">Diğer</option></select></label><label>Konu<input name="subject" required minlength="3" maxlength="100" placeholder="Kısaca konu başlığı"></label><label>E-posta <span class="fine">(İsteğe bağlı, yanıt için)</span><input name="email" type="email" maxlength="254" placeholder="ornek@eposta.com"></label><label>Mesajın<textarea name="message" required minlength="10" maxlength="3000" rows="5" placeholder="Fikrini veya yaşadığın sorunu ayrıntılı yaz…"></textarea></label><button class="submit" type="submit">Gönder <span>→</span></button></form>
+      <button class="outline" data-view-close>Geri dön</button>
+    </div>
+  </section>
 
-<!-- GİRİŞ / KAYIT -->
-<div class="overlay" id="authOv">
-  <div class="modal"><button class="close" data-close>×</button>
-    <div class="tabs"><button class="on" data-tab="login">Giriş Yap</button><button data-tab="reg">Kayıt Ol</button></div>
-    <form id="loginForm">
-      <label class="f">Kullanıcı adı veya e-posta<input type="text" required autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="username"></label>
-      <label class="f">Şifre<input type="password" required autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="current-password"></label>
-      <button class="submit" type="submit">Giriş Yap</button>
-      <div class="msg" id="loginMsg"></div>
+  <div class="overlay" id="authOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="authTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button>
+    <p class="modal-kicker" id="authKicker">YENİDEN MERHABA</p><h2 id="authTitle">Hesabına giriş yap.</h2>
+    <div class="tabs"><button class="active" data-tab="login">Giriş Yap</button><button data-tab="register">Kayıt Ol</button></div>
+    <form class="form" id="loginForm"><label>Kullanıcı adı veya e-posta<input name="identity" required autocomplete="username" placeholder="kullaniciadi veya e-posta"></label><label>Şifre<input name="password" type="password" required autocomplete="current-password"></label><button class="submit">Giriş Yap <span>→</span></button><p class="msg" id="loginMessage" aria-live="polite"></p></form>
+    <form class="form" id="registerForm" hidden><div class="two"><label>Ad<input name="firstName" required minlength="2" maxlength="60" autocomplete="given-name"></label><label>Soyad<input name="lastName" required minlength="2" maxlength="60" autocomplete="family-name"></label></div>
+      <div class="two"><label>Yaş<input name="age" type="number" min="1" max="120" required></label><label>Kullanıcı adı<input name="username" required minlength="3" maxlength="24" autocomplete="username"></label></div>
+      <label>E-posta<input name="email" type="email" required maxlength="254" autocomplete="email"></label><label>Şifre<input name="password" type="password" minlength="10" maxlength="200" required autocomplete="new-password" placeholder="En az 10 karakter"></label>
+      <label class="check"><input name="noticeAcknowledged" type="checkbox" required><span><a href="#" data-legal="kvkk">KVKK Aydınlatma Metni</a> hakkında bilgilendirildim.</span></label>
+      <label class="check"><input name="termsAccepted" type="checkbox" required><span><a href="#" data-legal="terms">Kullanım Koşulları</a>'nı okudum ve kabul ediyorum.</span></label>
+      <label class="check"><input name="marketingConsent" type="checkbox"><span>Kampanya ve duyurular için e-posta almayı kabul ediyorum. (İsteğe bağlı)</span></label>
+      <button class="text-link" type="button" data-legal="privacy">Gizlilik ve Çerez Politikası</button>
+      <button class="submit">Hesabını oluştur <span>→</span></button><p class="fine">Aydınlatma metni bilgilendirme içindir; varsa açık rıza tercihi ayrıca alınmalıdır.</p><p class="msg" id="registerMessage" aria-live="polite"></p>
     </form>
+  </section></div>
 
-    <form id="regForm" style="display:none">
-      <p class="msg" style="margin:0 0 12px;text-align:left;opacity:.7">Tüm alanların doldurulması zorunludur.</p>
-      <label class="f">E-posta<input type="email" name="email" required></label>
-      <div class="row">
-        <label class="f">İsim<input type="text" name="ad" required pattern=".*\S.*" title="Bu alan boş bırakılamaz"></label>
-        <label class="f">Soyisim<input type="text" name="soyad" required pattern=".*\S.*" title="Bu alan boş bırakılamaz"></label>
-      </div>
-      <label class="f">Kullanıcı adı<input type="text" name="kadi" required pattern=".*\S.*" title="Bu alan boş bırakılamaz" autocapitalize="off" autocomplete="off"><span class="dim" style="display:block;margin-top:4px">Bu kullanıcı adı profilinde görünecek.</span></label>
-      <label class="f">Şifre<input type="password" name="sifre" minlength="8" required></label>
+  <div class="overlay" id="setupOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="setupTitle"><p class="modal-kicker">İLK KURULUM</p><h2 id="setupTitle">Yerel yönetici hesabı oluştur.</h2><p class="setup-note">Bu dosya verileri sadece bu tarayıcıda tutar. Yönetici adı <strong>YigitKag</strong> olacak. İlk kurulumda istediğin yönetici şifresini gir; parola tarayıcıda özet olarak saklanır.</p>
+    <form class="form" id="setupForm"><label>Yönetici kullanıcı adı<input value="YigitKag" disabled></label><label>Yönetici şifresi<input name="password" type="password" minlength="10" maxlength="200" required autocomplete="new-password"></label><label>Şifreyi tekrar yaz<input name="confirm" type="password" minlength="10" maxlength="200" required autocomplete="new-password"></label><button class="submit">Yönetici hesabını oluştur <span>→</span></button><p class="msg" id="setupMessage" aria-live="polite"></p></form>
+  </section></div>
 
-      <label class="chk"><input type="checkbox" class="req" required>
-        <span><a href="/kvkk-aydinlatma-metni.html" target="_blank">KVKK Aydınlatma Metni</a>’ni okudum, kişisel verilerimin işlenmesine ilişkin bilgilendirildim. (zorunlu)</span></label>
-      <label class="chk"><input type="checkbox" class="req" required>
-        <span><a href="/acik-riza-metni.html" target="_blank">Açık Rıza Metni</a>’ni okudum ve kişisel verilerimin belirtilen kapsamda işlenmesine onay veriyorum. (zorunlu)</span></label>
-      <label class="chk"><input type="checkbox" class="req" required>
-        <span><a href="/kullanim-kosullari.html" target="_blank">Kullanım Koşulları</a> ve <a href="/gizlilik-politikasi.html" target="_blank">Gizlilik Politikası</a>’nı kabul ediyorum. (zorunlu)</span></label>
-      <label class="chk"><input type="checkbox" name="ticari">
-        <span>Tarafıma ticari elektronik ileti gönderilmesine izin veriyorum. (isteğe bağlı)</span></label>
+  <div class="overlay" id="legalOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="legalTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">BİLGİLENDİRME</p><h2 id="legalTitle"></h2><div class="legal-copy" id="legalCopy"></div><button class="outline" data-close>Kapat</button></section></div>
 
-      <button class="submit" id="regSubmit" type="submit" disabled>Kayıt Ol</button>
-      <div class="msg" id="regMsg"></div>
-    </form>
-  </div>
-</div>
+  <div class="overlay" id="adminOverlay" hidden><section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="adminTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">YÖNETİM</p><h2 id="adminTitle">Kontrol paneli</h2><nav class="admin-tabs" id="adminTabs"><button class="active" data-admin-tab="overview">Genel Bakış</button><button data-admin-tab="users">Kullanıcılar</button><button data-admin-tab="feedback">Geri Bildirimler</button><button data-admin-tab="announcements">Duyurular</button><button data-admin-tab="settings">Site Ayarları</button><button data-admin-tab="security">Güvenlik</button><button data-admin-tab="audit">İşlem Geçmişi</button></nav><div class="admin-panel" id="adminPanel"></div></section></div>
 
-<!-- ADMİN PANELİ -->
-<div class="overlay" id="adminOv">
-  <div class="modal wide"><button class="close" data-close>×</button>
-    <h2>Admin Paneli</h2>
-    <div class="tabs"><button class="on" data-at="users">Kullanıcılar</button><button data-at="site">Site Kontrolü</button><button data-at="ann">Duyuru</button></div>
-    <div id="adminBody"></div>
-  </div>
-</div>
-<!-- PROFİL -->
-<div class="overlay" id="profOv">
-  <div class="modal"><button class="close" data-close>×</button><div id="profBody"></div></div>
-</div>
-<div id="annBar"></div>
-<div id="maintenance" role="status" aria-live="polite"><div><h1>Site Bakımda</h1><p id="maintenanceMsg"></p></div></div>
-<div id="toast"></div>
+  <div class="maintenance" id="maintenance" hidden><div><p class="modal-kicker">KISA BİR ARA</p><h1>Site bakımda.</h1><p id="maintenanceMessage">Biraz sonra yeniden deneyin.</p></div></div>
+  <div class="announcement" id="announcement" hidden></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script>
-'use strict';
-
-const $ = selector => document.querySelector(selector);
-const open = selector => $(selector).classList.add('show');
-const closeAll = () => document.querySelectorAll('.overlay').forEach(node => node.classList.remove('show'));
-const defaults = { maint: false, maintMsg: 'Site bakımda. Lütfen daha sonra tekrar deneyin.', off: {}, ann: '' };
-const app = { me: null, settings: { ...defaults }, users: [], blocked: 0 };
-let toastTimer, adminTab = 'users', userFilter = '', openUser = null, previousUnread = null, syncing = false;
-const esc = value => String(value == null ? '' : value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-const fmt = value => value ? new Date(value).toLocaleString('tr-TR') : '—';
-const KEYS = { tyt: 'TYT', ayt: 'AYT', liderlik: 'Liderlik Tablosu', sikayet: 'Şikayet ve Önerileriniz', profil: 'Profil', giris: 'Giriş / Kayıt' };
-const AVATARS = ['🎓','🦊','🐼','🦁','🐯','🐸','🐧','🦉','🐨','🦄','🐙','🚀','📚','⚡'];
-
-async function api(path, options = {}) {
-  const headers = { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) };
-  const response = await fetch(path, { credentials: 'same-origin', ...options, headers });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.error || `Sunucu hatası (${response.status}).`);
-  return result;
-}
-
-function toast(message) {
-  const node = $('#toast');
-  node.textContent = message;
-  node.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => node.classList.remove('show'), 2800);
-}
-
-function isAdmin() { return !!app.me?.admin; }
-function isOff(key) { return !isAdmin() && !!app.settings.off?.[key]; }
-
-function refreshUI() {
-  const maintenance = !!app.settings.maint && !isAdmin();
-  $('#maintenance').classList.toggle('show', maintenance);
-  $('#maintenanceMsg').textContent = app.settings.maintMsg || defaults.maintMsg;
-  if (maintenance) {
-    closeAll();
-    $('#drawer').classList.remove('open');
-  }
-  $('#authBtn').textContent = app.me ? 'Çıkış Yap' : 'Giriş Yap';
-  $('#adminMenuBtn').style.display = isAdmin() ? '' : 'none';
-  const unread = app.users.filter(user => user.seen === false).length;
-  $('#adminMenuBtn').textContent = '🛠️ Admin Paneli' + (unread ? ` (${unread} yeni)` : '');
-  if (isAdmin() && previousUnread !== null && unread > previousUnread) toast('Yeni üye kaydı geldi.');
-  previousUnread = isAdmin() ? unread : null;
-  $('#who').style.display = app.me ? 'inline' : 'none';
-  $('#who').textContent = app.me ? `${app.me.avatar || '🎓'} ${app.me.display || app.me.kadi}` : '';
-  document.querySelectorAll('[data-key]').forEach(button => button.classList.toggle('off', isOff(button.dataset.key)));
-  const message = app.settings.maint ? `🛠️ ${app.settings.maintMsg}` : app.settings.ann;
-  $('#annBar').textContent = message || '';
-  $('#annBar').classList.toggle('show', !!message && !maintenance);
-  document.querySelectorAll('.half').forEach(half => {
-    const key = half.querySelector('[data-open]')?.dataset.key;
-    if (isOff(key)) half.querySelectorAll('.sub.show').forEach(sub => sub.classList.remove('show'));
-  });
-  if (isOff('profil')) $('#profOv').classList.remove('show');
-}
-
-async function syncState() {
-  if (syncing) return;
-  syncing = true;
-  try {
-    const previousAdmin = isAdmin();
-    const snapshot = await api('/api/bootstrap');
-    app.settings = Object.assign({ ...defaults }, snapshot.settings || {});
-    app.settings.off ||= {};
-    app.me = snapshot.user || null;
-    if (isAdmin()) {
-      const adminData = await api('/api/admin/users');
-      app.users = adminData.users || [];
-      app.blocked = adminData.blocked || 0;
-    } else {
-      app.users = [];
-      app.blocked = 0;
-      if (previousAdmin) previousUnread = null;
-    }
-    refreshUI();
-    const editingAdminInput = $('#adminBody').contains(document.activeElement) && document.activeElement.matches('input, textarea');
-    if ($('#adminOv').classList.contains('show') && !editingAdminInput) renderAdmin();
-    if ($('#profOv').classList.contains('show')) renderProfile();
-  } catch (error) {
-    if (!app._connectionError) {
-      const help = location.protocol === 'file:'
-        ? ' Sayfayı dosyadan açmayın; start.bat dosyasını çalıştırın, site otomatik açılsın.'
-        : ' start.bat dosyasını çalıştırıp açılan localhost sayfasını kullanın.';
-      toast(`Sunucuya bağlanılamadı.${help}`);
-      app._connectionError = true;
-    }
-  } finally {
-    syncing = false;
-  }
-}
-
-// Drawer and the TYT/AYT lesson views
-$('#menuBtn').addEventListener('click', () => $('#drawer').classList.toggle('open'));
-document.addEventListener('click', event => {
-  if (!event.target.closest('#drawer') && !event.target.closest('#menuBtn')) $('#drawer').classList.remove('open');
-}, true);
-
-const LESSONS = {
-  TYT: [
-    { ad: 'Türkçe' },
-    { ad: 'Sosyal Bilimler', d: ['Tarih', 'Coğrafya', 'Felsefe', 'Din Kültürü ve Ahlak Bilgisi'] },
-    { ad: 'Temel Matematik' },
-    { ad: 'Fen Bilimleri', d: ['Fizik', 'Kimya', 'Biyoloji'] }
-  ],
-  AYT: [
-    { ad: 'Türk Dili ve Edebiyatı' }, { ad: 'Matematik' },
-    { ad: 'Fen Bilimleri', d: ['Fizik', 'Kimya', 'Biyoloji'] },
-    { ad: 'Sosyal Bilimler-1', d: ['Tarih-1', 'Coğrafya-1'] },
-    { ad: 'Sosyal Bilimler-2', d: ['Tarih-2', 'Coğrafya-2', 'Felsefe Grubu', 'Din Kültürü ve Ahlak Bilgisi'] },
-    { ad: 'Yabancı Dil' }
-  ]
-};
-
-document.querySelectorAll('.half').forEach(half => {
-  const outer = half.querySelector('.sub');
-  const box = half.querySelector('[data-lessons]');
-  const title = box.dataset.lessons;
-  const view = document.createElement('div');
-  view.className = 'sub';
-  view.innerHTML = '<button class="back">← Geri</button><h2></h2><div class="center">Çok Yakında...</div>';
-  outer.appendChild(view);
-  view.querySelector('.back').onclick = () => view.classList.remove('show');
-  outer.querySelector(':scope > .back').addEventListener('click', () => view.classList.remove('show'));
-  const openLesson = name => { view.querySelector('h2').textContent = name; view.classList.add('show'); };
-  const makeButton = (name, className) => {
-    const button = document.createElement('button');
-    button.textContent = name;
-    if (className) button.className = className;
-    button.onclick = () => openLesson(name);
-    return button;
-  };
-  LESSONS[title].forEach(group => {
-    if (!group.d) { box.appendChild(makeButton(group.ad)); return; }
-    const accordion = document.createElement('div'); accordion.className = 'acc';
-    const heading = document.createElement('button');
-    heading.innerHTML = '<span></span><span class="arr">▼</span>';
-    heading.firstChild.textContent = group.ad;
-    heading.onclick = () => {
-      box.querySelectorAll('.acc.open').forEach(item => { if (item !== accordion) item.classList.remove('open'); });
-      accordion.classList.toggle('open');
+  <script>
+    'use strict';
+    const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+    const DB_KEY='yks-standalone-v1';
+    const app={db:null,user:null,adminTab:'overview',toastTimer:null,returnToAuth:false};
+    const legal={
+      kvkk:{title:'KVKK Aydınlatma Metni',html:`<p><b>Veri sorumlusu:</b> Canlı kullanımda siteyi işleten kişi/kurumun unvanı ve iletişim bilgileri buraya eklenmelidir.</p><p><b>İşlenen veriler:</b> Bu tek dosya sürümünde kayıt bilgileri yalnızca bu tarayıcının yerel depolamasında tutulur: ad, soyad, yaş, kullanıcı adı ve e-posta. Parolalar düz metin olarak saklanmaz.</p><p><b>Amaç ve saklama:</b> Hesabı bu tarayıcıda oluşturup yönetmek amacıyla kullanılır. Tarayıcı verilerini temizlemek kayıtları siler. Canlı hizmet için gerçek saklama süresi, aktarım alıcıları ve başvuru kanalı açıklanmalıdır.</p><p><b>Haklarınız:</b> 6698 sayılı Kanun’un 11. maddesi kapsamındaki haklarınız için gerçek veri sorumlusunun canlı sitede açıklayacağı başvuru yolunu kullanabilirsiniz.</p><p class="legal-note">Bu örnek bilgilendirme taslağıdır. Gerçek işletmeci ve veri akışına göre düzenlenmeden canlı sitede kullanılmamalıdır.</p>`},
+      terms:{title:'Kullanım Koşulları',html:`<p>Bu uygulama YKS hazırlığı için bir başlangıç arayüzüdür. TYT, AYT ve liderlik alanları henüz hazırlık aşamasındadır.</p><p>Hesap bilgilerini doğru vermek ve siteyi hukuka uygun kullanmak üyelerin sorumluluğundadır. İşletmeci unvanı ve iletişim bilgileri canlıya geçmeden önce eklenmelidir.</p><p>Bu örnek metin hukuki incelemenin yerini tutmaz.</p>`},
+      privacy:{title:'Gizlilik ve Çerez Politikası',html:`<p>Bu tek dosyalı uygulama harici sunucuya istek göndermez. Oturum ve kullanıcı verileri bu tarayıcının yerel depolamasında tutulur; tarayıcı verilerini silmek bunları kaldırır.</p><p>Reklam veya izleme çerezi kullanılmaz. Uygulama internete açık çok kullanıcılı bir hizmet sağlamaz. Gerçek hizmette barındırma, e-posta ve analiz sağlayıcıları varsa bu metne eklenmelidir.</p><p>Bu örnek politika, gerçek hizmetinize göre düzenlenmelidir.</p>`}
     };
-    const body = document.createElement('div'); body.className = 'acc-body';
-    const wrap = document.createElement('div'); const inner = document.createElement('div'); inner.className = 'in';
-    group.d.forEach(name => inner.appendChild(makeButton(name, 'lesson')));
-    wrap.appendChild(inner); body.appendChild(wrap); accordion.append(heading, body); box.appendChild(accordion);
-  });
-  half.querySelector('[data-open]').onclick = () => {
-    document.querySelectorAll('.half').forEach(other => { if (other !== half) other.querySelectorAll('.sub.show').forEach(sub => sub.classList.remove('show')); });
-    outer.classList.add('show');
-  };
-  half.querySelector('.back').onclick = () => outer.classList.remove('show');
-});
-
-const drawerSub = $('#drawerSub');
-document.querySelectorAll('[data-sub]').forEach(button => button.onclick = () => {
-  $('#drawerTitle').textContent = button.dataset.sub;
-  drawerSub.classList.add('show');
-});
-drawerSub.querySelector('.back').onclick = () => drawerSub.classList.remove('show');
-
-// Login and registration forms
-$('#authBtn').onclick = async () => {
-  if (app.me) {
-    try { await api('/api/auth/logout', { method: 'POST' }); app.me = null; app.users = []; refreshUI(); toast('Çıkış yapıldı.'); await syncState(); }
-    catch (error) { toast(error.message); }
-    return;
-  }
-  if (app.settings.off?.giris) return toast('Giriş ve kayıt şu anda kapalı.');
-  open('#authOv');
-};
-
-document.querySelectorAll('[data-tab]').forEach(tab => tab.onclick = () => {
-  document.querySelectorAll('[data-tab]').forEach(item => item.classList.toggle('on', item === tab));
-  const show = tab.dataset.tab === 'login' ? $('#loginForm') : $('#regForm');
-  const hide = tab.dataset.tab === 'login' ? $('#regForm') : $('#loginForm');
-  hide.style.display = 'none'; show.style.display = '';
-  show.style.animation = 'none'; show.offsetHeight; show.style.animation = '';
-});
-document.querySelectorAll('[data-close]').forEach(button => button.onclick = closeAll);
-document.querySelectorAll('.overlay').forEach(overlay => overlay.addEventListener('click', event => { if (event.target === overlay) closeAll(); }));
-
-const requiredConsents = [...document.querySelectorAll('#regForm .req')];
-const syncRegisterButton = () => { $('#regSubmit').disabled = !($('#regForm').checkValidity() && requiredConsents.every(check => check.checked)); };
-$('#regForm').addEventListener('input', syncRegisterButton);
-$('#regForm').addEventListener('change', syncRegisterButton);
-
-$('#regForm').addEventListener('submit', async event => {
-  event.preventDefault();
-  if (!event.currentTarget.checkValidity() || !requiredConsents.every(check => check.checked)) return;
-  const form = Object.fromEntries(new FormData(event.currentTarget));
-  const message = $('#regMsg'); message.textContent = '';
-  try {
-    await api('/api/auth/register', { method: 'POST', body: JSON.stringify({
-      email: form.email, ad: form.ad, soyad: form.soyad, kadi: form.kadi, sifre: form.sifre, ticari: !!form.ticari,
-      consents: { kvkk: requiredConsents[0].checked, explicit: requiredConsents[1].checked, terms: requiredConsents[2].checked }
-    }) });
-    event.currentTarget.reset(); syncRegisterButton();
-    document.querySelector('[data-tab="login"]').click();
-    $('#loginMsg').textContent = 'Kayıt başarılı. Şimdi giriş yapabilirsin.';
-  } catch (error) { message.textContent = error.message; }
-});
-
-$('#loginForm').addEventListener('submit', async event => {
-  event.preventDefault();
-  const message = $('#loginMsg'); message.textContent = '';
-  try {
-    await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ identity: event.currentTarget.elements[0].value.trim(), password: event.currentTarget.elements[1].value }) });
-    event.currentTarget.reset(); closeAll(); await syncState(); toast('Giriş yapıldı.');
-  } catch (error) { message.textContent = error.message; }
-});
-
-// Admin panel
-function renderAdmin() {
-  if (!isAdmin()) return;
-  const body = $('#adminBody'), settings = app.settings;
-  document.querySelectorAll('[data-at]').forEach(tab => tab.classList.toggle('on', tab.dataset.at === adminTab));
-  if (adminTab === 'users') {
-    const today = new Date().toDateString();
-    const list = app.users.filter(user => `${user.kadi}${user.email}${user.ad}${user.soyad}`.toLowerCase().includes(userFilter.toLowerCase())).sort((a, b) => new Date(b.kayit) - new Date(a.kayit));
-    body.innerHTML = `<div class="stats"><span>Toplam: <b>${app.users.length}</b></span><span>Bugün: <b>${app.users.filter(user => new Date(user.kayit).toDateString() === today).length}</b></span><span>Engelli: <b>${app.users.filter(user => user.banned).length}</b></span><span>Reddedilen kayıt denemesi: <b>${app.blocked}</b></span></div>
-      <input id="aSearch" type="text" placeholder="Ara: kullanıcı adı, e-posta, isim" value="${esc(userFilter)}">
-      <div class="ulist">${list.map(user => {
-        const key = user.kadi.toLowerCase();
-        return `<div class="urow"><button class="uhead" data-act="tog" data-id="${esc(key)}"><span>${esc(user.avatar || '🎓')} ${esc(user.kadi)}${user.seen === false ? '<span class="new">YENİ</span>' : ''}${user.banned ? ' 🚫' : ''}</span><span class="dim">${esc(user.email)}</span></button>
-          ${openUser === key ? `<div class="udet">İsim Soyisim: ${esc(user.ad)} ${esc(user.soyad)}<br>Kullanıcı adı: ${esc(user.kadi)}<br>E-posta: ${esc(user.email)}<br>Kayıt tarihi: ${fmt(user.kayit)}<br>Son giriş: ${fmt(user.son)}<br>Ticari ileti izni: ${user.ticari ? 'Var' : 'Yok'}<br>Durum: ${user.banned ? 'Engelli' : 'Aktif'}<div class="uact"><button data-act="ban" data-id="${esc(key)}">${user.banned ? 'Engeli Kaldır' : 'Engelle'}</button><button data-act="del" data-id="${esc(key)}">Sil</button></div></div>` : ''}</div>`;
-      }).join('') || '<p class="msg">Kullanıcı bulunamadı.</p>'}</div><button class="submit" data-act="csv">CSV olarak indir</button>`;
-  } else if (adminTab === 'site') {
-    body.innerHTML = `<h3>Bakım Modu</h3><p class="dim">Açıkken ziyaretçilerde bakım ekranı görünür. Yönetici siteyi kullanmaya devam eder.</p>
-      <div class="krow"><span>Bakım modu</span><button class="sw ${settings.maint ? 'on' : ''}" data-act="maint">${settings.maint ? 'Açık' : 'Kapalı'}</button></div>
-      <h3>Bakım mesajı</h3><input id="maintMsg" type="text" maxlength="300" value="${esc(settings.maintMsg)}"><button class="sw" data-act="savemsg">Mesajı kaydet</button>
-      <h3>Bölüm Kontrolü</h3><p class="dim">Kapatılan bölümler bütün ziyaretçiler için devre dışı kalır.</p>
-      ${Object.keys(KEYS).map(key => `<div class="krow"><span>${KEYS[key]}</span><button class="sw ${settings.off?.[key] ? '' : 'on'}" data-act="key" data-id="${key}">${settings.off?.[key] ? 'Kapalı' : 'Açık'}</button></div>`).join('')}
-      <h3>Yönetici şifresi</h3><p class="dim">Yeni şifre en az 12 karakter olmalıdır.</p><form id="adminPasswordForm"><label class="f">Mevcut şifre<input id="oldAdminPassword" type="password" autocomplete="current-password" required></label><label class="f">Yeni şifre<input id="newAdminPassword" type="password" minlength="12" autocomplete="new-password" required></label><button class="sw" type="submit">Şifreyi değiştir</button></form>`;
-  } else {
-    body.innerHTML = `<h3>Site Duyurusu</h3><p class="dim">Sayfanın altında tüm ziyaretçilere gösterilir.</p><input id="annTxt" type="text" maxlength="300" placeholder="Duyuru metni" value="${esc(settings.ann)}"><div class="uact"><button data-act="annpub">Yayınla</button><button data-act="annoff">Kaldır</button></div>`;
-  }
-}
-
-async function saveSettings(patch) {
-  const result = await api('/api/admin/settings', { method: 'POST', body: JSON.stringify(patch) });
-  app.settings = Object.assign({ ...defaults }, result.settings); app.settings.off ||= {};
-  refreshUI(); renderAdmin();
-}
-
-$('#adminMenuBtn').onclick = () => {
-  if (!isAdmin()) return;
-  $('#drawer').classList.remove('open'); open('#adminOv'); renderAdmin();
-};
-document.querySelectorAll('[data-at]').forEach(tab => tab.onclick = () => { adminTab = tab.dataset.at; renderAdmin(); });
-$('#adminBody').addEventListener('input', event => {
-  if (event.target.id !== 'aSearch') return;
-  userFilter = event.target.value;
-  const start = event.target.selectionStart;
-  renderAdmin();
-  const input = $('#aSearch'); input.focus(); input.setSelectionRange(start, start);
-});
-$('#adminBody').addEventListener('focusout', () => setTimeout(() => { if (!$('#adminBody').contains(document.activeElement)) renderAdmin(); }, 0));
-
-$('#adminBody').addEventListener('submit', async event => {
-  if (event.target.id !== 'adminPasswordForm' || !isAdmin()) return;
-  event.preventDefault();
-  try {
-    await api('/api/admin/password', { method: 'POST', body: JSON.stringify({ oldPassword: $('#oldAdminPassword').value, newPassword: $('#newAdminPassword').value }) });
-    event.target.reset(); toast('Yönetici şifresi güncellendi.');
-  } catch (error) { toast(error.message); }
-});
-
-$('#adminBody').addEventListener('click', async event => {
-  const button = event.target.closest('[data-act]');
-  if (!button || !isAdmin()) return;
-  const action = button.dataset.act, id = button.dataset.id;
-  try {
-    if (action === 'tog') {
-      openUser = openUser === id ? null : id;
-      const user = app.users.find(item => item.kadi.toLowerCase() === id);
-      if (user?.seen === false) await api(`/api/admin/users/${encodeURIComponent(id)}/seen`, { method: 'POST' });
-      await syncState();
-    } else if (action === 'ban') {
-      const user = app.users.find(item => item.kadi.toLowerCase() === id);
-      await api(`/api/admin/users/${encodeURIComponent(id)}/ban`, { method: 'POST', body: JSON.stringify({ banned: !user.banned }) });
-      await syncState();
-    } else if (action === 'del') {
-      if (!confirm('Bu kullanıcı kalıcı olarak silinsin mi?')) return;
-      await api(`/api/admin/users/${encodeURIComponent(id)}`, { method: 'DELETE' }); openUser = null; await syncState();
-    } else if (action === 'csv') {
-      const quote = value => `"${String(value == null ? '' : value).replace(/"/g, '""')}"`;
-      const rows = [['Kullanıcı adı','Ad','Soyad','E-posta','Kayıt tarihi','Son giriş','Ticari izin','Durum'], ...app.users.map(user => [user.kadi,user.ad,user.soyad,user.email,fmt(user.kayit),fmt(user.son),user.ticari ? 'Var' : 'Yok',user.banned ? 'Engelli' : 'Aktif'])];
-      const link = document.createElement('a');
-      const objectUrl = URL.createObjectURL(new Blob(['\ufeff' + rows.map(row => row.map(quote).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' }));
-      link.href = objectUrl; link.download = 'kullanicilar.csv'; link.click();
-      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-    } else if (action === 'maint') {
-      await saveSettings({ maint: !app.settings.maint });
-    } else if (action === 'savemsg') {
-      await saveSettings({ maintMsg: $('#maintMsg').value.trim() || defaults.maintMsg }); toast('Bakım mesajı kaydedildi.');
-    } else if (action === 'key') {
-      await saveSettings({ off: { ...app.settings.off, [id]: !app.settings.off?.[id] } });
-    } else if (action === 'annpub') {
-      await saveSettings({ ann: $('#annTxt').value.trim() }); toast('Duyuru yayınlandı.');
-    } else if (action === 'annoff') {
-      await saveSettings({ ann: '' });
+    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const date=v=>v?new Intl.DateTimeFormat('tr-TR',{dateStyle:'medium',timeStyle:'short'}).format(new Date(v)):'—';
+    const now=()=>new Date().toISOString();
+    function blankDB(){return {admin:null,users:[],feedback:[],announcements:[],audit:[],settings:{registrationsOpen:true,maintenance:false,maintenanceMessage:'Site bakımda. Lütfen daha sonra tekrar deneyin.'}}}
+    function loadDB(){try{return Object.assign(blankDB(),JSON.parse(localStorage.getItem(DB_KEY)||'{}'))}catch{return blankDB()}}
+    function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(app.db));window.dispatchEvent(new Event('yks-local-change'))}
+    function log(action,actor='system',detail=''){app.db.audit.unshift({id:crypto.randomUUID(),at:now(),action,actor,detail:String(detail).slice(0,140)});app.db.audit=app.db.audit.slice(0,300)}
+    function showToast(text){const el=$('#toast');el.textContent=text;el.classList.add('show');clearTimeout(app.toastTimer);app.toastTimer=setTimeout(()=>el.classList.remove('show'),2800)}
+    function showOverlay(id){$('#'+id).hidden=false;document.body.dataset.modal='open'}
+    function closeOverlays(){ $$('.overlay').forEach(el=>el.hidden=true);delete document.body.dataset.modal }
+    function openLegal(key){const item=legal[key];if(!item)return;app.returnToAuth=!$('#authOverlay').hidden;$('#legalTitle').textContent=item.title;$('#legalCopy').innerHTML=item.html;showOverlay('legalOverlay')}
+    function closeLegal(){ $('#legalOverlay').hidden=true;if(app.returnToAuth)$('#authOverlay').hidden=false;else delete document.body.dataset.modal;app.returnToAuth=false }
+    function isAdmin(){return app.user?.role==='admin'}
+    function showDrawer(){ $('#drawer').classList.add('open');$('#drawer').setAttribute('aria-hidden','false');$('#menuButton').setAttribute('aria-expanded','true');$('#menuButton').setAttribute('aria-label','Menüyü kapat');$('#scrim').hidden=false }
+    function hideDrawer(){ $('#drawer').classList.remove('open');$('#drawer').setAttribute('aria-hidden','true');$('#menuButton').setAttribute('aria-expanded','false');$('#menuButton').setAttribute('aria-label','Menüyü aç');$('#scrim').hidden=true }
+    function openComing(name){const isFeedback=name==='Şikayet ve Önerileriniz';hideDrawer();$('#comingLabel').textContent=isFeedback?'GERİ BİLDİRİM':name.toLocaleUpperCase('tr-TR');$('#comingTitle').textContent=isFeedback?name:'Çok Yakında...';$('#comingDescription').textContent=isFeedback?'Şikayetini, önerini veya yaşadığın sorunu bize ilet.':`${name} bölümü için hazırlıklarımız devam ediyor.`;$('#comingSoon').hidden=isFeedback;$('#feedbackForm').hidden=!isFeedback;$('#comingView').classList.add('show');$('#comingView').setAttribute('aria-hidden','false')}
+    function closeComing(){$('#comingView').classList.remove('show');$('#comingView').setAttribute('aria-hidden','true')}
+    function setAuthTab(tab){const reg=tab==='register';$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));$('#loginForm').hidden=reg;$('#registerForm').hidden=!reg;$('#authTitle').textContent=reg?'Yolculuğuna başla.':'Hesabına giriş yap.';$('#authKicker').textContent=reg?'İLK ADIMINI AT':'YENİDEN MERHABA';$('#loginMessage').textContent='';$('#registerMessage').textContent='';if(reg&&!app.db.settings.registrationsOpen){setAuthTab('login');showToast('Kayıtlar şu anda kapalı.')}}
+    function openAuth(tab='login'){ $('#accountPop').hidden=true;showOverlay('authOverlay');setAuthTab(tab) }
+    async function hashPassword(password,salt){const bytes=new TextEncoder().encode(password);if(globalThis.crypto?.subtle){const key=await crypto.subtle.importKey('raw',bytes,'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:120000,hash:'SHA-256'},key,256);return [...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join('')}let h=2166136261;for(const c of `${salt}:${password}`){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return `fallback-${(h>>>0).toString(16)}`}
+    async function createCredential(password){const salt=[...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,'0')).join('');return{salt,hash:await hashPassword(password,salt)}}
+    async function matches(password,record){if(!record?.salt||!record?.hash)return false;return(await hashPassword(password,record.salt))===record.hash}
+    function ensureSetup(){if(!app.db.admin){showOverlay('setupOverlay');return false}return true}
+    function updateHeader(){const label=app.user?(app.user.role==='admin'?'YigitKag':app.user.username):'Giriş Yap';$('#accountButton').textContent=label;$('#adminOpen').hidden=!isAdmin();$('#logout').hidden=!app.user;$$('[data-auth]').forEach(el=>el.hidden=!!app.user);if(app.db.settings.maintenance&&!isAdmin()){$('#maintenance').hidden=false;$('#maintenanceMessage').textContent=app.db.settings.maintenanceMessage||'Site bakımda. Lütfen daha sonra tekrar deneyin.'}else $('#maintenance').hidden=true;const announcement=app.db.announcements[0];$('#announcement').hidden=!announcement||!!app.db.settings.maintenance;$('#announcement').textContent=announcement?`DUYURU · ${announcement.title} — ${announcement.message}`:''}
+    function refresh(){updateHeader();if(!$('#adminOverlay').hidden)renderAdmin()}
+    function signIn(user){app.user={id:user.id,role:user.role,username:user.username,firstName:user.firstName||'Yönetici'};updateHeader()}
+    function openAdmin(){if(!isAdmin())return showToast('Yönetici girişi gerekli.');$('#accountPop').hidden=true;app.adminTab='overview';showOverlay('adminOverlay');renderAdmin()}
+    function renderAdmin(){if(!isAdmin())return;$$('[data-admin-tab]').forEach(b=>b.classList.toggle('active',b.dataset.adminTab===app.adminTab));const p=$('#adminPanel'),d=app.db;const userRows=d.users.map(u=>`<article class="admin-row"><div class="admin-row-head"><strong>${esc(u.firstName)} ${esc(u.lastName)} · @${esc(u.username)}</strong><span>${u.active?'Aktif':'Kapalı'}</span></div><small>${esc(u.email)} · ${esc(u.age)} yaş · ${date(u.createdAt)}</small><div class="actions"><button class="small-btn" data-user-toggle="${esc(u.id)}">${u.active?'Askıya al':'Etkinleştir'}</button><button class="small-btn danger" data-user-delete="${esc(u.id)}">Sil</button></div></article>`).join('');
+      const feedbackRows=d.feedback.map(f=>`<article class="feedback-row"><div class="admin-row-head"><strong>${esc(f.category)} · ${esc(f.username||'Misafir')}</strong><span>${esc(f.status)}</span></div><small class="feedback-meta">${date(f.createdAt)} · ${f.email?`Yanıt e-postası: ${esc(f.email)}`:'E-posta paylaşılmadı'}</small><p><strong>${esc(f.subject||'Konu belirtilmedi')}</strong></p><p>${esc(f.message)}</p><div class="actions"><select data-feedback-status="${esc(f.id)}" aria-label="Durum"><option ${f.status==='Yeni'?'selected':''}>Yeni</option><option ${f.status==='İnceleniyor'?'selected':''}>İnceleniyor</option><option ${f.status==='Çözüldü'?'selected':''}>Çözüldü</option></select></div></article>`).join('');
+      const annRows=d.announcements.map(a=>`<article class="announcement-row"><div class="admin-row-head"><strong>${esc(a.title)}</strong><button class="small-btn danger" data-ann-delete="${esc(a.id)}">Sil</button></div><small>${date(a.createdAt)} · ${esc(a.author)}</small><p>${esc(a.message)}</p></article>`).join('');
+      if(app.adminTab==='overview')p.innerHTML=`<div class="stats"><div class="stat"><span>Üyeler</span><strong>${d.users.length}</strong></div><div class="stat"><span>Aktif üyeler</span><strong>${d.users.filter(u=>u.active).length}</strong></div><div class="stat"><span>Açık geri bildirim</span><strong>${d.feedback.filter(f=>f.status!=='Çözüldü').length}</strong></div><div class="stat"><span>Duyurular</span><strong>${d.announcements.length}</strong></div></div><h3>Son işlemler</h3>${d.audit.slice(0,8).map(a=>`<article class="audit-row"><strong>${esc(a.action)}</strong><small>${esc(a.actor)} · ${esc(a.detail)} · ${date(a.at)}</small></article>`).join('')||'<p class="empty">Henüz işlem yok.</p>'}`;
+      else if(app.adminTab==='users')p.innerHTML=`<h3>Kayıtlı üyeler</h3><div class="actions"><input class="search" id="userSearch" type="search" placeholder="Ad, kullanıcı adı veya e-posta ara"><button class="small-btn" id="userCsv">CSV indir</button></div><div id="userRows">${userRows||'<p class="empty">Henüz üye yok.</p>'}</div>`;
+      else if(app.adminTab==='feedback')p.innerHTML=`<h3>Şikayet ve öneriler</h3>${feedbackRows||'<p class="empty">Henüz geri bildirim yok.</p>'}`;
+      else if(app.adminTab==='announcements')p.innerHTML=`<h3>Duyuru yayınla</h3><form class="admin-form" id="announcementForm"><label>Başlık<input name="title" required minlength="3" maxlength="100"></label><label>Metin<textarea name="message" required minlength="3" maxlength="1000" rows="3"></textarea></label><button class="submit">Duyuruyu yayınla →</button></form><h3>Yayındaki duyurular</h3>${annRows||'<p class="empty">Duyuru bulunmuyor.</p>'}`;
+      else if(app.adminTab==='settings')p.innerHTML=`<h3>Site ayarları</h3><label class="setting"><span><strong>Yeni kayıtları kabul et</strong><small>Kapatıldığında yeni üye kaydı engellenir.</small></span><input type="checkbox" data-setting="registrationsOpen" ${d.settings.registrationsOpen?'checked':''}></label><label class="setting"><span><strong>Bakım modu</strong><small>Yönetici dışındaki bu tarayıcı görünümünde bakım ekranı gösterilir.</small></span><input type="checkbox" data-setting="maintenance" ${d.settings.maintenance?'checked':''}></label><form class="admin-form" id="maintenanceForm"><label>Bakım mesajı<input name="message" maxlength="300" value="${esc(d.settings.maintenanceMessage)}"></label><button class="small-btn">Mesajı kaydet</button></form><p class="fine">Bu ayarlar yalnızca bu tarayıcıdaki yerel kopyayı etkiler.</p>`;
+      else if(app.adminTab==='security')p.innerHTML=`<h3>Yönetici şifresini değiştir</h3><form class="admin-form" id="passwordForm"><label>Mevcut şifre<input name="current" type="password" required autocomplete="current-password"></label><label>Yeni şifre<input name="next" type="password" required minlength="12" autocomplete="new-password"></label><button class="submit">Şifreyi güncelle →</button></form><p class="fine">Şifre özeti PBKDF2 ile yerel tarayıcıda saklanır. Bu, gerçek sunucu kimlik doğrulaması değildir.</p>`;
+      else p.innerHTML=`<h3>Son işlemler</h3>${d.audit.map(a=>`<article class="audit-row"><strong>${esc(a.action)}</strong><small>${esc(a.actor)} · ${esc(a.detail)} · ${date(a.at)}</small></article>`).join('')||'<p class="empty">Henüz işlem yok.</p>'}`;
     }
-  } catch (error) { toast(error.message); }
-});
 
-// Profile
-function renderProfile() {
-  const user = app.me;
-  if (!user) return;
-  $('#profBody').innerHTML = `<div class="avatar-big">${esc(user.avatar || '🎓')}</div><div class="pname">${user.admin ? esc(user.display) : '@' + esc(user.kadi)}</div>
-    <div class="plabel">${user.admin ? 'Yönetici hesabı • Giriş adın: ' + esc(user.kadi) : 'Kullanıcı adın (kayıt olurken belirlediğin ad)'}</div>
-    ${user.admin ? '' : `<div class="pinfo">İsim Soyisim: ${esc(user.ad)} ${esc(user.soyad)}<br>E-posta: ${esc(user.email)}<br>Kayıt tarihi: ${fmt(user.kayit)}</div>`}
-    <h3>Avatarını seç</h3><div class="avgrid">${AVATARS.map(avatar => `<button data-av="${avatar}" class="${avatar === (user.avatar || '🎓') ? 'on' : ''}">${avatar}</button>`).join('')}</div>`;
-}
-
-$('#profileBtn').onclick = () => {
-  if (isOff('profil')) return toast('Bu bölüm şu anda yönetici tarafından kapatıldı.');
-  if (!app.me) return toast('Profil için önce giriş yapmalısın.');
-  $('#drawer').classList.remove('open'); open('#profOv'); renderProfile();
-};
-$('#profBody').addEventListener('click', async event => {
-  const button = event.target.closest('[data-av]');
-  if (!button || !app.me) return;
-  try { await api('/api/profile', { method: 'POST', body: JSON.stringify({ avatar: button.dataset.av }) }); await syncState(); toast('Avatar güncellendi.'); }
-  catch (error) { toast(error.message); }
-});
-
-// Prevent actions from being opened after an admin closes a section.
-document.addEventListener('click', event => {
-  const button = event.target.closest('[data-key]');
-  if (button && isOff(button.dataset.key)) {
-    event.stopPropagation(); event.preventDefault(); toast('Bu bölüm şu anda yönetici tarafından kapatıldı.');
-  }
-}, true);
-
-window.addEventListener('focus', syncState);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) syncState(); });
-setInterval(syncState, 3000);
-syncState();
-
-</script>
+    document.addEventListener('click',async e=>{
+      if(!e.target.closest('#drawer')&&!e.target.closest('#menuButton'))hideDrawer();
+      if(!e.target.closest('#accountPop')&&!e.target.closest('#accountButton'))$('#accountPop').hidden=true;
+      const auth=e.target.closest('[data-auth]');if(auth){if(!ensureSetup())return;openAuth(auth.dataset.auth);return}
+      if(e.target.closest('#accountButton')){$('#accountPop').hidden=!$('#accountPop').hidden;return}
+      if(e.target.closest('#drawerClose,#scrim'))return hideDrawer();
+      const coming=e.target.closest('[data-coming]');if(coming)return openComing(coming.dataset.coming);
+      if(e.target.closest('#viewBack,[data-view-close]'))return closeComing();
+      if(e.target.closest('[data-close]')){if(e.target.closest('#legalOverlay'))return closeLegal();closeOverlays();return}
+      const legalLink=e.target.closest('[data-legal]');if(legalLink){e.preventDefault();return openLegal(legalLink.dataset.legal)}
+      const tab=e.target.closest('[data-tab]');if(tab)return setAuthTab(tab.dataset.tab);
+      if(e.target.closest('#adminOpen'))return openAdmin();
+      if(e.target.closest('#logout')){app.user=null;$('#accountPop').hidden=true;closeOverlays();updateHeader();showToast('Çıkış yapıldı.');return}
+      const adminTab=e.target.closest('[data-admin-tab]');if(adminTab){app.adminTab=adminTab.dataset.adminTab;return renderAdmin()}
+      const toggle=e.target.closest('[data-user-toggle]');if(toggle){const u=app.db.users.find(x=>x.id===toggle.dataset.userToggle);if(u){u.active=!u.active;log(u.active?'Üye etkinleştirildi':'Üye askıya alındı','YigitKag',u.username);saveDB();renderAdmin()}return}
+      const del=e.target.closest('[data-user-delete]');if(del){if(!confirm('Bu üyeyi ve profil bilgisini silmek istiyor musun?'))return;const u=app.db.users.find(x=>x.id===del.dataset.userDelete);app.db.users=app.db.users.filter(x=>x.id!==del.dataset.userDelete);log('Üye silindi','YigitKag',u?.username);saveDB();renderAdmin();return}
+      const annDel=e.target.closest('[data-ann-delete]');if(annDel){app.db.announcements=app.db.announcements.filter(a=>a.id!==annDel.dataset.annDelete);log('Duyuru silindi','YigitKag');saveDB();renderAdmin();return}
+      if(e.target.closest('#userCsv')){const rows=[['Kullanıcı adı','Ad','Soyad','Yaş','E-posta','Kayıt tarihi','Durum'],...app.db.users.map(u=>[u.username,u.firstName,u.lastName,u.age,u.email,date(u.createdAt),u.active?'Aktif':'Kapalı'])];const quote=x=>'"'+String(x??'').replace(/"/g,'""')+'"';const blob=new Blob(['\ufeff'+rows.map(r=>r.map(quote).join(',')).join('\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yks-kullanicilar.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);return}
+    });
+    document.addEventListener('change',e=>{const s=e.target.closest('[data-feedback-status]');if(s){const f=app.db.feedback.find(x=>x.id===s.dataset.feedbackStatus);if(f){f.status=s.value;log('Geri bildirim güncellendi','YigitKag',f.status);saveDB();renderAdmin()}return}const setting=e.target.closest('[data-setting]');if(setting){app.db.settings[setting.dataset.setting]=setting.checked;log('Site ayarı güncellendi','YigitKag',setting.dataset.setting);saveDB();refresh()}});
+    document.addEventListener('input',e=>{if(e.target.id==='userSearch'){const q=e.target.value.toLocaleLowerCase('tr-TR');$$('#userRows .admin-row').forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase('tr-TR').includes(q))}});
+    document.addEventListener('submit',async e=>{
+      const form=e.target;if(!['loginForm','registerForm','setupForm','feedbackForm','announcementForm','maintenanceForm','passwordForm'].includes(form.id))return;e.preventDefault();
+      try{
+        if(form.id==='setupForm'){const d=new FormData(form),password=String(d.get('password')),confirmPassword=String(d.get('confirm'));if(password.length<10)throw Error('Şifre en az 10 karakter olmalı.');if(password!==confirmPassword)throw Error('Şifreler eşleşmiyor.');app.db.admin={username:'YigitKag',...(await createCredential(password))};log('Yönetici hesabı oluşturuldu','YigitKag');saveDB();app.user={role:'admin',username:'YigitKag',firstName:'Yönetici'};closeOverlays();refresh();showToast('Yönetici hesabı oluşturuldu.');return}
+        if(form.id==='loginForm'){const d=new FormData(form),identity=String(d.get('identity')).trim().toLocaleLowerCase('tr-TR'),password=String(d.get('password'));if(identity===app.db.admin.username.toLocaleLowerCase('tr-TR')&&await matches(password,app.db.admin)){app.user={role:'admin',username:'YigitKag',firstName:'Yönetici'};log('Yönetici giriş yaptı','YigitKag');saveDB();closeOverlays();refresh();showToast('Yönetici girişi başarılı.');return}const user=app.db.users.find(u=>u.username.toLocaleLowerCase('tr-TR')===identity||u.email.toLocaleLowerCase('tr-TR')===identity);if(!user||!await matches(password,user))throw Error('Kullanıcı bilgileri hatalı.');if(!user.active)throw Error('Hesap devre dışı bırakılmış.');app.user={role:'user',id:user.id,username:user.username,firstName:user.firstName};log('Üye giriş yaptı',user.username);saveDB();closeOverlays();refresh();showToast(`Hoş geldin, ${user.firstName}.`);return}
+        if(form.id==='registerForm'){if(!app.db.settings.registrationsOpen)throw Error('Kayıtlar şu anda kapalı.');const d=new FormData(form),v=Object.fromEntries(d);const username=String(v.username).trim(),email=String(v.email).trim().toLowerCase(),age=Number(v.age);if(username.length<3||username.length>24)throw Error('Kullanıcı adı 3–24 karakter olmalı.');if(app.db.admin.username.toLowerCase()===username.toLowerCase()||app.db.users.some(u=>u.username.toLowerCase()===username.toLowerCase()))throw Error('Bu kullanıcı adı alınmış.');if(app.db.users.some(u=>u.email===email))throw Error('Bu e-posta ile hesap zaten var.');if(!Number.isInteger(age)||age<1||age>120)throw Error('Yaşınızı 1–120 arasında girin.');const record={id:crypto.randomUUID(),username,email,firstName:String(v.firstName).trim(),lastName:String(v.lastName).trim(),age,active:true,createdAt:now(),noticeAcknowledgedAt:now(),marketingConsent:d.has('marketingConsent'),...(await createCredential(String(v.password)))};app.db.users.push(record);log('Yeni üye kaydı',username);saveDB();app.user={role:'user',id:record.id,username,firstName:record.firstName};form.reset();closeOverlays();refresh();showToast('Hesabın oluşturuldu. Hoş geldin!');return}
+        if(form.id==='feedbackForm'){const d=new FormData(form),message=String(d.get('message')).trim(),subject=String(d.get('subject')).trim(),email=String(d.get('email')).trim().toLowerCase();if(subject.length<3)throw Error('Konu başlığı en az 3 karakter olmalı.');if(message.length<10)throw Error('Mesaj en az 10 karakter olmalı.');app.db.feedback.unshift({id:crypto.randomUUID(),category:String(d.get('category')),subject,email,message,status:'Yeni',createdAt:now(),username:app.user?.username||'Misafir'});log('Yeni geri bildirim',app.user?.username||'Misafir',subject);saveDB();form.reset();closeComing();showToast('Görüşün için teşekkürler.');return}
+        if(form.id==='announcementForm'){const d=new FormData(form);app.db.announcements.unshift({id:crypto.randomUUID(),title:String(d.get('title')).trim(),message:String(d.get('message')).trim(),author:'YigitKag',createdAt:now()});log('Duyuru yayınlandı','YigitKag',String(d.get('title')).trim());saveDB();renderAdmin();showToast('Duyuru yayınlandı.');return}
+        if(form.id==='maintenanceForm'){app.db.settings.maintenanceMessage=String(new FormData(form).get('message')).trim()||'Site bakımda. Lütfen daha sonra tekrar deneyin.';saveDB();refresh();showToast('Bakım mesajı güncellendi.');return}
+        if(form.id==='passwordForm'){const d=new FormData(form);if(!await matches(String(d.get('current')),app.db.admin))throw Error('Mevcut şifre yanlış.');if(String(d.get('next')).length<12)throw Error('Yeni şifre en az 12 karakter olmalı.');const credential=await createCredential(String(d.get('next')));app.db.admin={username:'YigitKag',...credential};log('Yönetici şifresi değiştirildi','YigitKag');saveDB();form.reset();showToast('Yönetici şifresi güncellendi.');return}
+      }catch(error){const target={loginForm:'#loginMessage',registerForm:'#registerMessage',setupForm:'#setupMessage'}[form.id];if(target)$(target).textContent=error.message;else showToast(error.message)}
+    });
+    $$('.overlay').forEach(overlay=>overlay.addEventListener('click',e=>{if(e.target!==overlay)return;if(overlay.id==='setupOverlay')return;if(overlay.id==='legalOverlay')closeLegal();else closeOverlays()}));
+    $('#comingView').addEventListener('click',e=>{if(e.target===$('#comingView'))closeComing()});
+    $('#menuButton').addEventListener('click',()=>$('#drawer').classList.contains('open')?hideDrawer():showDrawer());
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideDrawer();closeComing();closeLegal();closeOverlays();$('#accountPop').hidden=true}});
+    window.addEventListener('storage',e=>{if(e.key===DB_KEY){app.db=loadDB();if(app.user?.role==='admin'&&!app.db.admin)app.user=null;refresh()}});
+    app.db=loadDB();updateHeader();if(!app.db.admin)ensureSetup();
+  </script>
 </body>
 </html>
-
-
-======================== server.js ========================
-
-'use strict';
-
-const http = require('node:http');
-const fs = require('node:fs');
-const path = require('node:path');
-const crypto = require('node:crypto');
-const { spawn } = require('node:child_process');
-
-const ROOT = __dirname;
-const DATA_DIR = path.join(ROOT, 'data');
-const DATA_FILE = path.join(DATA_DIR, 'site-data.json');
-const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.HOST || '0.0.0.0';
-const ADMIN_NAME = String(process.env.ADMIN_USERNAME || 'yigitkag').trim();
-const SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
-const sessions = new Map();
-const ALLOWED_KEYS = ['tyt', 'ayt', 'liderlik', 'sikayet', 'profil', 'giris'];
-const AVATARS = ['🎓','🦊','🐼','🦁','🐯','🐸','🐧','🦉','🐨','🦄','🐙','🚀','📚','⚡'];
-
-fs.mkdirSync(DATA_DIR, { recursive: true });
-
-function passwordHash(password, salt = crypto.randomBytes(16).toString('hex')) {
-  return `${salt}:${crypto.scryptSync(password, salt, 64).toString('hex')}`;
-}
-
-function passwordMatches(password, stored) {
-  if (typeof stored !== 'string' || !stored.includes(':')) return false;
-  const [salt, hex] = stored.split(':');
-  try {
-    const actual = crypto.scryptSync(password, salt, 64);
-    const expected = Buffer.from(hex, 'hex');
-    return expected.length === actual.length && crypto.timingSafeEqual(actual, expected);
-  } catch {
-    return false;
-  }
-}
-
-function randomPassword(length = 24) {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@$%';
-  return Array.from(crypto.randomBytes(length), byte => alphabet[byte % alphabet.length]).join('');
-}
-
-function defaultData() {
-  let initialPassword = process.env.ADMIN_PASSWORD;
-  if (initialPassword && initialPassword.length < 12) throw new Error('ADMIN_PASSWORD en az 12 karakter olmalı.');
-  if (!initialPassword) {
-    initialPassword = randomPassword();
-    console.log(`\nİlk yönetici hesabı oluşturuldu. Kullanıcı adı: ${ADMIN_NAME}\nİlk şifre (güvenli bir yere kaydedin): ${initialPassword}\n`);
-  }
-  return {
-    version: 1,
-    admin: { username: ADMIN_NAME, hash: passwordHash(initialPassword), avatar: '🛠️' },
-    users: [],
-    blocked: [],
-    settings: { maint: false, maintMsg: 'Site bakımda. Lütfen daha sonra tekrar deneyin.', off: {}, ann: '' }
-  };
-}
-
-let data;
-try {
-  data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-  data.users ||= [];
-  data.blocked ||= [];
-  data.settings = Object.assign({ maint: false, maintMsg: 'Site bakımda. Lütfen daha sonra tekrar deneyin.', off: {}, ann: '' }, data.settings || {});
-  data.admin ||= { username: ADMIN_NAME, hash: passwordHash(process.env.ADMIN_PASSWORD || randomPassword()), avatar: '🛠️' };
-} catch (error) {
-  if (error.code !== 'ENOENT') throw new Error(`Veri dosyası okunamadı: ${error.message}`);
-  data = defaultData();
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), { mode: 0o600 });
-}
-
-function saveData() {
-  const temp = `${DATA_FILE}.${process.pid}.tmp`;
-  fs.writeFileSync(temp, JSON.stringify(data, null, 2), { mode: 0o600 });
-  fs.renameSync(temp, DATA_FILE);
-}
-
-function json(res, status, payload, headers = {}) {
-  const body = JSON.stringify(payload);
-  res.writeHead(status, {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Cache-Control': 'no-store',
-    'X-Content-Type-Options': 'nosniff',
-    ...headers
-  });
-  res.end(body);
-}
-
-function cookieOptions() {
-  return `Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_MAX_AGE / 1000)}${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`;
-}
-
-function getSession(req) {
-  const raw = req.headers.cookie || '';
-  const match = raw.match(/(?:^|;\s*)yks_sid=([a-f0-9]+)/);
-  if (!match) return null;
-  const row = sessions.get(match[1]);
-  if (!row || row.expires < Date.now()) {
-    sessions.delete(match[1]);
-    return null;
-  }
-  if (row.admin) return { ...row, admin: true, username: data.admin.username, avatar: data.admin.avatar || '🛠️' };
-  const user = data.users.find(item => item.id === row.userId && !item.banned);
-  return user ? { ...row, admin: false, user } : null;
-}
-
-function publicUser(session) {
-  if (!session) return null;
-  if (session.admin) return { admin: true, kadi: data.admin.username, display: 'Yiğit', avatar: data.admin.avatar || '🛠️' };
-  const user = session.user;
-  if (data.settings.maint) return null;
-  return { admin: false, kadi: user.kadi, ad: user.ad, soyad: user.soyad, email: user.email, kayit: user.kayit, avatar: user.avatar || '🎓' };
-}
-
-function adminOnly(session, res) {
-  if (!session || !session.admin) {
-    json(res, 401, { error: 'Bu işlem için yönetici girişi gerekli.' });
-    return false;
-  }
-  return true;
-}
-
-function parseBody(req) {
-  return new Promise((resolve, reject) => {
-    let body = '';
-    req.on('data', part => {
-      body += part;
-      if (body.length > 64 * 1024) {
-        reject(Object.assign(new Error('İstek çok büyük.'), { status: 413 }));
-        req.destroy();
-      }
-    });
-    req.on('end', () => {
-      try { resolve(body ? JSON.parse(body) : {}); }
-      catch { reject(Object.assign(new Error('Geçersiz JSON.'), { status: 400 })); }
-    });
-    req.on('error', reject);
-  });
-}
-
-function isProfane(value) {
-  const plain = String(value).toLocaleLowerCase('tr').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/ı/g, 'i').replace(/[^a-z]/g, '').replace(/(.)\1+/g, '$1');
-  const terms = ['orospu','pezevenk','yarrak','yarak','gotveren','siktir','sikik','sikis','sikeyim','sikerim','amcik','aminakoy','serefsiz','kahpe','kaltak','fahise','gavat','ibne','fuck','shit','bitch','cunt','whore','slut','asshole','nigger','nigga','dickhead','pussy'];
-  return terms.some(term => plain.includes(term)) || /(^|[^a-z])(amk|aq|amq|oc|pic|sg|mk)([^a-z]|$)/i.test(String(value));
-}
-
-function safeUser(user) {
-  const { hash, ...visible } = user;
-  return visible;
-}
-
-async function handleApi(req, res, url) {
-  const session = getSession(req);
-  const method = req.method;
-  const pathname = url.pathname;
-
-  if (method === 'GET' && pathname === '/api/bootstrap') {
-    return json(res, 200, { settings: data.settings, user: publicUser(session) });
-  }
-
-  if (method === 'POST' && pathname === '/api/auth/register') {
-    const body = await parseBody(req);
-    if (data.settings.maint || data.settings.off.giris) return json(res, 403, { error: 'Kayıt şu anda kapalı.' });
-    const email = String(body.email || '').trim().toLowerCase();
-    const kadi = String(body.kadi || '').trim();
-    const ad = String(body.ad || '').trim();
-    const soyad = String(body.soyad || '').trim();
-    const sifre = String(body.sifre || '');
-    if (!body.consents || body.consents.kvkk !== true || body.consents.explicit !== true || body.consents.terms !== true) return json(res, 400, { error: 'Kayıt için zorunlu onayların tamamı gereklidir.' });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || !kadi || kadi.length > 32 || !ad || ad.length > 80 || !soyad || soyad.length > 80 || sifre.length < 8 || sifre.length > 128) return json(res, 400, { error: 'Bilgileri kontrol edin. Şifre en az 8 karakter olmalı.' });
-    if ([kadi, ad, soyad].some(isProfane)) {
-      data.blocked.push({ kadi: kadi.slice(0, 32), tarih: new Date().toISOString() });
-      data.blocked = data.blocked.slice(-100);
-      saveData();
-      return json(res, 400, { error: 'Bu isim uygunsuz ifadeler içeriyor. Lütfen başka bir isim kullan.' });
-    }
-    if (kadi.toLowerCase() === data.admin.username.toLowerCase() || data.users.some(user => user.kadi.toLowerCase() === kadi.toLowerCase())) return json(res, 409, { error: 'Bu kullanıcı adı alınmış.' });
-    if (data.users.some(user => user.email.toLowerCase() === email)) return json(res, 409, { error: 'Bu e-posta ile zaten kayıt olunmuş.' });
-    const user = {
-      id: crypto.randomUUID(), kadi, email, ad, soyad, hash: passwordHash(sifre),
-      ticari: body.ticari === true, consentAt: new Date().toISOString(), kayit: new Date().toISOString(),
-      son: null, banned: false, avatar: '🎓', seen: false
-    };
-    data.users.push(user);
-    saveData();
-    return json(res, 201, { ok: true });
-  }
-
-  if (method === 'POST' && pathname === '/api/auth/login') {
-    const body = await parseBody(req);
-    const identity = String(body.identity || '').trim().toLowerCase();
-    const password = String(body.password || '');
-    if (identity === data.admin.username.toLowerCase() && passwordMatches(password, data.admin.hash)) {
-      const token = crypto.randomBytes(32).toString('hex');
-      sessions.set(token, { admin: true, expires: Date.now() + SESSION_MAX_AGE });
-      return json(res, 200, { ok: true }, { 'Set-Cookie': `yks_sid=${token}; ${cookieOptions()}` });
-    }
-    if (data.settings.maint || data.settings.off.giris) return json(res, 403, { error: data.settings.maint ? 'Site bakımda, giriş geçici olarak kapalı.' : 'Giriş ve kayıt şu anda kapalı.' });
-    const user = data.users.find(item => item.kadi.toLowerCase() === identity || item.email.toLowerCase() === identity);
-    if (!user || !passwordMatches(password, user.hash)) return json(res, 401, { error: 'Kullanıcı adı/e-posta veya şifre yanlış.' });
-    if (user.banned) return json(res, 403, { error: 'Hesabınız engellenmiştir.' });
-    user.son = new Date().toISOString();
-    saveData();
-    const token = crypto.randomBytes(32).toString('hex');
-    sessions.set(token, { admin: false, userId: user.id, expires: Date.now() + SESSION_MAX_AGE });
-    return json(res, 200, { ok: true }, { 'Set-Cookie': `yks_sid=${token}; ${cookieOptions()}` });
-  }
-
-  if (method === 'POST' && pathname === '/api/auth/logout') {
-    const match = String(req.headers.cookie || '').match(/(?:^|;\s*)yks_sid=([a-f0-9]+)/);
-    if (match) sessions.delete(match[1]);
-    return json(res, 200, { ok: true }, { 'Set-Cookie': 'yks_sid=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0' });
-  }
-
-  if (method === 'GET' && pathname === '/api/admin/users') {
-    if (!adminOnly(session, res)) return;
-    return json(res, 200, { users: data.users.map(safeUser), blocked: data.blocked.length });
-  }
-
-  if (method === 'POST' && pathname === '/api/admin/settings') {
-    if (!adminOnly(session, res)) return;
-    const body = await parseBody(req);
-    if ('maint' in body) data.settings.maint = body.maint === true;
-    if ('maintMsg' in body) data.settings.maintMsg = String(body.maintMsg).trim().slice(0, 300) || 'Site bakımda. Lütfen daha sonra tekrar deneyin.';
-    if ('ann' in body) data.settings.ann = String(body.ann).trim().slice(0, 300);
-    if ('off' in body && body.off && typeof body.off === 'object') {
-      const next = {};
-      for (const key of ALLOWED_KEYS) next[key] = body.off[key] === true;
-      data.settings.off = next;
-    }
-    saveData();
-    return json(res, 200, { settings: data.settings });
-  }
-
-  if (method === 'POST' && pathname === '/api/admin/password') {
-    if (!adminOnly(session, res)) return;
-    const body = await parseBody(req);
-    const oldPassword = String(body.oldPassword || '');
-    const newPassword = String(body.newPassword || '');
-    if (!passwordMatches(oldPassword, data.admin.hash)) return json(res, 401, { error: 'Mevcut şifre yanlış.' });
-    if (newPassword.length < 12 || newPassword.length > 128) return json(res, 400, { error: 'Yeni şifre en az 12 karakter olmalı.' });
-    data.admin.hash = passwordHash(newPassword);
-    saveData();
-    return json(res, 200, { ok: true });
-  }
-
-  const adminUserMatch = pathname.match(/^\/api\/admin\/users\/([^/]+)(?:\/(seen|ban))?$/);
-  if (adminUserMatch) {
-    if (!adminOnly(session, res)) return;
-    const username = decodeURIComponent(adminUserMatch[1]).toLowerCase();
-    const user = data.users.find(item => item.kadi.toLowerCase() === username);
-    if (!user) return json(res, 404, { error: 'Kullanıcı bulunamadı.' });
-    if (method === 'POST' && adminUserMatch[2] === 'seen') {
-      user.seen = true;
-      saveData();
-      return json(res, 200, { ok: true });
-    }
-    if (method === 'POST' && adminUserMatch[2] === 'ban') {
-      const body = await parseBody(req);
-      user.banned = body.banned === true;
-      saveData();
-      return json(res, 200, { ok: true });
-    }
-    if (method === 'DELETE' && !adminUserMatch[2]) {
-      data.users = data.users.filter(item => item.id !== user.id);
-      saveData();
-      return json(res, 200, { ok: true });
-    }
-  }
-
-  if (method === 'POST' && pathname === '/api/profile') {
-    if (!session || (!session.admin && data.settings.maint)) {
-      json(res, 401, { error: data.settings.maint ? 'Site bakımda.' : 'Bu işlem için giriş yapmalısınız.' });
-      return;
-    }
-    const body = await parseBody(req);
-    const avatar = String(body.avatar || '');
-    if (!AVATARS.includes(avatar)) return json(res, 400, { error: 'Geçersiz avatar.' });
-    if (session.admin) data.admin.avatar = avatar;
-    else session.user.avatar = avatar;
-    saveData();
-    return json(res, 200, { ok: true });
-  }
-
-  return json(res, 404, { error: 'API adresi bulunamadı.' });
-}
-
-const contentTypes = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml' };
-
-const server = http.createServer(async (req, res) => {
-  try {
-    const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-    if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
-    if (!['GET', 'HEAD'].includes(req.method)) return json(res, 405, { error: 'Yöntem desteklenmiyor.' });
-    let relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
-    if (relative.includes('\0')) return json(res, 400, { error: 'Geçersiz adres.' });
-    let file = path.resolve(ROOT, `.${relative}`);
-    if (!file.startsWith(ROOT + path.sep) && file !== path.join(ROOT, 'index.html')) return json(res, 403, { error: 'Erişim reddedildi.' });
-    const stat = fs.statSync(file);
-    if (!stat.isFile() || file === DATA_FILE || file.startsWith(DATA_DIR + path.sep) || ['server.js', 'README.md', 'start.bat'].includes(path.basename(file))) return json(res, 404, { error: 'Dosya bulunamadı.' });
-    res.writeHead(200, {
-      'Content-Type': contentTypes[path.extname(file).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': path.basename(file) === 'index.html' ? 'no-cache' : 'public, max-age=3600',
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY',
-      'Referrer-Policy': 'same-origin',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; frame-ancestors 'none'"
-    });
-    if (req.method === 'HEAD') return res.end();
-    fs.createReadStream(file).pipe(res);
-  } catch (error) {
-    if (res.headersSent) return res.destroy(error);
-    const status = error.status || (error.code === 'ENOENT' || error.code === 'ENOTDIR' ? 404 : 500);
-    json(res, status, { error: status === 500 ? 'Sunucu hatası oluştu.' : error.message });
-    if (status === 500) console.error(error);
-  }
-});
-
-server.on('error', error => {
-  if (error.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} kullanımda. Başka bir uygulamayı kapatın veya PORT ortam değişkeniyle farklı bir port seçin.`);
-  } else {
-    console.error(`Sunucu başlatılamadı: ${error.message}`);
-  }
-  process.exitCode = 1;
-});
-
-server.listen(PORT, HOST, () => {
-  const siteUrl = `http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`;
-  console.log(`YKS site sunucusu hazır: ${siteUrl}`);
-  console.log(`Veri dosyası: ${DATA_FILE}`);
-  if (process.env.NODE_ENV === 'production') console.log('Production modu: oturum çerezinde Secure etkin. HTTPS proxy arkasında çalıştırın.');
-  if (process.env.OPEN_BROWSER === '1') {
-    const browser = spawn('cmd.exe', ['/c', 'start', '', siteUrl], { detached: true, stdio: 'ignore', windowsHide: true });
-    browser.on('error', error => console.error(`Tarayıcı otomatik açılamadı: ${error.message}`));
-    browser.unref();
-  }
-});
-
-
-======================== start.bat ========================
-
-@echo off
-setlocal
-cd /d "%~dp0"
-where node >nul 2>nul
-if errorlevel 1 (
-  echo Node.js bulunamadi. Node.js 18 veya uzeri kurup bu dosyayi tekrar calistirin.
-  echo Indirme: https://nodejs.org/
-  pause
-  exit /b 1
-)
-set "OPEN_BROWSER=1"
-node server.js
-if errorlevel 1 (
-  echo Sunucu baslatilamadi. Yukaridaki hata mesajini kontrol edin.
-  pause
-)
