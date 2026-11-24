@@ -345,9 +345,25 @@
   let lastN = null;
   function me(){
     const ss = session(); if (!ss) return null;
-    if (ss === ADMIN) return {kadi:'YigitKag', admin:true, avatar:DB.get('yks_admin_avatar','🛠️')};
+    if (ss === ADMIN) return {kadi:'YigitKag', display:'Yiğit', admin:true, avatar:DB.get('yks_admin_avatar','🛠️')};
     return getUsers().find(u => u.kadi.toLowerCase() === ss) || null;
   }
+  /* ===== Küfür filtresi ===== */
+  const norm = (t, leet) => {
+    let x = String(t).toLocaleLowerCase('tr').replace(/\u0307/g, '');
+    x = x.replace(/[çğıöşüâîû]/g, c => ({'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u','â':'a','î':'i','û':'u'}[c]));
+    if (leet) x = x.replace(/[013457@$!]/g, c => ({'0':'o','1':'i','3':'e','4':'a','5':'s','7':'t','@':'a','$':'s','!':'i'}[c]));
+    return x.replace(/[^a-z]/g, '').replace(/(.)\1+/g, '$1');
+  };
+  const STRONG = ['orospu','orospi','pezevenk','yarrak','yarak','gotveren','siktir','sikik','sikis','sikeyim','sikerim','amcik','aminakoy','serefsiz','kahpe','kaltak','fahise','gavat','ibne','sicmak','sicayim','fuck','shit','bitch','cunt','whore','slut','asshole','nigger','nigga','dickhead','pussy'].map(w => norm(w, false));
+  const SHORT = ['amk','aq','amq','oc','pic','sg','mk','got','sik','bok','pust'];
+  function isProfane(text){
+    const t = String(text), full = norm(t, true), plain = norm(t, false);
+    if (STRONG.some(w => full.includes(w) || plain.includes(w))) return true;
+    const toks = t.toLocaleLowerCase('tr').split(/[^a-zçğıöşü]+/).filter(Boolean).map(x => norm(x, false));
+    return toks.some(x => SHORT.includes(x)) || SHORT.includes(plain);
+  }
+
   function refreshUI(){
     const set = getSet(), ss = session();
     if (ss && ss !== ADMIN && (set.maint || !getUsers().some(u => u.kadi.toLowerCase() === ss && !u.banned))) DB.set('yks_session', null);
@@ -359,7 +375,7 @@
     lastN = n;
     const m = me();
     $('#who').style.display = m ? 'inline' : 'none';
-    $('#who').textContent = m ? (m.avatar || '🎓') + ' ' + m.kadi : '';
+    $('#who').textContent = m ? (m.avatar || '🎓') + ' ' + (m.display || m.kadi) : '';
     document.querySelectorAll('[data-key]').forEach(b => b.classList.toggle('off', isOff(b.dataset.key)));
     const msg = set.maint ? '🛠️ ' + set.maintMsg : set.ann;
     $('#annBar').textContent = msg; $('#annBar').classList.toggle('show', !!msg);
@@ -385,6 +401,10 @@
     const f = Object.fromEntries(new FormData(e.target));
     const users = getUsers(), kadi = f.kadi.trim(), mail = f.email.trim().toLowerCase();
     const msg = $('#regMsg');
+    if ([kadi, f.ad, f.soyad].some(isProfane)) {
+      const bl = DB.get('yks_blocked', []); bl.push({kadi, tarih: new Date().toISOString()}); DB.set('yks_blocked', bl.slice(-50));
+      msg.textContent = 'Bu isim uygunsuz ifadeler içeriyor. Lütfen başka bir isim kullan.'; return;
+    }
     if (kadi.toLowerCase() === ADMIN || users.some(u => u.kadi.toLowerCase() === kadi.toLowerCase())) { msg.textContent = 'Bu kullanıcı adı alınmış.'; return; }
     if (users.some(u => u.email === mail)) { msg.textContent = 'Bu e-posta ile zaten kayıt olunmuş.'; return; }
     users.push({kadi, email: mail, ad: f.ad.trim(), soyad: f.soyad.trim(), hash: hashPw(kadi, f.sifre),
@@ -428,7 +448,7 @@
     if (aTab === 'users') {
       const today = new Date().toDateString();
       const list = users.filter(u => (u.kadi + u.email + u.ad + u.soyad).toLowerCase().includes(aFilter.toLowerCase())).sort((a, b) => new Date(b.kayit) - new Date(a.kayit));
-      body.innerHTML = `<div class="stats"><span>Toplam: <b>${users.length}</b></span><span>Bugün: <b>${users.filter(u => new Date(u.kayit).toDateString() === today).length}</b></span><span>Engelli: <b>${users.filter(u => u.banned).length}</b></span></div>
+      body.innerHTML = `<div class="stats"><span>Toplam: <b>${users.length}</b></span><span>Bugün: <b>${users.filter(u => new Date(u.kayit).toDateString() === today).length}</b></span><span>Engelli: <b>${users.filter(u => u.banned).length}</b></span><span>Reddedilen kayıt denemesi: <b>${DB.get('yks_blocked', []).length}</b></span></div>
         <input id="aSearch" type="text" placeholder="Ara: kullanıcı adı, e-posta, isim" value="${esc(aFilter)}">
         <div class="ulist">${list.map(u => { const k = u.kadi.toLowerCase(); return `<div class="urow">
           <button class="uhead" data-act="tog" data-id="${esc(k)}"><span>${esc(u.avatar || '🎓')} ${esc(u.kadi)}${u.seen === false ? '<span class="new">YENİ</span>' : ''}${u.banned ? ' 🚫' : ''}</span><span class="dim">${esc(u.email)}</span></button>
@@ -482,8 +502,8 @@
   function renderProfile(){
     const m = me(); if (!m) return;
     $('#profBody').innerHTML = `<div class="avatar-big">${m.avatar || '🎓'}</div>
-      <div class="pname">@${esc(m.kadi)}</div>
-      <div class="plabel">${m.admin ? 'Yönetici hesabı' : 'Kullanıcı adın (kayıt olurken belirlediğin ad)'}</div>
+      <div class="pname">${m.admin ? esc(m.display) : '@' + esc(m.kadi)}</div>
+      <div class="plabel">${m.admin ? 'Yönetici hesabı • Giriş adın: ' + esc(m.kadi) : 'Kullanıcı adın (kayıt olurken belirlediğin ad)'}</div>
       ${m.admin ? '' : `<div class="pinfo">İsim Soyisim: ${esc(m.ad)} ${esc(m.soyad)}<br>E-posta: ${esc(m.email)}<br>Kayıt tarihi: ${fmt(m.kayit)}</div>`}
       <h3>Avatarını seç</h3>
       <div class="avgrid">${AVATARS.map(a => `<button data-av="${a}" class="${a === (m.avatar || '🎓') ? 'on' : ''}">${a}</button>`).join('')}</div>`;
