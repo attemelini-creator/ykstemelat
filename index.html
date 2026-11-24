@@ -20,7 +20,9 @@
   .tabs button:hover:not(.on){background:#fff;color:#000}
   .title{position:absolute;left:50%;top:0;height:56px;transform:translateX(-50%);display:flex;align-items:center;
     font-weight:800;font-size:clamp(12px,2vw,20px);text-align:center;width:50%;justify-content:center;pointer-events:none}
-  .auth{display:flex}
+  .auth{display:flex;align-items:center}
+  #who{display:none;font-size:13px;margin-right:10px;white-space:nowrap}
+  @media(max-width:640px){#who{display:none!important}}
   .auth button{background:none;border:1px solid #fff;color:#fff;border-radius:6px;padding:6px 12px;font-size:13px}
 
   /* BÖLÜNMÜŞ ANA EKRAN */
@@ -99,6 +101,16 @@
   #toast{position:fixed;left:50%;bottom:60px;transform:translate(-50%,20px);background:#fff;color:#000;padding:10px 18px;border-radius:8px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:200}
   #toast.show{opacity:1;transform:translate(-50%,0)}
   .off{opacity:.35}
+  .new{background:#fff;color:#000;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:6px}
+  .avatar-big{width:96px;height:96px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:52px;margin:0 auto 12px}
+  .pname{text-align:center;font-size:22px;font-weight:800;overflow-wrap:anywhere}
+  .plabel{text-align:center;opacity:.65;font-size:13px;margin:2px 0 14px}
+  .pinfo{font-size:14px;line-height:1.8;border-top:1px solid #333;padding-top:10px;overflow-wrap:anywhere}
+  #profBody h3{margin:16px 0 4px;font-size:16px}
+  .avgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:10px}
+  .avgrid button{aspect-ratio:1;font-size:24px;padding:0;background:none;border:1px solid #555;border-radius:50%;color:#fff}
+  .avgrid button:hover{transform:scale(1.12);background:#222}
+  .avgrid button.on{border-color:#fff;background:#333}
   .soon{text-align:center;font-size:26px;font-weight:700;padding:20px 0}
   label.f{display:block;margin-bottom:10px;font-size:14px}
   input[type=text],input[type=email],input[type=number],input[type=password]{width:100%;margin-top:4px;padding:10px;border-radius:6px;
@@ -118,7 +130,7 @@
 <header class="topbar">
   <button class="menu-btn" id="menuBtn" aria-label="Menü">☰</button>
   <div class="title">YKS Temelini Sağlam At</div>
-  <div class="auth"><button id="authBtn">Giriş Yap</button></div>
+  <div class="auth"><span id="who"></span><button id="authBtn">Giriş Yap</button></div>
 </header>
 
 <!-- SOL MENÜ -->
@@ -126,6 +138,7 @@
   <div class="list">
     <button data-sub="Liderlik Tablosu" data-key="liderlik">🏆 Liderlik Tablosu</button>
     <button data-sub="Şikayet ve Önerileriniz" data-key="sikayet">💬 Şikayet ve Önerileriniz</button>
+    <button id="profileBtn" data-key="profil">👤 Profil</button>
     <button id="adminMenuBtn" style="display:none">🛠️ Admin Paneli</button>
   </div>
   <div class="sub" id="drawerSub">
@@ -165,7 +178,7 @@
         <label class="f">İsim<input type="text" name="ad" required pattern=".*\S.*" title="Bu alan boş bırakılamaz"></label>
         <label class="f">Soyisim<input type="text" name="soyad" required pattern=".*\S.*" title="Bu alan boş bırakılamaz"></label>
       </div>
-      <label class="f">Kullanıcı adı<input type="text" name="kadi" required pattern=".*\S.*" title="Bu alan boş bırakılamaz"></label>
+      <label class="f">Kullanıcı adı<input type="text" name="kadi" required pattern=".*\S.*" title="Bu alan boş bırakılamaz" autocapitalize="off" autocomplete="off"><span class="dim" style="display:block;margin-top:4px">Bu kullanıcı adı profilinde görünecek.</span></label>
       <label class="f">Şifre<input type="password" name="sifre" minlength="8" required></label>
 
       <label class="chk"><input type="checkbox" class="req" required>
@@ -190,6 +203,10 @@
     <div class="tabs"><button class="on" data-at="users">Kullanıcılar</button><button data-at="site">Site Kontrolü</button><button data-at="ann">Duyuru</button></div>
     <div id="adminBody"></div>
   </div>
+</div>
+<!-- PROFİL -->
+<div class="overlay" id="profOv">
+  <div class="modal"><button class="close" data-close>×</button><div id="profBody"></div></div>
 </div>
 <div id="annBar"></div>
 <div id="toast"></div>
@@ -325,11 +342,24 @@
   const hashPw = (kadi, pw) => sha256(kadi.toLowerCase() + ':' + pw);
   let tt; const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2600); };
 
+  let lastN = null;
+  function me(){
+    const ss = session(); if (!ss) return null;
+    if (ss === ADMIN) return {kadi:'YigitKag', admin:true, avatar:DB.get('yks_admin_avatar','🛠️')};
+    return getUsers().find(u => u.kadi.toLowerCase() === ss) || null;
+  }
   function refreshUI(){
     const set = getSet(), ss = session();
     if (ss && ss !== ADMIN && (set.maint || !getUsers().some(u => u.kadi.toLowerCase() === ss && !u.banned))) DB.set('yks_session', null);
     $('#authBtn').textContent = session() ? 'Çıkış Yap' : 'Giriş Yap';
     $('#adminMenuBtn').style.display = isAdmin() ? '' : 'none';
+    const n = getUsers().filter(u => u.seen === false).length;
+    $('#adminMenuBtn').textContent = '🛠️ Admin Paneli' + (n ? ' (' + n + ' yeni)' : '');
+    if (isAdmin() && lastN !== null && n > lastN) toast('Yeni üye kaydı geldi.');
+    lastN = n;
+    const m = me();
+    $('#who').style.display = m ? 'inline' : 'none';
+    $('#who').textContent = m ? (m.avatar || '🎓') + ' ' + m.kadi : '';
     document.querySelectorAll('[data-key]').forEach(b => b.classList.toggle('off', isOff(b.dataset.key)));
     const msg = set.maint ? '🛠️ ' + set.maintMsg : set.ann;
     $('#annBar').textContent = msg; $('#annBar').classList.toggle('show', !!msg);
@@ -358,7 +388,7 @@
     if (kadi.toLowerCase() === ADMIN || users.some(u => u.kadi.toLowerCase() === kadi.toLowerCase())) { msg.textContent = 'Bu kullanıcı adı alınmış.'; return; }
     if (users.some(u => u.email === mail)) { msg.textContent = 'Bu e-posta ile zaten kayıt olunmuş.'; return; }
     users.push({kadi, email: mail, ad: f.ad.trim(), soyad: f.soyad.trim(), hash: hashPw(kadi, f.sifre),
-      ticari: !!f.ticari, kayit: new Date().toISOString(), son: null, banned: false});
+      ticari: !!f.ticari, kayit: new Date().toISOString(), son: null, banned: false, avatar: '🎓', seen: false});
     DB.set('yks_users', users);
     e.target.reset(); sync(); msg.textContent = '';
     document.querySelector('[data-tab="login"]').click();
@@ -389,7 +419,7 @@
   /* ===== Admin paneli ===== */
   let aTab = 'users', aFilter = '', aOpen = null;
   const fmt = d => d ? new Date(d).toLocaleString('tr-TR') : '—';
-  const KEYS = {tyt:'TYT', ayt:'AYT', liderlik:'Liderlik Tablosu', sikayet:'Şikayet ve Önerileriniz', giris:'Giriş / Kayıt'};
+  const KEYS = {tyt:'TYT', ayt:'AYT', liderlik:'Liderlik Tablosu', sikayet:'Şikayet ve Önerileriniz', profil:'Profil', giris:'Giriş / Kayıt'};
 
   function renderAdmin(){
     if (!isAdmin()) return;
@@ -397,11 +427,11 @@
     document.querySelectorAll('[data-at]').forEach(t => t.classList.toggle('on', t.dataset.at === aTab));
     if (aTab === 'users') {
       const today = new Date().toDateString();
-      const list = users.filter(u => (u.kadi + u.email + u.ad + u.soyad).toLowerCase().includes(aFilter.toLowerCase()));
+      const list = users.filter(u => (u.kadi + u.email + u.ad + u.soyad).toLowerCase().includes(aFilter.toLowerCase())).sort((a, b) => new Date(b.kayit) - new Date(a.kayit));
       body.innerHTML = `<div class="stats"><span>Toplam: <b>${users.length}</b></span><span>Bugün: <b>${users.filter(u => new Date(u.kayit).toDateString() === today).length}</b></span><span>Engelli: <b>${users.filter(u => u.banned).length}</b></span></div>
         <input id="aSearch" type="text" placeholder="Ara: kullanıcı adı, e-posta, isim" value="${esc(aFilter)}">
         <div class="ulist">${list.map(u => { const k = u.kadi.toLowerCase(); return `<div class="urow">
-          <button class="uhead" data-act="tog" data-id="${esc(k)}"><span>${esc(u.kadi)}${u.banned ? ' 🚫' : ''}</span><span class="dim">${esc(u.email)}</span></button>
+          <button class="uhead" data-act="tog" data-id="${esc(k)}"><span>${esc(u.avatar || '🎓')} ${esc(u.kadi)}${u.seen === false ? '<span class="new">YENİ</span>' : ''}${u.banned ? ' 🚫' : ''}</span><span class="dim">${esc(u.email)}</span></button>
           ${aOpen === k ? `<div class="udet">İsim Soyisim: ${esc(u.ad)} ${esc(u.soyad)}<br>Kullanıcı adı: ${esc(u.kadi)}<br>E-posta: ${esc(u.email)}<br>Kayıt tarihi: ${fmt(u.kayit)}<br>Son giriş: ${fmt(u.son)}<br>Ticari ileti izni: ${u.ticari ? 'Var' : 'Yok'}<br>Durum: ${u.banned ? 'Engelli' : 'Aktif'}
             <div class="uact"><button data-act="ban" data-id="${esc(k)}">${u.banned ? 'Engeli Kaldır' : 'Engelle'}</button><button data-act="del" data-id="${esc(k)}">Sil</button></div></div>` : ''}</div>`; }).join('') || '<p class="msg">Kullanıcı bulunamadı.</p>'}</div>
         <button class="submit" data-act="csv">CSV olarak indir</button>`;
@@ -428,7 +458,7 @@
   $('#adminBody').addEventListener('click', e => {
     const b = e.target.closest('[data-act]'); if (!b || !isAdmin()) return;
     const act = b.dataset.act, id = b.dataset.id, set = getSet(), users = getUsers();
-    if (act === 'tog') aOpen = aOpen === id ? null : id;
+    if (act === 'tog') { aOpen = aOpen === id ? null : id; const u = users.find(x => x.kadi.toLowerCase() === id); if (u && u.seen === false) { u.seen = true; DB.set('yks_users', users); } }
     else if (act === 'ban') { const u = users.find(x => x.kadi.toLowerCase() === id); u.banned = !u.banned; DB.set('yks_users', users); }
     else if (act === 'del') { if (!confirm('Bu kullanıcı kalıcı olarak silinsin mi?')) return; DB.set('yks_users', users.filter(x => x.kadi.toLowerCase() !== id)); aOpen = null; }
     else if (act === 'csv') {
@@ -447,7 +477,29 @@
     refreshUI(); renderAdmin();
   });
 
-  window.addEventListener('storage', () => { if (lsOK) Object.keys(MEM).forEach(k => delete MEM[k]); refreshUI(); });
+  /* ===== Profil ===== */
+  const AVATARS = ['🎓','🦊','🐼','🦁','🐯','🐸','🐧','🦉','🐨','🦄','🐙','🚀','📚','⚡'];
+  function renderProfile(){
+    const m = me(); if (!m) return;
+    $('#profBody').innerHTML = `<div class="avatar-big">${m.avatar || '🎓'}</div>
+      <div class="pname">@${esc(m.kadi)}</div>
+      <div class="plabel">${m.admin ? 'Yönetici hesabı' : 'Kullanıcı adın (kayıt olurken belirlediğin ad)'}</div>
+      ${m.admin ? '' : `<div class="pinfo">İsim Soyisim: ${esc(m.ad)} ${esc(m.soyad)}<br>E-posta: ${esc(m.email)}<br>Kayıt tarihi: ${fmt(m.kayit)}</div>`}
+      <h3>Avatarını seç</h3>
+      <div class="avgrid">${AVATARS.map(a => `<button data-av="${a}" class="${a === (m.avatar || '🎓') ? 'on' : ''}">${a}</button>`).join('')}</div>`;
+  }
+  $('#profileBtn').onclick = () => {
+    if (!session()) { toast('Profil için önce giriş yapmalısın.'); return; }
+    $('#drawer').classList.remove('open'); open('#profOv'); renderProfile();
+  };
+  $('#profBody').addEventListener('click', e => {
+    const b = e.target.closest('[data-av]'); const m = me(); if (!b || !m) return;
+    if (m.admin) DB.set('yks_admin_avatar', b.dataset.av);
+    else { const users = getUsers(); users.find(u => u.kadi.toLowerCase() === m.kadi.toLowerCase()).avatar = b.dataset.av; DB.set('yks_users', users); }
+    renderProfile(); refreshUI(); toast('Avatar güncellendi.');
+  });
+
+  window.addEventListener('storage', () => { if (lsOK) Object.keys(MEM).forEach(k => delete MEM[k]); refreshUI(); if ($('#adminOv').classList.contains('show')) renderAdmin(); });
   refreshUI();
 </script>
 </body>
