@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YKS Temelini Sağlam At</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  button{font:inherit;cursor:pointer;transition:background .3s ease,color .3s ease,opacity .3s ease,transform .3s cubic-bezier(.22,.61,.36,1),letter-spacing .3s ease}
+  button:active{transform:scale(.97)}
+
+  /* ÜST BAR (sabit, bölünmüş ekranın dışında) */
+  .topbar{position:fixed;top:0;left:0;right:0;height:56px;background:#000;border-bottom:1px solid #333;
+    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}
+  .menu-btn{background:none;border:1px solid #fff;color:#fff;font-size:18px;width:36px;height:36px;border-radius:8px}
+  .menu-btn:hover,.auth button:hover{background:#fff;color:#000}
+  .drawer button:hover{transform:translateX(4px)}
+  .submit:not(:disabled):hover{transform:translateY(-1px);opacity:.9}
+  .tabs button:hover:not(.on){background:#fff;color:#000}
+  .title{position:absolute;left:50%;top:0;height:56px;transform:translateX(-50%);display:flex;align-items:center;
+    font-weight:800;font-size:clamp(12px,2vw,20px);text-align:center;width:50%;justify-content:center;pointer-events:none}
+  .auth{display:flex}
+  .auth button{background:none;border:1px solid #fff;color:#fff;border-radius:6px;padding:6px 12px;font-size:13px}
+
+  /* BÖLÜNMÜŞ ANA EKRAN */
+  .split{position:fixed;top:56px;left:0;right:0;bottom:0;display:flex}
+  .half{flex:1;position:relative}
+  .half:first-child{border-right:1px solid #fff}
+  .half-main{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;color:#fff;border:0;
+    font-size:clamp(40px,9vw,120px);font-weight:900;letter-spacing:4px}
+  .half-main:hover{background:#fff;color:#000}
+  .sub{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;z-index:5;
+    opacity:0;visibility:hidden;transform:scale(.97);
+    transition:opacity .4s ease,transform .4s cubic-bezier(.22,.61,.36,1),visibility 0s linear .4s}
+  .sub.show{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+  .sub h2,.sub .center{opacity:0;transform:translateY(12px);transition:opacity .45s ease .12s,transform .45s ease .12s}
+  .sub.show h2,.sub.show .center{opacity:1;transform:none}
+  .sub h2{margin-top:56px;width:100%;padding:0 16px;text-align:center;line-height:1.2;overflow-wrap:anywhere;font-size:clamp(24px,4.2vw,48px);font-weight:900;letter-spacing:2px}
+  .sub .center{flex:1;display:flex;align-items:center;justify-content:center;font-size:clamp(20px,3.2vw,36px);font-weight:700;text-align:center;padding:0 12px}
+.lessons{width:100%;max-width:520px;flex:1;min-height:0;overflow-y:auto;padding:24px 16px 28px;display:flex;flex-direction:column;gap:10px}
+  .lessons button{width:100%;display:flex;justify-content:center;align-items:center;text-align:center;position:relative;padding:14px 36px;
+    background:none;border:1px solid #fff;color:#fff;border-radius:8px;font-size:16px}
+  .lessons button:hover{background:#fff;color:#000}
+  .lessons .arr{position:absolute;right:14px;top:50%;margin-top:-8px;line-height:16px;transition:transform .35s ease;font-size:12px}
+  .acc.open>button .arr{transform:rotate(180deg)}
+  .acc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.22,.61,.36,1)}
+  .acc.open>.acc-body{grid-template-rows:1fr}
+  .acc-body>div{overflow:hidden;min-height:0}
+  .acc-body .in{display:flex;flex-direction:column;gap:8px;padding:10px 0 2px 16px}
+  .lessons button.lesson{font-size:15px;border-color:#666}
+  .back{position:absolute;top:12px;left:14px;background:none;border:0;color:#fff;padding:4px 2px;font-size:15px;opacity:.7}
+  .back:hover{background:none;color:#fff;opacity:1;transform:translateX(-3px)}
+
+  /* MENÜ */
+  .drawer{position:fixed;top:0;left:0;bottom:0;width:280px;max-width:85vw;background:#000;border-right:1px solid #fff;
+    padding:72px 16px 16px;transform:translateX(-100%);transition:transform .4s cubic-bezier(.22,.61,.36,1);z-index:40;overflow:hidden}
+  .drawer.open{transform:none}
+  .drawer .list{display:flex;flex-direction:column;gap:10px}
+  .drawer .sub{z-index:1;top:56px;justify-content:center;gap:14px;padding:0 20px;text-align:center}
+  .drawer .sub h2{margin:0;width:100%;font-size:22px;line-height:1.3;letter-spacing:1px;text-align:center;overflow-wrap:anywhere}
+  .drawer .sub .center{flex:none;width:100%;font-size:24px;text-align:center;padding:0}
+  .drawer button{background:none;border:1px solid #fff;color:#fff;text-align:center;padding:14px;border-radius:8px;font-size:16px}
+  .drawer button:hover{background:#fff;color:#000}
+
+  /* MODAL */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;
+    opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s}
+  .overlay.show{opacity:1;visibility:visible;transition-delay:0s}
+  .overlay .modal{transform:translateY(20px) scale(.98);transition:transform .4s cubic-bezier(.22,.61,.36,1)}
+  .overlay.show .modal{transform:none}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  #loginForm,#regForm{animation:fadeIn .35s ease}
+  .modal{background:#000;border:1px solid #fff;border-radius:12px;padding:24px;width:100%;max-width:440px;max-height:90vh;overflow:auto;position:relative}
+  .modal{padding-top:68px}
+  .modal h2{margin-bottom:14px}
+  .modal .close{position:absolute;top:14px;right:16px;background:none;border:0;color:#fff;font-size:26px;opacity:.7;line-height:1}
+  .modal .close:hover{background:none;color:#fff;opacity:1;transform:rotate(90deg)}
+.tabs{display:flex;gap:8px;margin:0 0 16px}
+  .tabs button{flex:1;padding:10px;background:none;border:1px solid #fff;color:#fff;border-radius:8px;font-weight:700}
+  .tabs button.on{background:#fff;color:#000}
+.modal.wide{max-width:760px}
+  .stats{display:flex;gap:16px;margin-bottom:12px;font-size:14px}
+  .dim{opacity:.65;font-size:13px}
+  #adminBody h3{margin:18px 0 6px;font-size:16px}
+  #adminBody input[type=text]{margin:0 0 10px}
+  .ulist{max-height:44vh;overflow:auto;margin:10px 0 12px}
+  .urow{border:1px solid #444;border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .uhead{width:100%;display:flex;justify-content:space-between;gap:10px;padding:10px 12px;background:none;border:0;color:#fff;text-align:left}
+  .uhead:hover{background:#fff;color:#000}
+  .udet{padding:10px 12px;border-top:1px solid #444;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+  .uact{display:flex;gap:8px;margin-top:8px}
+  .uact button,.sw{padding:8px 12px;background:none;border:1px solid #fff;color:#fff;border-radius:6px}
+  .uact button:hover,.sw:hover{background:#fff;color:#000}
+  .sw.on{background:#fff;color:#000}
+  .krow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222}
+  #annBar{position:fixed;left:0;right:0;bottom:0;background:#fff;color:#000;text-align:center;padding:8px 12px;font-size:14px;font-weight:600;z-index:60;transform:translateY(100%);transition:transform .4s ease}
+  #annBar.show{transform:none}
+  #toast{position:fixed;left:50%;bottom:60px;transform:translate(-50%,20px);background:#fff;color:#000;padding:10px 18px;border-radius:8px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:200}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  .off{opacity:.35}
+  .soon{text-align:center;font-size:26px;font-weight:700;padding:20px 0}
+  label.f{display:block;margin-bottom:10px;font-size:14px}
+  input[type=text],input[type=email],input[type=number],input[type=password]{width:100%;margin-top:4px;padding:10px;border-radius:6px;
+    border:1px solid #fff;background:#000;color:#fff;font-size:15px}
+  .row{display:flex;gap:10px}.row>*{flex:1}
+  .chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin:8px 0;line-height:1.35}
+  .chk input{margin-top:3px;flex:none}
+  .chk a{color:#fff;text-decoration:underline}
+  .submit{width:100%;margin-top:14px;padding:12px;border-radius:8px;border:1px solid #fff;background:#fff;color:#000;font-weight:700}
+  .submit:disabled{opacity:.35;cursor:not-allowed}
+  .msg{margin-top:10px;font-size:14px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- SABİT ÜST BAR -->
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Menü">☰</button>
+  <div class="title">YKS Temelini Sağlam At</div>
+  <div class="auth"><button id="authBtn">Giriş Yap</button></div>
+</header>
+
+<!-- SOL MENÜ -->
+<nav class="drawer" id="drawer">
+  <div class="list">
+    <button data-sub="Liderlik Tablosu" data-key="liderlik">🏆 Liderlik Tablosu</button>
+    <button data-sub="Şikayet ve Önerileriniz" data-key="sikayet">💬 Şikayet ve Önerileriniz</button>
+    <button id="adminMenuBtn" style="display:none">🛠️ Admin Paneli</button>
+  </div>
+  <div class="sub" id="drawerSub">
+    <button class="back">← Geri</button>
+    <h2 id="drawerTitle"></h2>
+    <div class="center">Çok Yakında...</div>
+  </div>
+</nav>
+
+<!-- ORTADAN İKİYE AYRILMIŞ ANA EKRAN -->
+<main class="split">
+  <div class="half">
+    <button class="half-main" data-open data-key="tyt">TYT</button>
+    <div class="sub"><button class="back">← Geri</button><h2>TYT</h2><div class="lessons" data-lessons="TYT"></div></div>
+  </div>
+  <div class="half">
+    <button class="half-main" data-open data-key="ayt">AYT</button>
+    <div class="sub"><button class="back">← Geri</button><h2>AYT</h2><div class="lessons" data-lessons="AYT"></div></div>
+  </div>
+</main>
+
+<!-- GİRİŞ / KAYIT -->
+<div class="overlay" id="authOv">
+  <div class="modal"><button class="close" data-close>×</button>
+    <div class="tabs"><button class="on" data-tab="login">Giriş Yap</button><button data-tab="reg">Kayıt Ol</button></div>
+    <form id="loginForm">
+      <label class="f">Kullanıcı adı veya e-posta<input type="text" required autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="username"></label>
+      <label class="f">Şifre<input type="password" required autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="current-password"></label>
+      <button class="submit" type="submit">Giriş Yap</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+
+    <form id="regForm" style="display:none">
+      <p class="msg" style="margin:0 0 12px;text-align:left;opacity:.7">Tüm alanların doldurulması zorunludur.</p>
+      <label class="f">E-posta<input type="email" name="email" required></label>
+      <div class="row">
+        <label class="f">İsim<input type="text" name="ad" required pattern=".*\S.*" title="Bu alan boş bırakılamaz"></label>
+        <label class="f">Soyisim<input type="text" name="soyad" required pattern=".*\S.*" title="Bu alan boş bırakılamaz"></label>
+      </div>
+      <label class="f">Kullanıcı adı<input type="text" name="kadi" required pattern=".*\S.*" title="Bu alan boş bırakılamaz"></label>
+      <label class="f">Şifre<input type="password" name="sifre" minlength="8" required></label>
+
+      <label class="chk"><input type="checkbox" class="req" required>
+        <span><a href="/kvkk-aydinlatma-metni.html" target="_blank">KVKK Aydınlatma Metni</a>’ni okudum, kişisel verilerimin işlenmesine ilişkin bilgilendirildim. (zorunlu)</span></label>
+      <label class="chk"><input type="checkbox" class="req" required>
+        <span><a href="/acik-riza-metni.html" target="_blank">Açık Rıza Metni</a>’ni okudum ve kişisel verilerimin belirtilen kapsamda işlenmesine onay veriyorum. (zorunlu)</span></label>
+      <label class="chk"><input type="checkbox" class="req" required>
+        <span><a href="/kullanim-kosullari.html" target="_blank">Kullanım Koşulları</a> ve <a href="/gizlilik-politikasi.html" target="_blank">Gizlilik Politikası</a>’nı kabul ediyorum. (zorunlu)</span></label>
+      <label class="chk"><input type="checkbox" name="ticari">
+        <span>Tarafıma ticari elektronik ileti gönderilmesine izin veriyorum. (isteğe bağlı)</span></label>
+
+      <button class="submit" id="regSubmit" type="submit" disabled>Kayıt Ol</button>
+      <div class="msg" id="regMsg"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ADMİN PANELİ -->
+<div class="overlay" id="adminOv">
+  <div class="modal wide"><button class="close" data-close>×</button>
+    <h2>Admin Paneli</h2>
+    <div class="tabs"><button class="on" data-at="users">Kullanıcılar</button><button data-at="site">Site Kontrolü</button><button data-at="ann">Duyuru</button></div>
+    <div id="adminBody"></div>
+  </div>
+</div>
+<div id="annBar"></div>
+<div id="toast"></div>
+
+<script>
+  const $ = s => document.querySelector(s);
+  const open = id => $(id).classList.add('show');
+  const closeAll = () => document.querySelectorAll('.overlay').forEach(o => o.classList.remove('show'));
+
+  // Menü
+  $('#menuBtn').onclick = () => $('#drawer').classList.toggle('open');
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#drawer') && !e.target.closest('#menuBtn')) $('#drawer').classList.remove('open');
+  });
+
+  // TYT / AYT: başlık kendi bölümünün üstüne, ortada "Çok Yakında..."
+  document.querySelectorAll('.half').forEach(h => {
+    const sub = h.querySelector('.sub');
+    h.querySelector('[data-open]').onclick = () => {
+      document.querySelectorAll('.half').forEach(o => { if (o !== h) o.querySelectorAll('.sub.show').forEach(x => x.classList.remove('show')); });
+      sub.classList.add('show');
+    };
+    h.querySelector('.back').onclick = () => sub.classList.remove('show');
+  });
+
+  // Ders listeleri (açılır menü) + ders görünümü
+  const LESSONS = {
+    TYT: [
+      {ad:'Türkçe'},
+      {ad:'Sosyal Bilimler', d:['Tarih','Coğrafya','Felsefe','Din Kültürü ve Ahlak Bilgisi']},
+      {ad:'Temel Matematik'},
+      {ad:'Fen Bilimleri', d:['Fizik','Kimya','Biyoloji']}
+    ],
+    AYT: [
+      {ad:'Türk Dili ve Edebiyatı'},
+      {ad:'Matematik'},
+      {ad:'Fen Bilimleri', d:['Fizik','Kimya','Biyoloji']},
+      {ad:'Sosyal Bilimler-1', d:['Tarih-1','Coğrafya-1']},
+      {ad:'Sosyal Bilimler-2', d:['Tarih-2','Coğrafya-2','Felsefe Grubu','Din Kültürü ve Ahlak Bilgisi']},
+      {ad:'Yabancı Dil'}
+    ]
+  };
+  document.querySelectorAll('.half').forEach(h => {
+    const outer = h.querySelector('.sub');
+    const box = h.querySelector('[data-lessons]');
+    const key = box.dataset.lessons;
+    // ders için "Çok Yakında..." görünümü
+    const view = document.createElement('div');
+    view.className = 'sub';
+    view.innerHTML = '<button class="back">← Geri</button><h2></h2><div class="center">Çok Yakında...</div>';
+    outer.appendChild(view);
+    view.querySelector('.back').onclick = () => view.classList.remove('show');
+    outer.querySelector(':scope > .back').addEventListener('click', () => view.classList.remove('show'));
+    const openLesson = ad => { view.querySelector('h2').textContent = ad; view.classList.add('show'); };
+    const mk = (ad, cls) => { const b = document.createElement('button'); b.textContent = ad; if (cls) b.className = cls; b.onclick = () => openLesson(ad); return b; };
+    LESSONS[key].forEach(g => {
+      if (!g.d) { box.appendChild(mk(g.ad)); return; }
+      const acc = document.createElement('div'); acc.className = 'acc';
+      const head = document.createElement('button');
+      head.innerHTML = '<span></span><span class="arr">▼</span>';
+      head.firstChild.textContent = g.ad;
+      head.onclick = () => { box.querySelectorAll('.acc.open').forEach(o => { if (o !== acc) o.classList.remove('open'); }); acc.classList.toggle('open'); };
+      const body = document.createElement('div'); body.className = 'acc-body';
+      const wrap = document.createElement('div'); const inn = document.createElement('div'); inn.className = 'in';
+      g.d.forEach(x => inn.appendChild(mk(x, 'lesson')));
+      wrap.appendChild(inn); body.appendChild(wrap); acc.append(head, body); box.appendChild(acc);
+    });
+  });
+
+  // Menü: butona basınca ayrı bir alt menü açılır
+  const dSub = $('#drawerSub');
+  document.querySelectorAll('[data-sub]').forEach(b => b.onclick = () => {
+    $('#drawerTitle').textContent = b.dataset.sub;
+    dSub.classList.add('show');
+  });
+  dSub.querySelector('.back').onclick = () => dSub.classList.remove('show');
+
+  // Giriş Yap (giriş + kayıt sekmeleri)
+  $('#authBtn').onclick = () => open('#authOv');
+  document.querySelectorAll('[data-tab]').forEach(t => t.onclick = () => {
+    document.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === t));
+    const show = t.dataset.tab === 'login' ? $('#loginForm') : $('#regForm');
+    const hide = t.dataset.tab === 'login' ? $('#regForm') : $('#loginForm');
+    hide.style.display = 'none';
+    show.style.display = '';
+    show.style.animation = 'none'; show.offsetHeight; show.style.animation = '';
+  });
+  document.querySelectorAll('[data-close]').forEach(b => b.onclick = closeAll);
+  document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) closeAll(); }));
+
+  // Zorunlu onay kutuları işaretlenmeden kayıt olunamaz
+  const reqs = [...document.querySelectorAll('#regForm .req')];
+  const sync = () => $('#regSubmit').disabled = !($('#regForm').checkValidity() && reqs.every(c => c.checked));
+  $('#regForm').addEventListener('input', sync);
+  $('#regForm').addEventListener('change', sync);
+
+
+  function sha256(s){
+    s=unescape(encodeURIComponent(s));
+    var rr=function(v,a){return(v>>>a)|(v<<(32-a))},mp=Math.pow,mw=mp(2,32),h=[],k=[],pc=0,ic={},i,j,c;
+    for(c=2;pc<64;c++){if(!ic[c]){for(i=0;i<313;i+=c)ic[i]=c;h[pc]=(mp(c,.5)*mw)|0;k[pc++]=(mp(c,1/3)*mw)|0}}
+    var bl=s.length*8;s+='\x80';while(s.length%64-56)s+='\x00';
+    var w=[];for(i=0;i<s.length;i++){w[i>>2]|=s.charCodeAt(i)<<((3-i)%4)*8}
+    w[w.length]=(bl/mw)|0;w[w.length]=bl;
+    for(j=0;j<w.length;){
+      var x=w.slice(j,j+=16),o=h;h=h.slice(0,8);
+      for(i=0;i<64;i++){
+        var w15=x[i-15],w2=x[i-2],a=h[0],e=h[4];
+        var t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(x[i]=(i<16)?x[i]:(x[i-16]+(rr(w15,7)^rr(w15,18)^(w15>>>3))+x[i-7]+(rr(w2,17)^rr(w2,19)^(w2>>>10)))|0);
+        var t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));
+        h=[(t1+t2)|0].concat(h);h[4]=(h[4]+t1)|0;
+      }
+      for(i=0;i<8;i++)h[i]=(h[i]+o[i])|0;
+    }
+    var r='';for(i=0;i<8;i++)for(j=3;j+1;j--){var b=(h[i]>>(j*8))&255;r+=(b<16?'0':'')+b.toString(16)}
+    return r;
+  }
+  
+
+  /* ===== Depolama (tarayıcı localStorage) ===== */
+  const MEM = {}; let lsOK = true;
+  const DB = {
+    get(k,d){ if (k in MEM) return MEM[k]; try{ const v = JSON.parse(localStorage.getItem(k)); return v==null ? d : v; }catch(e){ return d; } },
+    set(k,v){ MEM[k] = v; try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ lsOK = false; } }
+  };
+  const ADMIN = 'yigitkag', ADMIN_HASH = 'a33f5b15e2ada034bc6687401ea9187ebe1e6e7138584945267c90595e7b525d';
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const getUsers = () => DB.get('yks_users', []);
+  const getSet = () => Object.assign({maint:false, maintMsg:'Site bakımda. Lütfen daha sonra tekrar deneyin.', off:{}, ann:''}, DB.get('yks_settings', {}));
+  const session = () => DB.get('yks_session', null);
+  const isAdmin = () => session() === ADMIN;
+  const isOff = k => !isAdmin() && !!getSet().off[k];
+  const hashPw = (kadi, pw) => sha256(kadi.toLowerCase() + ':' + pw);
+  let tt; const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2600); };
+
+  function refreshUI(){
+    const set = getSet(), ss = session();
+    if (ss && ss !== ADMIN && (set.maint || !getUsers().some(u => u.kadi.toLowerCase() === ss && !u.banned))) DB.set('yks_session', null);
+    $('#authBtn').textContent = session() ? 'Çıkış Yap' : 'Giriş Yap';
+    $('#adminMenuBtn').style.display = isAdmin() ? '' : 'none';
+    document.querySelectorAll('[data-key]').forEach(b => b.classList.toggle('off', isOff(b.dataset.key)));
+    const msg = set.maint ? '🛠️ ' + set.maintMsg : set.ann;
+    $('#annBar').textContent = msg; $('#annBar').classList.toggle('show', !!msg);
+  }
+
+  // Yönetici tarafından kapatılan butonlar
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-key]');
+    if (b && isOff(b.dataset.key)) { e.stopPropagation(); e.preventDefault(); toast('Bu bölüm şu anda yönetici tarafından kapatıldı.'); }
+  }, true);
+
+  // Giriş / Çıkış butonu
+  $('#authBtn').onclick = () => {
+    if (session()) { DB.set('yks_session', null); refreshUI(); toast('Çıkış yapıldı.'); return; }
+    if (getSet().off.giris) return toast('Giriş ve kayıt şu anda kapalı.');
+    open('#authOv');
+  };
+
+  // Kayıt
+  $('#regForm').addEventListener('submit', e => {
+    e.preventDefault();
+    if (!e.target.checkValidity() || !reqs.every(c => c.checked)) return;
+    const f = Object.fromEntries(new FormData(e.target));
+    const users = getUsers(), kadi = f.kadi.trim(), mail = f.email.trim().toLowerCase();
+    const msg = $('#regMsg');
+    if (kadi.toLowerCase() === ADMIN || users.some(u => u.kadi.toLowerCase() === kadi.toLowerCase())) { msg.textContent = 'Bu kullanıcı adı alınmış.'; return; }
+    if (users.some(u => u.email === mail)) { msg.textContent = 'Bu e-posta ile zaten kayıt olunmuş.'; return; }
+    users.push({kadi, email: mail, ad: f.ad.trim(), soyad: f.soyad.trim(), hash: hashPw(kadi, f.sifre),
+      ticari: !!f.ticari, kayit: new Date().toISOString(), son: null, banned: false});
+    DB.set('yks_users', users);
+    e.target.reset(); sync(); msg.textContent = '';
+    document.querySelector('[data-tab="login"]').click();
+    $('#loginMsg').textContent = 'Kayıt başarılı. Şimdi giriş yapabilirsin.';
+  });
+
+  // Giriş
+  $('#loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const id = e.target.elements[0].value.trim().toLowerCase(), pw = e.target.elements[1].value, msg = $('#loginMsg');
+    const badUser = 'Kullanıcı adı yanlış.', badPw = 'Şifre yanlış.';
+    if (id === ADMIN) {
+      if (hashPw(ADMIN, pw) !== ADMIN_HASH && hashPw(ADMIN, pw.trim()) !== ADMIN_HASH) { msg.textContent = badPw; return; }
+      DB.set('yks_session', ADMIN);
+    } else {
+      const set = getSet(), users = getUsers();
+      if (set.maint) { msg.textContent = 'Site bakımda, giriş geçici olarak kapalı.'; return; }
+      const u = users.find(x => x.kadi.toLowerCase() === id || x.email === id);
+      if (!u) { msg.textContent = badUser; return; }
+      if (u.hash !== hashPw(u.kadi, pw)) { msg.textContent = badPw; return; }
+      if (u.banned) { msg.textContent = 'Hesabınız engellenmiştir.'; return; }
+      u.son = new Date().toISOString(); DB.set('yks_users', users);
+      DB.set('yks_session', u.kadi.toLowerCase());
+    }
+    e.target.reset(); msg.textContent = ''; closeAll(); refreshUI(); toast(lsOK ? 'Giriş yapıldı.' : 'Giriş yapıldı. Tarayıcı depolaması kapalı, sayfa yenilenince oturum silinir.');
+  });
+
+  /* ===== Admin paneli ===== */
+  let aTab = 'users', aFilter = '', aOpen = null;
+  const fmt = d => d ? new Date(d).toLocaleString('tr-TR') : '—';
+  const KEYS = {tyt:'TYT', ayt:'AYT', liderlik:'Liderlik Tablosu', sikayet:'Şikayet ve Önerileriniz', giris:'Giriş / Kayıt'};
+
+  function renderAdmin(){
+    if (!isAdmin()) return;
+    const body = $('#adminBody'), set = getSet(), users = getUsers();
+    document.querySelectorAll('[data-at]').forEach(t => t.classList.toggle('on', t.dataset.at === aTab));
+    if (aTab === 'users') {
+      const today = new Date().toDateString();
+      const list = users.filter(u => (u.kadi + u.email + u.ad + u.soyad).toLowerCase().includes(aFilter.toLowerCase()));
+      body.innerHTML = `<div class="stats"><span>Toplam: <b>${users.length}</b></span><span>Bugün: <b>${users.filter(u => new Date(u.kayit).toDateString() === today).length}</b></span><span>Engelli: <b>${users.filter(u => u.banned).length}</b></span></div>
+        <input id="aSearch" type="text" placeholder="Ara: kullanıcı adı, e-posta, isim" value="${esc(aFilter)}">
+        <div class="ulist">${list.map(u => { const k = u.kadi.toLowerCase(); return `<div class="urow">
+          <button class="uhead" data-act="tog" data-id="${esc(k)}"><span>${esc(u.kadi)}${u.banned ? ' 🚫' : ''}</span><span class="dim">${esc(u.email)}</span></button>
+          ${aOpen === k ? `<div class="udet">İsim Soyisim: ${esc(u.ad)} ${esc(u.soyad)}<br>Kullanıcı adı: ${esc(u.kadi)}<br>E-posta: ${esc(u.email)}<br>Kayıt tarihi: ${fmt(u.kayit)}<br>Son giriş: ${fmt(u.son)}<br>Ticari ileti izni: ${u.ticari ? 'Var' : 'Yok'}<br>Durum: ${u.banned ? 'Engelli' : 'Aktif'}
+            <div class="uact"><button data-act="ban" data-id="${esc(k)}">${u.banned ? 'Engeli Kaldır' : 'Engelle'}</button><button data-act="del" data-id="${esc(k)}">Sil</button></div></div>` : ''}</div>`; }).join('') || '<p class="msg">Kullanıcı bulunamadı.</p>'}</div>
+        <button class="submit" data-act="csv">CSV olarak indir</button>`;
+    } else if (aTab === 'site') {
+      body.innerHTML = `<h3>Bakım Modu</h3><p class="dim">Açıkken yönetici dışında kimse giriş yapamaz, giriş yapmış olanlar çıkarılır.</p>
+        <div class="krow"><span>Bakım modu</span><button class="sw ${set.maint ? 'on' : ''}" data-act="maint">${set.maint ? 'Açık' : 'Kapalı'}</button></div>
+        <h3>Bakım mesajı</h3><input id="maintMsg" type="text" value="${esc(set.maintMsg)}"><button class="sw" data-act="savemsg">Mesajı kaydet</button>
+        <h3>Buton Kontrolü</h3><p class="dim">Kapattığın bölümler yönetici dışında kimse için çalışmaz.</p>
+        ${Object.keys(KEYS).map(k => `<div class="krow"><span>${KEYS[k]}</span><button class="sw ${set.off[k] ? '' : 'on'}" data-act="key" data-id="${k}">${set.off[k] ? 'Kapalı' : 'Açık'}</button></div>`).join('')}`;
+    } else {
+      body.innerHTML = `<h3>Site Duyurusu</h3><p class="dim">Sayfanın altında tüm ziyaretçilere gösterilir.</p>
+        <input id="annTxt" type="text" placeholder="Duyuru metni" value="${esc(set.ann)}">
+        <div class="uact"><button data-act="annpub">Yayınla</button><button data-act="annoff">Kaldır</button></div>`;
+    }
+  }
+
+  $('#adminMenuBtn').onclick = () => { $('#drawer').classList.remove('open'); open('#adminOv'); renderAdmin(); };
+  document.querySelectorAll('[data-at]').forEach(t => t.onclick = () => { aTab = t.dataset.at; renderAdmin(); });
+  $('#adminBody').addEventListener('input', e => {
+    if (e.target.id !== 'aSearch') return;
+    aFilter = e.target.value; renderAdmin();
+    const i = $('#aSearch'); i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+  });
+  $('#adminBody').addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b || !isAdmin()) return;
+    const act = b.dataset.act, id = b.dataset.id, set = getSet(), users = getUsers();
+    if (act === 'tog') aOpen = aOpen === id ? null : id;
+    else if (act === 'ban') { const u = users.find(x => x.kadi.toLowerCase() === id); u.banned = !u.banned; DB.set('yks_users', users); }
+    else if (act === 'del') { if (!confirm('Bu kullanıcı kalıcı olarak silinsin mi?')) return; DB.set('yks_users', users.filter(x => x.kadi.toLowerCase() !== id)); aOpen = null; }
+    else if (act === 'csv') {
+      const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+      const rows = [['Kullanıcı adı','Ad','Soyad','E-posta','Kayıt tarihi','Son giriş','Ticari izin','Durum']].concat(
+        users.map(u => [u.kadi, u.ad, u.soyad, u.email, fmt(u.kayit), fmt(u.son), u.ticari ? 'Var' : 'Yok', u.banned ? 'Engelli' : 'Aktif']));
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob(['\ufeff' + rows.map(r => r.map(q).join(',')).join('\n')], {type:'text/csv;charset=utf-8'}));
+      a.download = 'kullanicilar.csv'; a.click(); return;
+    }
+    else if (act === 'maint') { set.maint = !set.maint; DB.set('yks_settings', set); }
+    else if (act === 'savemsg') { set.maintMsg = $('#maintMsg').value.trim() || set.maintMsg; DB.set('yks_settings', set); toast('Mesaj kaydedildi.'); }
+    else if (act === 'key') { set.off[id] = !set.off[id]; DB.set('yks_settings', set); }
+    else if (act === 'annpub') { set.ann = $('#annTxt').value.trim(); DB.set('yks_settings', set); toast('Duyuru güncellendi.'); }
+    else if (act === 'annoff') { set.ann = ''; DB.set('yks_settings', set); }
+    refreshUI(); renderAdmin();
+  });
+
+  window.addEventListener('storage', () => { if (lsOK) Object.keys(MEM).forEach(k => delete MEM[k]); refreshUI(); });
+  refreshUI();
+</script>
+</body>
+</html>
