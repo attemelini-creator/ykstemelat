@@ -114,27 +114,43 @@ function refresh() { updateHeader(); if (!$('#adminOverlay').hidden) renderAdmin
 
 async function loadState() {
   if (!app.client) return;
-  const [settingsResult, announcementsResult] = await Promise.all([
-    app.client.from('site_settings').select('registrations_open,maintenance,maintenance_message').eq('id', 1).maybeSingle(),
-    app.client.from('announcements').select('id,title,message,author,created_at').order('created_at', { ascending: false }).limit(50)
+  const [publicStateResult, authResult] = await Promise.all([
+    app.client.rpc('get_public_site_state'),
+    app.client.auth.getUser()
   ]);
-  if (settingsResult.error) throw settingsResult.error;
-  if (announcementsResult.error) throw announcementsResult.error;
-  app.db.settings = settingsResult.data || { registrations_open: true, maintenance: false, maintenance_message: '' };
-  app.db.announcements = announcementsResult.data || [];
-  app.user = (await app.client.auth.getUser()).data.user || null;
+  if (publicStateResult.error) throw publicStateResult.error;
+  if (authResult.error) throw authResult.error;
+  const publicState = publicStateResult.data || {};
+  app.db.settings = publicState.settings || { registrations_open: true, maintenance: false, maintenance_message: '' };
+  app.db.announcements = publicState.announcements || [];
+  app.user = authResult.data.user || null;
   app.profile = null; app.role = null; app.isPrimaryAdmin = false;
   app.db.users = []; app.db.feedback = []; app.db.audit = [];
   if (app.user) {
-    const [profileResult, roleResult] = await Promise.all([
+    let [profileResult, roleResult] = await Promise.all([
       app.client.from('profiles').select('id,username,first_name,last_name,avatar_id,progress,active,created_at').eq('id', app.user.id).maybeSingle(),
       app.client.from('user_roles').select('role,is_primary_admin').eq('user_id', app.user.id).maybeSingle()
     ]);
+    let profileStatus = null;
     if (profileResult.error) throw profileResult.error;
-    if (!profileResult.data || profileResult.data.active === false) {
+    if (!profileResult.data) {
+      const { data, error: profileRepairError } = await app.client.rpc('ensure_current_profile');
+      if (profileRepairError) throw profileRepairError;
+      profileStatus = data;
+      if (profileStatus === 'ready') {
+        [profileResult, roleResult] = await Promise.all([
+          app.client.from('profiles').select('id,username,first_name,last_name,avatar_id,progress,active,created_at').eq('id', app.user.id).maybeSingle(),
+          app.client.from('user_roles').select('role,is_primary_admin').eq('user_id', app.user.id).maybeSingle()
+        ]);
+        if (profileResult.error) throw profileResult.error;
+      }
+    }
+    if (profileStatus === 'inactive' || profileResult.data?.active === false) {
       await app.client.auth.signOut();
       app.user = null;
       showToast('Bu hesap şu anda etkin değil.');
+    } else if (!profileResult.data) {
+      throw new Error('Hesap profili bulunamadı. Biraz sonra tekrar giriş yap.');
     } else {
       app.profile = profileResult.data;
       ensureProfile(app.profile);
@@ -163,13 +179,10 @@ async function loadState() {
 // for these two shared tables.
 async function refreshPublicContent() {
   if (!app.client) return;
-  const [settingsResult, announcementsResult] = await Promise.all([
-    app.client.from('site_settings').select('registrations_open,maintenance,maintenance_message').eq('id', 1).maybeSingle(),
-    app.client.from('announcements').select('id,title,message,author,created_at').order('created_at', { ascending: false }).limit(50)
-  ]);
-  if (settingsResult.error || announcementsResult.error) return;
-  app.db.settings = settingsResult.data || { registrations_open: true, maintenance: false, maintenance_message: '' };
-  app.db.announcements = announcementsResult.data || [];
+  const { data, error } = await app.client.rpc('get_public_site_state');
+  if (error) return;
+  app.db.settings = data?.settings || { registrations_open: true, maintenance: false, maintenance_message: '' };
+  app.db.announcements = data?.announcements || [];
   updateHeader();
   if (isAdmin() && !$('#adminOverlay').hidden && app.adminTab === 'settings') renderAdmin();
 }
@@ -388,7 +401,7 @@ document.addEventListener('submit', async (event) => {
       const { data: result, error } = await client.auth.signUp({ email, password, options: { data: { username, first_name: String(data.get('firstName')).trim(), last_name: String(data.get('lastName')).trim(), marketing_consent: data.has('marketingConsent') } } });
       if (error) throw error;
       form.reset();
-      if (result.session) { closeOverlays(); await loadState(); showToast('Hesabın oluşturuldu. Hoş geldin!'); }
+      if (result.session) { closeOverlays(); showToast('Hesabın oluşturuldu. Hoş geldin!'); }
       else { $('#registerMessage').textContent = 'Hesabını doğrulamak için e-postana gönderilen bağlantıya tıkla.'; }
       return;
     }
@@ -446,8 +459,9 @@ async function startApp() {
     return;
   }
   app.client = window.supabase.createClient(window.YKS_CONFIG.supabaseUrl, window.YKS_CONFIG.publishableKey);
-  app.client.auth.onAuthStateChange((_event, session) => {
+  app.client.auth.onAuthStateChange((event, session) => {
     app.user = session?.user || null;
+    if (event === 'INITIAL_SESSION') return;
     setTimeout(() => loadState().catch((error) => showToast(normalizeError(error))), 0);
   });
   setInterval(() => {
