@@ -103,6 +103,20 @@
     .course-topic-choice:hover span:last-child{color:#555}
     @media(max-width:700px){.landing.exam-open{min-height:0;grid-template-columns:minmax(0,1fr)}.exam-tile,.exam-content,.exam-groups,.exam-group,.exam-group-content,.exam-subject-list{width:100%;min-width:0}.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.exam-content{padding:0 12px 25px}.exam-groups{gap:9px}.exam-group-toggle{min-height:50px;padding:11px 12px;font-size:11px}.exam-group-content{padding:0 10px 11px}.exam-subject-list{gap:8px;padding-top:10px}.exam-course-open{min-height:48px;padding:10px 11px;font-size:11px}.course-topic-choices{gap:8px;margin:17px 0}.course-topic-choice{min-height:48px;padding:11px 12px;font-size:12px}.coming{-webkit-overflow-scrolling:touch;max-height:calc(100dvh - 24px);max-height:88svh}}
   </style>
+  <style>
+    .admin-panel.admin-chat-active{display:flex;flex-direction:column;gap:12px;max-height:min(58vh,540px);overflow:hidden}
+    .admin-chat-messages{flex:1;min-height:180px;max-height:430px;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:11px;border:1px solid var(--line);border-radius:14px;background:#090909;scroll-behavior:smooth}
+    .admin-chat-message{max-width:min(88%,680px);align-self:flex-start;padding:11px 13px;border:1px solid rgba(245,245,242,.14);border-radius:13px;background:var(--panel-raised);overflow-wrap:anywhere}
+    .admin-chat-message.mine{align-self:flex-end;border-color:#e4e4df;background:#e9e9e4;color:#111}
+    .admin-chat-meta{display:flex;justify-content:space-between;align-items:center;gap:18px;color:var(--muted);font-size:10px}
+    .admin-chat-message.mine .admin-chat-meta{color:#555}
+    .admin-chat-message p{margin:7px 0 0;white-space:pre-wrap;font-size:13px;line-height:1.5}
+    .admin-chat-form{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:10px;margin:0}
+    .admin-chat-form label{display:block;color:#c7c7c2;font-size:11px}
+    .admin-chat-form textarea{display:block;width:100%;min-height:48px;max-height:140px;resize:vertical;margin-top:6px;padding:12px;border:1px solid #383838;border-radius:11px;background:#0b0b0b;color:var(--white);font:inherit;font-size:13px}
+    .admin-chat-form .submit{width:auto;min-width:116px;margin:0}
+    @media(max-width:700px){.admin-panel.admin-chat-active{max-height:62vh}.admin-chat-messages{min-height:160px;max-height:48vh;padding:9px}.admin-chat-message{max-width:94%;padding:10px 11px}.admin-chat-form{grid-template-columns:minmax(0,1fr);gap:8px}.admin-chat-form .submit{width:100%;min-height:45px}}
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -124,7 +138,7 @@
         <div class="exam-content" id="examContentAYT" hidden><div class="exam-groups" id="examGroupsAYT"></div></div>
       </div>
       <div class="center-note" aria-hidden="true"><span>Yolculuğuna buradan başla</span><span>Birlikte başaracağız.</span></div>
-      <p class="bottom-note">KENDİ TEMELİNİ KENDİ TEMPONLA KUR</p>
+      <p class="bottom-note">KENDİ TEMELİNİ KENDİ TEMPOYLA KUR</p>
     </section>
   </main>
 
@@ -163,7 +177,7 @@
 
   <div class="overlay" id="legalOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="legalTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">BİLGİLENDİRME</p><h2 id="legalTitle"></h2><div class="legal-copy" id="legalCopy"></div><button class="outline" data-close>Kapat</button></section></div>
 
-  <div class="overlay" id="adminOverlay" hidden><section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="adminTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">YÖNETİM</p><h2 id="adminTitle">Kontrol paneli</h2><nav class="admin-tabs" id="adminTabs"><button class="active" data-admin-tab="overview">Genel Bakış</button><button data-admin-tab="users">Kullanıcılar</button><button data-admin-tab="feedback">Geri Bildirimler</button><button data-admin-tab="announcements">Duyurular</button><button data-admin-tab="settings">Site Ayarları</button><button data-admin-tab="security" hidden>Güvenlik</button><button data-admin-tab="audit">İşlem Geçmişi</button></nav><div class="admin-panel" id="adminPanel"></div></section></div>
+  <div class="overlay" id="adminOverlay" hidden><section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="adminTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">YÖNETİM</p><h2 id="adminTitle">Kontrol paneli</h2><nav class="admin-tabs" id="adminTabs"><button class="active" data-admin-tab="overview">Genel Bakış</button><button data-admin-tab="users">Kullanıcılar</button><button data-admin-tab="feedback">Geri Bildirimler</button><button data-admin-tab="announcements">Duyurular</button><button data-admin-tab="chat">Admin Sohbeti</button><button data-admin-tab="settings">Site Ayarları</button><button data-admin-tab="security" hidden>Güvenlik</button><button data-admin-tab="audit">İşlem Geçmişi</button></nav><div class="admin-panel" id="adminPanel"></div></section></div>
 
   <div class="overlay" id="profileOverlay" hidden><section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="profileTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">ÖĞRENCİ ALANI</p><h2 id="profileTitle">Profilim</h2><div id="profileContent"></div></section></div>
 
