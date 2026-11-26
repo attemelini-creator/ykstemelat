@@ -137,18 +137,32 @@
     .landing.exam-open .exam-tile:not(.active){display:flex;min-width:0;min-height:0;width:100%;height:0;max-height:0;overflow:hidden;opacity:0;transform:scale(.97);pointer-events:none;transition:opacity .28s ease,transform .44s cubic-bezier(.2,.75,.25,1),height .44s ease,max-height .44s ease}
     .exam-tile{transition:opacity .28s ease,transform .44s cubic-bezier(.2,.75,.25,1)}
     .side.active::after{inset:8px clamp(12px,2vw,24px) 0;border-color:rgba(245,245,242,.28);border-radius:16px 16px 5px 5px;background:radial-gradient(ellipse at center,rgba(245,245,242,.07),transparent 72%)}
+    .center-note{z-index:2;gap:6px;padding:13px 21px;border:1px solid rgba(245,245,242,.16);border-radius:15px;background:rgba(9,9,9,.98);box-shadow:0 12px 34px rgba(0,0,0,.5);opacity:1}
+    .center-note span:first-child{color:#c4c4bf}
+    .center-note span:last-child{color:var(--white)}
     .exam-content{width:min(100%,1040px);max-height:0;margin-inline:auto;padding:0 clamp(18px,3vw,38px);overflow:hidden;opacity:0;transform:translateY(-9px);pointer-events:none;animation:none;transition:max-height .44s cubic-bezier(.2,.75,.25,1),opacity .28s ease,transform .44s cubic-bezier(.2,.75,.25,1),padding-bottom .44s ease}
     .exam-content.is-open{max-height:3600px;padding-bottom:34px;opacity:1;transform:translateY(0);pointer-events:auto}
     .coming{width:min(100%,680px)}
     .course-topic-choice{min-height:52px;padding:14px 16px;font-size:13px}
-    .topic-test-card.is-open{border-color:rgba(245,245,242,.32);background:#131313}
+    .topic-test-card.is-open{border-color:rgba(245,245,242,.32);background:#131313;box-shadow:0 10px 28px rgba(0,0,0,.2)}
+    .topic-test-open{min-height:56px;padding:13px 16px;font-family:var(--serif);font-size:17px;font-weight:400;letter-spacing:.01em}
     .topic-test-card.is-open .topic-test-open{border-bottom-color:var(--line)}
     .topic-test-chevron{transition:transform .2s ease}
     .topic-test-card.is-open .topic-test-chevron{transform:rotate(180deg)}
     .topic-test-info{padding:5px 9px 10px;animation:topic-test-expand .2s ease both}
     @keyframes topic-test-expand{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-    .topic-test-start{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;padding:10px 13px;border:1px solid rgba(245,245,242,.24);border-radius:10px;background:#202020;color:var(--white);font-size:12px;text-align:left}
-    .topic-test-start:hover{border-color:var(--white);background:var(--white);color:var(--black)}
+    .topic-test-stats span{font-size:10px;letter-spacing:.025em}
+    .topic-test-stats strong{font-family:var(--serif);font-size:17px;font-weight:400}
+    .topic-test-start{display:flex;justify-content:center;align-items:center;gap:12px;width:100%;min-height:60px;margin-top:5px;padding:14px 18px;border:1px solid var(--white);border-radius:999px;background:var(--white);color:var(--black);font-size:14px;font-weight:600;letter-spacing:.015em;text-align:center;box-shadow:0 8px 22px rgba(255,255,255,.08);transition:background .2s,color .2s,transform .2s,box-shadow .2s}
+    .topic-test-start span{font-size:17px;transition:transform .2s ease}
+    .topic-test-start:hover{background:#deded9;color:var(--black);box-shadow:0 10px 26px rgba(255,255,255,.13)}
+    .topic-test-start:hover span{transform:translateX(3px)}
+    .legal-copy h3{margin:22px 0 8px;color:var(--white);font-family:var(--serif);font-size:19px;font-weight:400;letter-spacing:.01em}
+    .legal-copy p,.legal-copy li{color:#c2c2bd;font-size:13px;line-height:1.75}
+    .legal-copy ul{margin:8px 0 16px;padding-left:21px}
+    .legal-copy li{margin:0 0 8px;padding-left:3px}
+    .legal-copy strong{color:var(--white)}
+    @media(max-width:700px){.topic-test-open{min-height:54px;font-size:16px}.topic-test-stats span{font-size:9px}.topic-test-stats strong{font-size:15px}.topic-test-start{min-height:58px;font-size:13px}.center-note{padding:11px 14px;gap:4px}.center-note span:first-child{font-size:8px;letter-spacing:.13em}.center-note span:last-child{font-size:clamp(13px,3.7vw,16px)}}
     @media(max-width:700px){.landing.exam-open:not(.exam-open-ayt){grid-template-columns:minmax(0,1fr) minmax(0,0fr)}.landing.exam-open.exam-open-ayt{grid-template-columns:minmax(0,0fr) minmax(0,1fr)}.exam-content{padding-inline:12px}.exam-content.is-open{padding-bottom:25px}.course-topic-choice{min-height:50px;padding:12px;font-size:12px}.coming{padding:25px 18px}}
   </style>
 </head>
@@ -179,7 +193,7 @@
   <nav class="drawer" id="drawer" aria-label="Ana menü" aria-hidden="true">
     <div class="drawer-head"><span>KEŞFET</span><button class="close" id="drawerClose" aria-label="Menüyü kapat">×</button></div>
     <button class="drawer-link" data-coming="Liderlik Tablosu"><span class="drawer-number">01</span><span>Liderlik Tablosu</span></button>
-    <button class="drawer-link" data-profile><span class="drawer-number">02</span><span>Profilim</span></button>
+    <button class="drawer-link" data-coming="Biz Kimiz"><span class="drawer-number">02</span><span>Biz Kimiz</span></button>
     <button class="drawer-link" data-coming="Şikayet ve Önerileriniz"><span class="drawer-number">03</span><span>Şikayet ve Önerileriniz</span></button>
     <div class="drawer-foot">YKS TEMELİNİ SAĞLAM AT</div>
   </nav>
@@ -203,11 +217,11 @@
     <form class="form" id="registerForm" hidden><div class="two"><label>Ad<input name="firstName" required minlength="2" maxlength="60" autocomplete="given-name"></label><label>Soyad<input name="lastName" required minlength="2" maxlength="60" autocomplete="family-name"></label></div>
       <label>Kullanıcı adı<input name="username" required minlength="3" maxlength="24" autocomplete="username" placeholder="Herkese açık kullanıcı adın"><span class="fine">Profilinde herkese bu adın görünür. Küfürlü ve argo kullanıcı adlarına izin verilmez.</span></label>
       <label>E-posta<input name="email" type="email" required maxlength="254" autocomplete="email"></label><label>Şifre<input name="password" type="password" minlength="10" maxlength="200" required autocomplete="new-password" placeholder="En az 10 karakter"></label>
-      <label class="check"><input name="noticeAcknowledged" type="checkbox" required><span><a href="#" data-legal="kvkk">KVKK Aydınlatma Metni</a> hakkında bilgilendirildim.</span></label>
+      <label class="check"><input name="noticeAcknowledged" type="checkbox" required><span><a href="#" data-legal="kvkk">KVKK Aydınlatma Metni</a>'ni okudum ve anladım.</span></label>
       <label class="check"><input name="termsAccepted" type="checkbox" required><span><a href="#" data-legal="terms">Kullanım Koşulları</a>'nı okudum ve kabul ediyorum.</span></label>
       <label class="check"><input name="marketingConsent" type="checkbox"><span>Kampanya ve duyurular için e-posta almayı kabul ediyorum. (İsteğe bağlı)</span></label>
       <button class="text-link" type="button" data-legal="privacy">Gizlilik ve Çerez Politikası</button>
-      <button class="submit">Hesabını oluştur <span>→</span></button><p class="fine">Aydınlatma metni bilgilendirme içindir; varsa açık rıza tercihi ayrıca alınmalıdır. Canlı sürümde hesap ve site verileri ortak veritabanında saklanır. Bu metin örnektir ve canlı kullanımdan önce düzenlenmelidir.</p><p class="msg" id="registerMessage" aria-live="polite"></p>
+      <button class="submit">Hesabını oluştur <span>→</span></button><p class="fine">Aydınlatma metni bilgilendirme içindir; kişisel veri işleme izni yerine geçmez. Kampanya tercihi ayrıdır ve isteğe bağlıdır.</p><p class="msg" id="registerMessage" aria-live="polite"></p>
     </form>
   </section></div>
 
