@@ -67,9 +67,17 @@
   <style>@media(max-width:640px){.analysis-card{padding:15px}.analysis-card h3{font-size:18px}}</style>
   <style>
     .landing.exam-open{overflow:visible}
+    .landing.exam-open{overflow:visible;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto}
     .landing.exam-open::before,.landing.exam-open .bottom-note{display:none}
+    .side{transition:opacity .32s ease,transform .42s ease,min-height .42s ease,max-height .42s ease,padding .42s ease}
+    .landing.exam-open .side{grid-column:1;grid-row:1;min-height:0;height:0;max-height:0;padding:0;overflow:hidden;opacity:0;transform:translateY(-22px);pointer-events:none}
+    .landing.exam-open .side.active{min-height:165px;height:auto;max-height:240px;padding:20px;opacity:1;transform:translateY(0);pointer-events:auto}
+    .landing.exam-open .side.active .side-content{gap:7px;transform:none}
+    .landing.exam-open .side.active .side-label{font-size:clamp(58px,10vw,106px)}
+    .landing.exam-open .side.active .enter-mark{width:34px;height:34px;margin-top:8px}
     .side.active::after{border-color:rgba(245,245,242,.28);background:radial-gradient(ellipse at center,rgba(245,245,242,.07),transparent 68%)}
     .exam-panel{grid-column:1/-1;position:relative;z-index:2;width:calc(100% - 48px);max-width:920px;justify-self:center;align-self:start;margin:0 auto 76px;padding:clamp(20px,4vw,34px);border:1px solid rgba(245,245,242,.16);border-radius:20px;background:linear-gradient(145deg,#151515,#0d0d0d);box-shadow:0 24px 70px rgba(0,0,0,.4);scroll-margin-top:102px;text-align:left}
+    .landing.exam-open .exam-panel{grid-column:1;grid-row:2;margin-top:8px}
     .exam-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
     .exam-panel-kicker{margin:0 0 8px;color:var(--muted);font-size:10px;letter-spacing:.2em}
     .exam-panel h2{margin:0;font-family:var(--serif);font-size:clamp(27px,4vw,38px);font-weight:400}
@@ -161,4 +169,3 @@
   <script src="./app.js"></script>
 </body>
 </html>
-
