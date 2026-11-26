@@ -74,7 +74,8 @@ const app = {
   client: null, user: null, profile: null, role: null, isPrimaryAdmin: false,
   adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null,
   activeCourseMenu: null, activeCourseTopic: null, activeDifficulty: null,
-  courseMenuView: null, returnToMenuView: null,
+  activeTestNumber: null, courseMenuView: null, returnToMenuView: null,
+  examPanelTimers: {},
   chatLoading: false,
   db: { users: [], feedback: [], announcements: [], audit: [], chatMessages: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
 };
@@ -173,6 +174,7 @@ function closeComing() {
   app.activeCourseMenu = null;
   app.activeCourseTopic = null;
   app.activeDifficulty = null;
+  app.activeTestNumber = null;
   app.courseMenuView = null;
   app.returnToMenuView = null;
 }
@@ -185,6 +187,7 @@ function openComing(name, returnToMenuView = null) {
     app.activeCourseMenu = null;
     app.activeCourseTopic = null;
     app.activeDifficulty = null;
+    app.activeTestNumber = null;
   }
   $('#courseTopicChoices').hidden = true;
   $('#courseDifficultyChoices').hidden = true;
@@ -201,6 +204,7 @@ function openCourseTopics(course) {
   app.activeCourseMenu = course;
   app.activeCourseTopic = null;
   app.activeDifficulty = null;
+  app.activeTestNumber = null;
   app.courseMenuView = 'topics';
   app.returnToMenuView = null;
   const exam = course.exam || app.activeExam || 'YKS';
@@ -224,6 +228,7 @@ function openDifficultyChoices(topic) {
   hideDrawer();
   app.activeCourseTopic = topic;
   app.activeDifficulty = null;
+  app.activeTestNumber = null;
   app.courseMenuView = 'difficulties';
   app.returnToMenuView = null;
   $('#comingLabel').textContent = `${app.activeCourseMenu.exam || app.activeExam || 'YKS'} · ZORLUK SEÇİMİ`;
@@ -260,7 +265,8 @@ function openTopicTests(difficulty) {
     const attempts = result.correct + result.wrong + result.blank;
     const success = attempts ? Math.round(result.correct / attempts * 100) : 0;
     const completion = result.completed ? 100 : 0;
-    return `<article class="topic-test-card"><button class="topic-test-open" type="button" data-topic-test="${testNumber}"><span>Test ${testNumber}</span><span aria-hidden="true">›</span></button><div class="topic-test-stats"><div><span>Tamamlama</span><strong>%${completion}</strong></div><div><span>Başarı</span><strong>%${success}</strong></div><div><span>Doğru</span><strong>${result.correct}</strong></div><div><span>Yanlış</span><strong>${result.wrong}</strong></div><div><span>Boş</span><strong>${result.blank}</strong></div></div></article>`;
+    const expanded = app.activeTestNumber === testNumber;
+    return `<article class="topic-test-card ${expanded ? 'is-open' : ''}"><button class="topic-test-open" type="button" data-topic-test="${testNumber}" aria-expanded="${expanded}" aria-controls="topicTestDetails${testNumber}"><span>Test ${testNumber}</span><span class="topic-test-chevron" aria-hidden="true">⌄</span></button><div class="topic-test-info" id="topicTestDetails${testNumber}" ${expanded ? '' : 'hidden'}><div class="topic-test-stats"><div><span>Tamamlama</span><strong>%${completion}</strong></div><div><span>Başarı</span><strong>%${success}</strong></div><div><span>Doğru</span><strong>${result.correct}</strong></div><div><span>Yanlış</span><strong>${result.wrong}</strong></div><div><span>Boş</span><strong>${result.blank}</strong></div></div><button class="topic-test-start" type="button" data-start-test="${testNumber}">Teste Başla <span aria-hidden="true">→</span></button></div></article>`;
   }).join('') + '<p class="topic-test-footer">Yeni Testler Eklenmeye Devam Edecek...</p>';
   $('#topicTestChoices').hidden = false;
   $('#comingView').classList.add('show');
@@ -268,14 +274,35 @@ function openTopicTests(difficulty) {
 }
 function renderExamPanel() {
   const exam = app.activeExam;
-  $('.landing').classList.toggle('exam-open', !!exam);
+  const landing = $('.landing');
+  landing.classList.toggle('exam-open', !!exam);
+  landing.classList.toggle('exam-open-tyt', exam === 'TYT');
+  landing.classList.toggle('exam-open-ayt', exam === 'AYT');
   for (const name of ['TYT', 'AYT']) {
     const tile = $(`#examTile${name}`);
     const active = name === exam;
+    const content = $(`#examContent${name}`);
     tile.classList.toggle('active', active);
     tile.querySelector('.side').classList.toggle('active', active);
     tile.querySelector('.side').setAttribute('aria-expanded', String(active));
-    $(`#examContent${name}`).hidden = !active;
+    clearTimeout(app.examPanelTimers[name]);
+    if (active) {
+      const wasHidden = content.hidden;
+      content.hidden = false;
+      content.setAttribute('aria-hidden', 'false');
+      if (wasHidden) {
+        content.classList.remove('is-open');
+        requestAnimationFrame(() => {
+          if (app.activeExam === name) content.classList.add('is-open');
+        });
+      } else content.classList.add('is-open');
+    } else if (!content.hidden) {
+      content.classList.remove('is-open');
+      content.setAttribute('aria-hidden', 'true');
+      app.examPanelTimers[name] = setTimeout(() => {
+        if (!content.classList.contains('is-open')) content.hidden = true;
+      }, 440);
+    }
   }
   $$('[data-exam-toggle]').forEach((button) => button.classList.toggle('active', button.dataset.examToggle === exam));
   if (!exam || !EXAM_GROUPS[exam]) return;
@@ -578,8 +605,15 @@ document.addEventListener('click', async (event) => {
   }
   const testChoice = target.closest('[data-topic-test]');
   if (testChoice) {
+    const testNumber = Number(testChoice.dataset.topicTest);
+    app.activeTestNumber = app.activeTestNumber === testNumber ? null : testNumber;
+    openTopicTests(app.activeDifficulty);
+    return;
+  }
+  const startTest = target.closest('[data-start-test]');
+  if (startTest) {
     const courseTitle = app.activeCourseMenu?.title || '';
-    openComing(`${courseTitle} · ${app.activeCourseTopic} · ${app.activeDifficulty} · Test ${testChoice.dataset.topicTest}`, 'tests');
+    openComing(`${courseTitle} · ${app.activeCourseTopic} · ${app.activeDifficulty} · Test ${startTest.dataset.startTest}`, 'tests');
     return;
   }
   const courseButton = target.closest('[data-course-key]');
