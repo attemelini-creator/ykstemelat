@@ -9,13 +9,27 @@ const AVATARS = [
   { id: 'lion', emoji: '🦁', label: 'Aslan' }, { id: 'penguin', emoji: '🐧', label: 'Penguen' }
 ];
 const LESSONS = {
-  TYT: ['Türkçe', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya', 'Felsefe', 'Din Kültürü'],
-  AYT: ['Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Edebiyat', 'Tarih-1', 'Coğrafya-1', 'Tarih-2', 'Coğrafya-2', 'Felsefe Grubu', 'Din Kültürü']
+  TYT: ['Türkçe', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya', 'Felsefe', 'Din Kültürü ve Ahlak Bilgisi', 'Geometri'],
+  AYT: ['Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Türk Dili ve Edebiyatı', 'Tarih-1', 'Coğrafya-1', 'Tarih-2', 'Coğrafya-2', 'Felsefe Grubu', 'Din Kültürü ve Ahlak Bilgisi', 'Geometri']
+};
+const EXAM_GROUPS = {
+  TYT: [
+    { id: 'turkce', title: 'Türkçe', subjects: ['Türkçe'] },
+    { id: 'matematik', title: 'Temel Matematik', subjects: ['Matematik', 'Geometri'] },
+    { id: 'fen', title: 'Fen Bilimleri', subjects: ['Fizik', 'Kimya', 'Biyoloji'] },
+    { id: 'sosyal', title: 'Sosyal Bilimler', subjects: ['Tarih', 'Coğrafya', 'Felsefe', 'Din Kültürü ve Ahlak Bilgisi'] }
+  ],
+  AYT: [
+    { id: 'matematik', title: 'Matematik', subjects: ['Matematik', 'Geometri'] },
+    { id: 'fen', title: 'Fen Bilimleri', subjects: ['Fizik', 'Kimya', 'Biyoloji'] },
+    { id: 'edebiyat-sosyal-1', title: 'Türk Dili ve Edebiyatı–Sosyal Bilimler-1', subjects: ['Türk Dili ve Edebiyatı', 'Tarih-1', 'Coğrafya-1'] },
+    { id: 'sosyal-2', title: 'Sosyal Bilimler-2', subjects: ['Tarih-2', 'Coğrafya-2', 'Felsefe Grubu (Psikoloji, Sosyoloji, Mantık)', 'Din Kültürü ve Ahlak Bilgisi'] }
+  ]
 };
 const BLOCKED_USERNAME_TERMS = ['amk', 'aq', 'aminakoyim', 'orospu', 'siktir', 'sikiyim', 'sikmek', 'yarak', 'yarrak', 'pic', 'ibne', 'pezevenk', 'kahpe', 'fuck', 'shit', 'bitch', 'asshole'];
 const app = {
   client: null, user: null, profile: null, role: null, isPrimaryAdmin: false,
-  adminTab: 'overview', toastTimer: null,
+  adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null,
   db: { users: [], feedback: [], announcements: [], audit: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
 };
 
@@ -83,6 +97,47 @@ function openComing(name) {
   $('#comingDescription').textContent = feedback ? 'Şikayetini, önerini veya yaşadığın sorunu bize ilet.' : `${name} bölümü için hazırlıklarımız devam ediyor.`;
   $('#comingSoon').hidden = feedback; $('#feedbackForm').hidden = !feedback;
   $('#comingView').classList.add('show'); $('#comingView').setAttribute('aria-hidden', 'false');
+}
+function renderExamPanel() {
+  const exam = app.activeExam;
+  if (!exam || !EXAM_GROUPS[exam]) return;
+  $('#examPanel').hidden = false;
+  $('#examPanelKicker').textContent = exam === 'TYT' ? 'TEMEL YETERLİLİK TESTİ' : 'ALAN YETERLİLİK TESTLERİ';
+  $('#examPanelTitle').textContent = `${exam} Dersleri`;
+  $('#examPanelDescription').textContent = 'Bir ders grubuna basınca dersleri açılır. Aynı anda tek grup açık kalır.';
+  $('#examGroups').innerHTML = EXAM_GROUPS[exam].map((group) => {
+    const open = app.activeCourseGroup === group.id;
+    return `<section class="exam-group"><button class="exam-group-toggle" type="button" data-course-group="${esc(group.id)}" aria-expanded="${open}"><span>${esc(group.title)}</span><span class="exam-chevron" aria-hidden="true">⌄</span></button><div class="exam-group-content" ${open ? '' : 'hidden'}><div class="exam-subject-list">${group.subjects.map((subject) => `<span class="exam-subject">${esc(subject)}</span>`).join('')}</div></div></section>`;
+  }).join('');
+  $$('[data-exam-toggle]').forEach((button) => {
+    const active = button.dataset.examToggle === exam;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-expanded', String(active));
+    if (button.closest('#examPanel')) button.setAttribute('aria-selected', String(active));
+  });
+}
+function closeExamPanel() {
+  app.activeExam = null;
+  app.activeCourseGroup = null;
+  $('#examPanel').hidden = true;
+  $('.landing').classList.remove('exam-open');
+  $$('[data-exam-toggle]').forEach((button) => {
+    button.classList.remove('active');
+    button.setAttribute('aria-expanded', 'false');
+    if (button.closest('#examPanel')) button.setAttribute('aria-selected', 'false');
+  });
+}
+function setActiveExam(exam, toggleIfCurrent = true, scrollToPanel = true) {
+  if (!EXAM_GROUPS[exam]) return;
+  if (app.activeExam === exam) {
+    if (toggleIfCurrent) closeExamPanel();
+    return;
+  }
+  app.activeExam = exam;
+  app.activeCourseGroup = null;
+  $('.landing').classList.add('exam-open');
+  renderExamPanel();
+  if (scrollToPanel) $('#examPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function setAuthTab(tab) {
   const register = tab === 'register';
@@ -284,6 +339,19 @@ document.addEventListener('click', async (event) => {
     } catch (error) { showToast(normalizeError(error)); }
     return;
   }
+  const examToggle = target.closest('[data-exam-toggle]');
+  if (examToggle) {
+    const inPanel = !!examToggle.closest('#examPanel');
+    setActiveExam(examToggle.dataset.examToggle, !inPanel, !inPanel);
+    return;
+  }
+  const courseGroup = target.closest('[data-course-group]');
+  if (courseGroup) {
+    app.activeCourseGroup = app.activeCourseGroup === courseGroup.dataset.courseGroup ? null : courseGroup.dataset.courseGroup;
+    renderExamPanel();
+    return;
+  }
+  if (target.closest('#examPanelClose')) { closeExamPanel(); return; }
   const coming = target.closest('[data-coming]');
   if (coming) { openComing(coming.dataset.coming); return; }
   if (target.closest('#viewBack,[data-view-close]')) { closeComing(); return; }
@@ -449,7 +517,7 @@ $$('.overlay').forEach((overlay) => overlay.addEventListener('click', (event) =>
 $('#comingView').addEventListener('click', (event) => { if (event.target === $('#comingView')) closeComing(); });
 $('#menuButton').addEventListener('click', () => $('#drawer').classList.contains('open') ? hideDrawer() : showDrawer());
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') { hideDrawer(); closeComing(); closeLegal(); closeOverlays(); $('#accountPop').hidden = true; }
+  if (event.key === 'Escape') { hideDrawer(); closeComing(); closeExamPanel(); closeLegal(); closeOverlays(); $('#accountPop').hidden = true; }
 });
 
 async function startApp() {
