@@ -66,37 +66,29 @@
   </style>
   <style>@media(max-width:640px){.analysis-card{padding:15px}.analysis-card h3{font-size:18px}}</style>
   <style>
-    .landing.exam-open{overflow:visible}
-    .landing.exam-open{overflow:visible;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto}
-    .landing.exam-open::before,.landing.exam-open .bottom-note{display:none}
-    .side{transition:opacity .32s ease,transform .42s ease,min-height .42s ease,max-height .42s ease,padding .42s ease}
-    .landing.exam-open .side{grid-column:1;grid-row:1;min-height:0;height:0;max-height:0;padding:0;overflow:hidden;opacity:0;transform:translateY(-22px);pointer-events:none}
-    .landing.exam-open .side.active{min-height:165px;height:auto;max-height:240px;padding:20px;opacity:1;transform:translateY(0);pointer-events:auto}
-    .landing.exam-open .side.active .side-content{gap:7px;transform:none}
-    .landing.exam-open .side.active .side-label{font-size:clamp(58px,10vw,106px)}
-    .landing.exam-open .side.active .enter-mark{width:34px;height:34px;margin-top:8px}
+    .landing.exam-open{overflow:visible;align-items:start}
+    .landing.exam-open::before,.landing.exam-open .center-note,.landing.exam-open .bottom-note{display:none}
+    .exam-tile{position:relative;z-index:1;min-width:0;display:flex;flex-direction:column;align-self:start}
+    .side{width:100%;transition:opacity .32s ease,transform .42s ease,min-height .42s ease,max-height .42s ease,padding .42s ease}
+    .side-label{transition:font-size .42s ease}
+    .side.active{min-height:170px;padding:18px 16px}
+    .side.active .side-content{gap:7px;transform:none}
+    .side.active .side-label{font-size:clamp(54px,9vw,94px)}
+    .side.active .enter-mark{width:32px;height:32px;margin-top:5px}
     .side.active::after{border-color:rgba(245,245,242,.28);background:radial-gradient(ellipse at center,rgba(245,245,242,.07),transparent 68%)}
-    .exam-panel{grid-column:1/-1;position:relative;z-index:2;width:calc(100% - 48px);max-width:920px;justify-self:center;align-self:start;margin:0 auto 76px;padding:clamp(20px,4vw,34px);border:1px solid rgba(245,245,242,.16);border-radius:20px;background:linear-gradient(145deg,#151515,#0d0d0d);box-shadow:0 24px 70px rgba(0,0,0,.4);scroll-margin-top:102px;text-align:left}
-    .landing.exam-open .exam-panel{grid-column:1;grid-row:2;margin-top:8px}
-    .exam-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
-    .exam-panel-kicker{margin:0 0 8px;color:var(--muted);font-size:10px;letter-spacing:.2em}
-    .exam-panel h2{margin:0;font-family:var(--serif);font-size:clamp(27px,4vw,38px);font-weight:400}
-    .exam-panel-close{flex:0 0 40px;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--white);font-size:22px}
-    .exam-panel-close:hover{background:var(--white);color:var(--black)}
-    .exam-switch{display:flex;gap:8px;margin-top:22px;padding-bottom:15px;border-bottom:1px solid #303030}
-    .exam-switch button{min-width:76px;padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--white);font-size:12px}
-    .exam-switch button.active{background:var(--white);color:var(--black);font-weight:600}
-    .exam-panel-description{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
-    .exam-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
-    .exam-group{align-self:start;overflow:hidden;border:1px solid #363636;border-radius:13px;background:#0b0b0b}
-    .exam-group-toggle{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;min-height:58px;padding:14px 16px;border:0;background:transparent;color:var(--white);text-align:left;font-size:13px}
+    .exam-content{position:relative;z-index:2;padding:0 clamp(12px,2.4vw,30px) 34px;animation:exam-content-in .32s ease both}
+    @keyframes exam-content-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    .exam-groups{display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
+    .exam-group{min-width:0;align-self:start;overflow:hidden;border:1px solid #363636;border-radius:13px;background:#0b0b0b}
+    .exam-group-toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:54px;padding:12px 13px;border:0;background:transparent;color:var(--white);text-align:left;font-size:12px;line-height:1.45}
+    .exam-group-toggle span:first-child{min-width:0;overflow-wrap:anywhere}
     .exam-group-toggle:hover,.exam-group-toggle[aria-expanded="true"]{background:#191919}
-    .exam-chevron{color:#aaa;font-size:18px;transition:transform .18s}
+    .exam-chevron{flex:0 0 auto;color:#aaa;font-size:18px;transition:transform .18s}
     .exam-group-toggle[aria-expanded="true"] .exam-chevron{transform:rotate(180deg)}
-    .exam-group-content{padding:0 14px 14px;border-top:1px solid #292929}
-    .exam-subject-list{display:flex;flex-wrap:wrap;gap:7px;padding-top:12px}
-    .exam-subject{padding:8px 11px;border:1px solid #333;border-radius:999px;background:#141414;color:#ddd;font-size:11px}
-    @media(max-width:700px){.exam-panel{width:calc(100% - 28px);margin-bottom:54px;padding:20px 16px}.exam-groups{grid-template-columns:1fr}.exam-panel-close{width:36px;height:36px;flex-basis:36px}.exam-switch button{min-width:68px}}
+    .exam-group-content{padding:0 11px 12px;border-top:1px solid #292929}
+    .exam-subject-list{display:flex;flex-wrap:wrap;gap:6px;padding-top:10px}
+    .exam-subject{max-width:100%;padding:7px 9px;border:1px solid #333;border-radius:999px;background:#141414;color:#ddd;font-size:10px;line-height:1.4;overflow-wrap:anywhere}
+    @media(max-width:700px){.side.active{min-height:150px;padding:15px 8px}.exam-content{padding:0 9px 25px}.exam-group-toggle{padding:10px 9px;font-size:11px}.exam-subject{padding:6px 8px;font-size:9px}}
   </style>
 </head>
 <body>
@@ -110,15 +102,15 @@
 
   <main id="landing">
     <section class="landing" aria-label="Sınav seçimi">
-      <button class="side" type="button" data-exam-toggle="TYT" aria-expanded="false"><span class="side-content"><span class="side-label">TYT</span><span class="side-caption">Temel Yeterlilik Testi</span><span class="enter-mark" aria-hidden="true">↗</span></span></button>
-      <button class="side" type="button" data-exam-toggle="AYT" aria-expanded="false"><span class="side-content"><span class="side-label">AYT</span><span class="side-caption">Alan Yeterlilik Testleri</span><span class="enter-mark" aria-hidden="true">↗</span></span></button>
+      <div class="exam-tile" id="examTileTYT">
+        <button class="side" type="button" data-exam-toggle="TYT" aria-expanded="false" aria-controls="examContentTYT"><span class="side-content"><span class="side-label">TYT</span><span class="side-caption">Temel Yeterlilik Testi</span><span class="enter-mark" aria-hidden="true">↗</span></span></button>
+        <div class="exam-content" id="examContentTYT" hidden><div class="exam-groups" id="examGroupsTYT"></div></div>
+      </div>
+      <div class="exam-tile" id="examTileAYT">
+        <button class="side" type="button" data-exam-toggle="AYT" aria-expanded="false" aria-controls="examContentAYT"><span class="side-content"><span class="side-label">AYT</span><span class="side-caption">Alan Yeterlilik Testleri</span><span class="enter-mark" aria-hidden="true">↗</span></span></button>
+        <div class="exam-content" id="examContentAYT" hidden><div class="exam-groups" id="examGroupsAYT"></div></div>
+      </div>
       <div class="center-note" aria-hidden="true"><span>Yolculuğuna buradan başla</span><span>Birlikte başaracağız.</span></div>
-      <section class="exam-panel" id="examPanel" aria-labelledby="examPanelTitle" hidden>
-        <div class="exam-panel-head"><div><p class="exam-panel-kicker" id="examPanelKicker"></p><h2 id="examPanelTitle"></h2></div><button class="exam-panel-close" id="examPanelClose" type="button" aria-label="Ders panelini kapat">×</button></div>
-        <div class="exam-switch" role="tablist" aria-label="Sınav türü"><button type="button" data-exam-toggle="TYT" role="tab" aria-selected="false">TYT</button><button type="button" data-exam-toggle="AYT" role="tab" aria-selected="false">AYT</button></div>
-        <p class="exam-panel-description" id="examPanelDescription"></p>
-        <div class="exam-groups" id="examGroups"></div>
-      </section>
       <p class="bottom-note">KENDİ TEMELİNİ KENDİ TEMPOYLA KUR</p>
     </section>
   </main>
@@ -169,3 +161,4 @@
   <script src="./app.js"></script>
 </body>
 </html>
+
