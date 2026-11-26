@@ -10,6 +10,8 @@ const AVATARS = [
 ];
 const GEOMETRY_TOPICS = ['Doğruda ve Üçgende Açılar', 'Üçgenler', 'Üçgende Alan', 'Çokgenler ve Dörtgenler', 'Çember ve Daire', 'Analitik Geometri', 'Katı Cisimler'];
 const YDT_TOPICS = ['Kelime Bilgisi', 'Dil Bilgisi', 'Cümle Tamamlama', 'Anlamca Yakın Cümle', 'Çeviri', 'Paragraf Tamamlama', 'Diyalog Tamamlama', 'Anlam Bütünlüğünü Bozan Cümle', 'Okuma Parçaları'];
+const DIFFICULTIES = ['Kolay', 'Orta', 'Zor'];
+const TESTS_PER_DIFFICULTY = 15;
 const EXAM_GROUPS = {
   TYT: [
     { id: 'turkce', title: 'Türkçe', subjects: [
@@ -71,7 +73,8 @@ const BLOCKED_USERNAME_TERMS = ['amk', 'aq', 'aminakoyim', 'orospu', 'siktir', '
 const app = {
   client: null, user: null, profile: null, role: null, isPrimaryAdmin: false,
   adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null,
-  activeCourseMenu: null, returnToCourseTopics: false,
+  activeCourseMenu: null, activeCourseTopic: null, activeDifficulty: null,
+  courseMenuView: null, returnToMenuView: null,
   chatLoading: false,
   db: { users: [], feedback: [], announcements: [], audit: [], chatMessages: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
 };
@@ -85,9 +88,19 @@ const legal = {
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const date = (value) => value ? new Intl.DateTimeFormat('tr-TR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '—';
 const now = () => new Date().toISOString();
-const emptyProgress = () => ({ completed_topics: [] });
+const emptyProgress = () => ({ completed_topics: [], test_results: {} });
 const progressTopicKey = (exam, groupId, courseId, topic) => `${exam}:${groupId}:${courseId}:${topic}`;
-const topicIsComplete = (exam, groupId, courseId, topic, profile = app.profile) => profile?.progress?.completed_topics?.includes(progressTopicKey(exam, groupId, courseId, topic)) || false;
+const testResultFor = (topicKey, difficulty, testNumber, profile = app.profile) => {
+  const result = profile?.progress?.test_results?.[topicKey]?.[difficulty]?.[testNumber] || {};
+  return {
+    completed: result.completed === true,
+    correct: Math.max(0, Number(result.correct) || 0),
+    wrong: Math.max(0, Number(result.wrong) || 0),
+    blank: Math.max(0, Number(result.blank) || 0)
+  };
+};
+const topicCompletedTestCount = (topicKey, profile = app.profile) => DIFFICULTIES.reduce((sum, difficulty) => sum + Array.from({ length: TESTS_PER_DIFFICULTY }, (_, index) => testResultFor(topicKey, difficulty, index + 1, profile).completed ? 1 : 0).reduce((a, b) => a + b, 0), 0);
+const topicIsComplete = (exam, groupId, courseId, topic, profile = app.profile) => topicCompletedTestCount(progressTopicKey(exam, groupId, courseId, topic), profile) === DIFFICULTIES.length * TESTS_PER_DIFFICULTY;
 const normalizeUsername = (value) => String(value || '').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/ı/g, 'i').replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't').replace(/[^a-z0-9]/g, '');
 const inappropriateUsername = (value) => BLOCKED_USERNAME_TERMS.some((term) => normalizeUsername(value).includes(term));
 const avatarFor = (id) => AVATARS.find((item) => item.id === id) || AVATARS[0];
@@ -131,6 +144,7 @@ function ensureProfile(record) {
   if (!AVATARS.some((item) => item.id === record.avatar_id)) record.avatar_id = 'moon';
   record.progress = { ...emptyProgress(), ...(record.progress || {}) };
   if (!Array.isArray(record.progress.completed_topics)) record.progress.completed_topics = [];
+  if (!record.progress.test_results || typeof record.progress.test_results !== 'object' || Array.isArray(record.progress.test_results)) record.progress.test_results = {};
 }
 function showDrawer() {
   $('#drawer').classList.add('open'); $('#drawer').setAttribute('aria-hidden', 'false');
@@ -141,22 +155,40 @@ function hideDrawer() {
   $('#menuButton').setAttribute('aria-expanded', 'false'); $('#menuButton').setAttribute('aria-label', 'Menüyü aç'); $('#scrim').hidden = true;
 }
 function closeComing() {
-  if (app.returnToCourseTopics && app.activeCourseMenu) {
-    const course = app.activeCourseMenu;
-    app.returnToCourseTopics = false;
-    openCourseTopics(course);
+  if (app.courseMenuView === 'coming' && app.returnToMenuView === 'tests') {
+    app.returnToMenuView = null;
+    openTopicTests(app.activeDifficulty);
+    return;
+  }
+  if (app.courseMenuView === 'tests' && app.activeCourseTopic) {
+    openDifficultyChoices(app.activeCourseTopic);
+    return;
+  }
+  if (app.courseMenuView === 'difficulties' && app.activeCourseMenu) {
+    openCourseTopics(app.activeCourseMenu);
     return;
   }
   $('#comingView').classList.remove('show');
   $('#comingView').setAttribute('aria-hidden', 'true');
   app.activeCourseMenu = null;
-  app.returnToCourseTopics = false;
+  app.activeCourseTopic = null;
+  app.activeDifficulty = null;
+  app.courseMenuView = null;
+  app.returnToMenuView = null;
 }
-function openComing(name, returnToCourseTopics = false) {
+function openComing(name, returnToMenuView = null) {
   const feedback = name === 'Şikayet ve Önerileriniz';
   hideDrawer();
-  app.returnToCourseTopics = returnToCourseTopics;
+  app.courseMenuView = 'coming';
+  app.returnToMenuView = returnToMenuView;
+  if (!returnToMenuView) {
+    app.activeCourseMenu = null;
+    app.activeCourseTopic = null;
+    app.activeDifficulty = null;
+  }
   $('#courseTopicChoices').hidden = true;
+  $('#courseDifficultyChoices').hidden = true;
+  $('#topicTestChoices').hidden = true;
   $('#comingLabel').textContent = feedback ? 'GERİ BİLDİRİM' : name.toLocaleUpperCase('tr-TR');
   $('#comingTitle').textContent = feedback ? name : 'Çok Yakında...';
   $('#comingDescription').textContent = feedback ? 'Şikayetini, önerini veya yaşadığın sorunu bize ilet.' : `${name} bölümü için hazırlıklarımız devam ediyor.`;
@@ -167,19 +199,70 @@ function openCourseTopics(course) {
   if (!course) return;
   hideDrawer();
   app.activeCourseMenu = course;
-  app.returnToCourseTopics = false;
+  app.activeCourseTopic = null;
+  app.activeDifficulty = null;
+  app.courseMenuView = 'topics';
+  app.returnToMenuView = null;
   const exam = course.exam || app.activeExam || 'YKS';
   $('#comingLabel').textContent = `${exam} · KONU SEÇİMİ`;
   $('#comingTitle').textContent = course.title;
-  $('#comingDescription').textContent = 'Konuyu açmak için başlığa dokun; bitirdiğinde yanındaki “Bitti” düğmesine bas.';
+  $('#comingDescription').textContent = 'Çalışmak istediğin konuyu seç.';
   $('#comingSoon').hidden = true;
   $('#feedbackForm').hidden = true;
+  $('#courseDifficultyChoices').hidden = true;
+  $('#topicTestChoices').hidden = true;
   $('#courseTopicChoices').innerHTML = course.topics.map((topic) => {
-    const topicKey = progressTopicKey(exam, course.groupId, course.id, topic);
     const complete = topicIsComplete(exam, course.groupId, course.id, topic);
-    return `<div class="course-topic-row"><button class="course-topic-choice" type="button" data-topic-choice="${esc(topic)}" data-course-title="${esc(course.title)}"><span>${esc(topic)}</span><span aria-hidden="true">›</span></button><button class="topic-completion ${complete ? 'complete' : ''}" type="button" data-topic-complete="${esc(topicKey)}" aria-pressed="${complete}" aria-label="${esc(topic)} ${complete ? 'tamamlandı' : 'tamamlandı olarak işaretle'}"><span aria-hidden="true">${complete ? '✓' : '○'}</span><span>${complete ? 'Tamamlandı' : 'Bitti'}</span></button></div>`;
+    return `<button class="course-topic-choice ${complete ? 'topic-done' : ''}" type="button" data-topic-choice="${esc(topic)}"><span>${esc(topic)}${complete ? ' · ✓ Bitti' : ''}</span><span aria-hidden="true">›</span></button>`;
   }).join('');
   $('#courseTopicChoices').hidden = false;
+  $('#comingView').classList.add('show');
+  $('#comingView').setAttribute('aria-hidden', 'false');
+}
+function openDifficultyChoices(topic) {
+  if (!app.activeCourseMenu || !topic) return;
+  hideDrawer();
+  app.activeCourseTopic = topic;
+  app.activeDifficulty = null;
+  app.courseMenuView = 'difficulties';
+  app.returnToMenuView = null;
+  $('#comingLabel').textContent = `${app.activeCourseMenu.exam || app.activeExam || 'YKS'} · ZORLUK SEÇİMİ`;
+  $('#comingTitle').textContent = topic;
+  $('#comingDescription').textContent = 'Testleri görmek için zorluk seviyesini seç.';
+  $('#comingSoon').hidden = true;
+  $('#feedbackForm').hidden = true;
+  $('#courseTopicChoices').hidden = true;
+  $('#topicTestChoices').hidden = true;
+  $('#courseDifficultyChoices').innerHTML = DIFFICULTIES.map((difficulty) => `<button class="course-topic-choice difficulty-choice" type="button" data-topic-difficulty="${difficulty}"><span>${difficulty}</span><span aria-hidden="true">›</span></button>`).join('');
+  $('#courseDifficultyChoices').hidden = false;
+  $('#comingView').classList.add('show');
+  $('#comingView').setAttribute('aria-hidden', 'false');
+}
+function openTopicTests(difficulty) {
+  if (!app.activeCourseMenu || !app.activeCourseTopic || !DIFFICULTIES.includes(difficulty)) return;
+  hideDrawer();
+  app.activeDifficulty = difficulty;
+  app.courseMenuView = 'tests';
+  app.returnToMenuView = null;
+  const course = app.activeCourseMenu;
+  const exam = course.exam || app.activeExam || 'YKS';
+  const topicKey = progressTopicKey(exam, course.groupId, course.id, app.activeCourseTopic);
+  $('#comingLabel').textContent = `${exam} · ${difficulty.toLocaleUpperCase('tr-TR')} TESTLERİ`;
+  $('#comingTitle').textContent = app.activeCourseTopic;
+  $('#comingDescription').textContent = `${difficulty} seviyesindeki testlerden birini seç.`;
+  $('#comingSoon').hidden = true;
+  $('#feedbackForm').hidden = true;
+  $('#courseTopicChoices').hidden = true;
+  $('#courseDifficultyChoices').hidden = true;
+  $('#topicTestChoices').innerHTML = Array.from({ length: TESTS_PER_DIFFICULTY }, (_, index) => {
+    const testNumber = index + 1;
+    const result = testResultFor(topicKey, difficulty, testNumber);
+    const attempts = result.correct + result.wrong + result.blank;
+    const success = attempts ? Math.round(result.correct / attempts * 100) : 0;
+    const completion = result.completed ? 100 : 0;
+    return `<article class="topic-test-card"><button class="topic-test-open" type="button" data-topic-test="${testNumber}"><span>Test ${testNumber}</span><span aria-hidden="true">›</span></button><div class="topic-test-stats"><div><span>Tamamlama</span><strong>%${completion}</strong></div><div><span>Başarı</span><strong>%${success}</strong></div><div><span>Doğru</span><strong>${result.correct}</strong></div><div><span>Yanlış</span><strong>${result.wrong}</strong></div><div><span>Boş</span><strong>${result.blank}</strong></div></div></article>`;
+  }).join('') + '<p class="topic-test-footer">Yeni Testler Eklenmeye Devam Edecek...</p>';
+  $('#topicTestChoices').hidden = false;
   $('#comingView').classList.add('show');
   $('#comingView').setAttribute('aria-hidden', 'false');
 }
@@ -352,8 +435,8 @@ function renderProfile() {
   const progressGroups = Object.entries(EXAM_GROUPS).map(([exam, sections]) => {
     const sectionRows = sections.map((section) => {
       const rows = section.subjects.map((course) => {
-        const total = course.topics.length;
-        const completed = course.topics.filter((topic) => topicIsComplete(exam, section.id, course.id, topic, record)).length;
+        const total = course.topics.length * DIFFICULTIES.length * TESTS_PER_DIFFICULTY;
+        const completed = course.topics.reduce((sum, topic) => sum + topicCompletedTestCount(progressTopicKey(exam, section.id, course.id, topic), record), 0);
         const value = total ? Math.round(completed / total * 100) : 0;
         return { course, completed, total, value };
       });
@@ -362,15 +445,15 @@ function renderProfile() {
     return { exam, sections: sectionRows };
   });
   const allCourses = progressGroups.flatMap((group) => group.sections.flatMap((section) => section.rows.map((row) => ({ ...row, area: group.exam }))));
-  const topicCount = allCourses.reduce((sum, row) => sum + row.total, 0);
+  const totalTests = allCourses.reduce((sum, row) => sum + row.total, 0);
   const completedCount = allCourses.reduce((sum, row) => sum + row.completed, 0);
-  const average = topicCount ? Math.round(completedCount / topicCount * 100) : 0;
+  const average = totalTests ? Math.round(completedCount / totalTests * 100) : 0;
   const weakest = [...allCourses].filter((row) => row.total).sort((a, b) => a.value - b.value)[0];
   const analysis = completedCount
-    ? `<div class="analysis-card"><span class="analysis-kicker">OTOMATİK DERS ANALİZİ</span><h3>${average}% genel ilerleme</h3><p>${completedCount} / ${topicCount} konu tamamlandı.</p><p>Şu an en çok konu bekleyen dersin <strong>${esc(weakest.area + ' ' + weakest.course.title)}</strong> (%${weakest.value}).</p></div>`
-    : '<div class="analysis-card"><span class="analysis-kicker">OTOMATİK DERS ANALİZİ</span><h3>İlerlemen konuları tamamladıkça oluşur.</h3><p>Konu menüsünde bitirdiğin konuyu işaretle; ders yüzdesi otomatik hesaplanır.</p></div>';
-  const groups = progressGroups.map(({ exam, sections }) => `<section class="progress-group"><h4>${exam} Dersleri</h4>${sections.map((section) => `<div class="progress-subgroup"><h5>${esc(section.title)}</h5>${section.rows.map(({ course, completed, total, value }) => `<div class="progress-row"><div class="progress-line"><span>${esc(course.title)}</span><output>${value}% · ${completed}/${total}</output></div><div class="progress-track"><i class="progress-fill" style="width:${value}%"></i></div></div>`).join('')}</div>`).join('')}</section>`).join('');
-  $('#profileContent').innerHTML = `<div class="profile-head"><div class="profile-avatar" aria-hidden="true">${avatar.emoji}</div><div><h3>${esc(fullName)}</h3><p class="public-handle">@${esc(record.username)}</p><p>Bu kullanıcı adı herkese görünür.</p></div></div>${avatarSection}${analysis}<h3 class="profile-section-title">Ders ilerlemelerim</h3><div class="progress-groups">${groups}</div><p class="progress-note">Yüzdeler, tamamlanan konu sayısına göre otomatik hesaplanır. Bitirdiğin konuyu ilgili dersin konu menüsündeki “Bitti” düğmesiyle işaretle.</p>`;
+    ? `<div class="analysis-card"><span class="analysis-kicker">OTOMATİK DERS ANALİZİ</span><h3>${average}% genel ilerleme</h3><p>${completedCount} / ${totalTests} test tamamlandı.</p><p>Şu an en çok test bekleyen dersin <strong>${esc(weakest.area + ' ' + weakest.course.title)}</strong> (%${weakest.value}).</p></div>`
+    : '<div class="analysis-card"><span class="analysis-kicker">OTOMATİK DERS ANALİZİ</span><h3>İlerlemen testler tamamlandıkça oluşur.</h3><p>Tamamlanan testler ve ders yüzdeleri sistem tarafından otomatik hesaplanır.</p></div>';
+  const groups = progressGroups.map(({ exam, sections }) => `<section class="progress-group"><h4>${exam} Dersleri</h4>${sections.map((section) => `<div class="progress-subgroup"><h5>${esc(section.title)}</h5>${section.rows.map(({ course, completed, total, value }) => `<div class="progress-row"><div class="progress-line"><span>${esc(course.title)}</span><output>${value}% · ${completed}/${total} test</output></div><div class="progress-track"><i class="progress-fill" style="width:${value}%"></i></div></div>`).join('')}</div>`).join('')}</section>`).join('');
+  $('#profileContent').innerHTML = `<div class="profile-head"><div class="profile-avatar" aria-hidden="true">${avatar.emoji}</div><div><h3>${esc(fullName)}</h3><p class="public-handle">@${esc(record.username)}</p><p>Bu kullanıcı adı herkese görünür.</p></div></div>${avatarSection}${analysis}<h3 class="profile-section-title">Ders ilerlemelerim</h3><div class="progress-groups">${groups}</div><p class="progress-note">Her testin tamamlanma durumu ve ders yüzdesi, test sonuçları kaydedildikçe sistem tarafından otomatik güncellenir. Konular kullanıcı tarafından elle tamamlandı olarak işaretlenemez.</p>`;
 }
 
 function openProfile() {
@@ -442,23 +525,6 @@ async function loadAdminChat(showSetupNotice = false) {
   }
 }
 
-async function toggleTopicCompletion(topicKey) {
-  if (!app.user || !app.profile) { showToast('İlerlemeni kaydetmek için giriş yap.'); return; }
-  const record = profileRecord();
-  ensureProfile(record);
-  const completedTopics = new Set(record.progress.completed_topics);
-  const wasComplete = completedTopics.has(topicKey);
-  if (wasComplete) completedTopics.delete(topicKey);
-  else completedTopics.add(topicKey);
-  const nextProgress = { ...record.progress, completed_topics: [...completedTopics] };
-  const { error } = await app.client.from('profiles').update({ progress: nextProgress }).eq('id', app.user.id);
-  if (error) throw error;
-  record.progress = nextProgress;
-  if (!$('#profileOverlay').hidden) renderProfile();
-  if (app.activeCourseMenu) openCourseTopics(app.activeCourseMenu);
-  showToast(wasComplete ? 'Konu tamamlandı durumundan çıkarıldı.' : 'Konu tamamlandı, ilerlemen güncellendi.');
-}
-
 async function requireClient() {
   if (!app.client) throw new Error('Bağlantı ayarı eksik. config.js dosyasına Supabase URL ve publishable key eklenmeli.');
   return app.client;
@@ -500,15 +566,20 @@ document.addEventListener('click', async (event) => {
     setActiveExam(examToggle.dataset.examToggle);
     return;
   }
-  const completionToggle = target.closest('[data-topic-complete]');
-  if (completionToggle) {
-    try { await toggleTopicCompletion(completionToggle.dataset.topicComplete); }
-    catch (error) { showToast(normalizeError(error)); }
-    return;
-  }
   const topicChoice = target.closest('[data-topic-choice]');
   if (topicChoice) {
-    openComing(`${topicChoice.dataset.courseTitle} · ${topicChoice.dataset.topicChoice}`, true);
+    openDifficultyChoices(topicChoice.dataset.topicChoice);
+    return;
+  }
+  const difficultyChoice = target.closest('[data-topic-difficulty]');
+  if (difficultyChoice) {
+    openTopicTests(difficultyChoice.dataset.topicDifficulty);
+    return;
+  }
+  const testChoice = target.closest('[data-topic-test]');
+  if (testChoice) {
+    const courseTitle = app.activeCourseMenu?.title || '';
+    openComing(`${courseTitle} · ${app.activeCourseTopic} · ${app.activeDifficulty} · Test ${testChoice.dataset.topicTest}`, 'tests');
     return;
   }
   const courseButton = target.closest('[data-course-key]');
