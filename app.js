@@ -75,6 +75,7 @@ const BLOCKED_USERNAME_TERMS = ['amk', 'aq', 'aminakoyim', 'orospu', 'siktir', '
 const app = {
   client: null, user: null, profile: null, role: null, isPrimaryAdmin: false,
   adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null,
+  activeCourseMenu: null, returnToCourseTopics: false,
   db: { users: [], feedback: [], announcements: [], audit: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
 };
 
@@ -93,6 +94,13 @@ const normalizeUsername = (value) => String(value || '').toLocaleLowerCase('tr-T
 const inappropriateUsername = (value) => BLOCKED_USERNAME_TERMS.some((term) => normalizeUsername(value).includes(term));
 const avatarFor = (id) => AVATARS.find((item) => item.id === id) || AVATARS[0];
 const isConfigured = () => window.YKS_CONFIG?.supabaseUrl?.startsWith('https://') && window.YKS_CONFIG?.publishableKey && !window.YKS_CONFIG.publishableKey.includes('PASTE_');
+
+document.addEventListener('touchmove', (event) => {
+  if (event.touches.length > 1) event.preventDefault();
+}, { passive: false });
+for (const eventName of ['gesturestart', 'gesturechange', 'gestureend']) {
+  document.addEventListener(eventName, (event) => event.preventDefault(), { passive: false });
+}
 
 function showToast(message) {
   const el = $('#toast');
@@ -133,10 +141,22 @@ function hideDrawer() {
   $('#drawer').classList.remove('open'); $('#drawer').setAttribute('aria-hidden', 'true');
   $('#menuButton').setAttribute('aria-expanded', 'false'); $('#menuButton').setAttribute('aria-label', 'Menüyü aç'); $('#scrim').hidden = true;
 }
-function closeComing() { $('#comingView').classList.remove('show'); $('#comingView').setAttribute('aria-hidden', 'true'); }
-function openComing(name) {
+function closeComing() {
+  if (app.returnToCourseTopics && app.activeCourseMenu) {
+    const course = app.activeCourseMenu;
+    app.returnToCourseTopics = false;
+    openCourseTopics(course);
+    return;
+  }
+  $('#comingView').classList.remove('show');
+  $('#comingView').setAttribute('aria-hidden', 'true');
+  app.activeCourseMenu = null;
+  app.returnToCourseTopics = false;
+}
+function openComing(name, returnToCourseTopics = false) {
   const feedback = name === 'Şikayet ve Önerileriniz';
   hideDrawer();
+  app.returnToCourseTopics = returnToCourseTopics;
   $('#courseTopicChoices').hidden = true;
   $('#comingLabel').textContent = feedback ? 'GERİ BİLDİRİM' : name.toLocaleUpperCase('tr-TR');
   $('#comingTitle').textContent = feedback ? name : 'Çok Yakında...';
@@ -147,6 +167,8 @@ function openComing(name) {
 function openCourseTopics(course) {
   if (!course) return;
   hideDrawer();
+  app.activeCourseMenu = course;
+  app.returnToCourseTopics = false;
   $('#comingLabel').textContent = `${app.activeExam || 'YKS'} · KONU SEÇİMİ`;
   $('#comingTitle').textContent = course.title;
   $('#comingDescription').textContent = 'Çalışmak istediğin konu başlığını seç.';
@@ -415,7 +437,7 @@ document.addEventListener('click', async (event) => {
   }
   const topicChoice = target.closest('[data-topic-choice]');
   if (topicChoice) {
-    openComing(`${topicChoice.dataset.courseTitle} · ${topicChoice.dataset.topicChoice}`);
+    openComing(`${topicChoice.dataset.courseTitle} · ${topicChoice.dataset.topicChoice}`, true);
     return;
   }
   const courseButton = target.closest('[data-course-key]');
