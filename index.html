@@ -96,16 +96,25 @@
     .exam-course-open span:first-child{min-width:0;overflow-wrap:anywhere}
     .exam-course-arrow{flex:0 0 auto;color:var(--muted);font-size:16px}
     .course-topic-choices{display:grid;gap:9px;margin:22px 0}
-    .course-topic-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;gap:8px}
     .course-topic-choice{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:46px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#101010;color:var(--white);text-align:left;font-size:12px;line-height:1.45}
     .course-topic-choice span:first-child{min-width:0;overflow-wrap:anywhere}
     .course-topic-choice span:last-child{flex:none;color:var(--muted);font-size:16px}
     .course-topic-choice:hover{border-color:var(--white);background:var(--white);color:var(--black)}
     .course-topic-choice:hover span:last-child{color:#555}
-    .topic-completion{display:flex;justify-content:center;align-items:center;gap:6px;min-width:106px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#101010;color:#ccc;font-size:10px;white-space:nowrap}
-    .topic-completion:hover,.topic-completion.complete{border-color:var(--white);background:var(--white);color:var(--black)}
-    .topic-completion span:first-child{font-size:14px}
-    @media(max-width:700px){.landing.exam-open{min-height:0;grid-template-columns:minmax(0,1fr)}.exam-tile,.exam-content,.exam-groups,.exam-group,.exam-group-content,.exam-subject-list{width:100%;min-width:0}.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.exam-content{padding:0 12px 25px}.exam-groups{gap:9px}.exam-group-toggle{min-height:50px;padding:11px 12px;font-size:11px}.exam-group-content{padding:0 10px 11px}.exam-subject-list{gap:8px;padding-top:10px}.exam-course-open{min-height:48px;padding:10px 11px;font-size:11px}.course-topic-choices{gap:8px;margin:17px 0}.course-topic-row{gap:6px}.course-topic-choice{min-height:48px;padding:10px;font-size:11px}.topic-completion{min-width:86px;padding:7px 8px;font-size:9px}.coming{-webkit-overflow-scrolling:touch;max-height:calc(100dvh - 24px);max-height:88svh}}
+    .course-topic-choice.topic-done{border-color:rgba(166,205,174,.45)}
+    .topic-test-choices{display:grid;gap:9px;margin:22px 0}
+    .topic-test-card{overflow:hidden;border:1px solid rgba(245,245,242,.14);border-radius:12px;background:#101010}
+    .topic-test-open{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:46px;padding:11px 14px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--white);text-align:left;font-size:12px}
+    .topic-test-open:hover{background:#202020}
+    .topic-test-open span:last-child{color:var(--muted);font-size:16px}
+    .topic-test-stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:9px}
+    .topic-test-stats>div{grid-column:span 2;min-width:0;padding:7px 8px;border:1px solid rgba(245,245,242,.08);border-radius:8px;background:#171717}
+    .topic-test-stats>div:nth-child(-n+2){grid-column:span 3}
+    .topic-test-stats span,.topic-test-stats strong{display:block;overflow-wrap:anywhere}
+    .topic-test-stats span{color:var(--muted);font-size:9px;line-height:1.35}
+    .topic-test-stats strong{margin-top:3px;color:var(--white);font-size:12px;font-variant-numeric:tabular-nums}
+    .topic-test-footer{margin:8px 0 4px;padding:14px;border:1px dashed rgba(245,245,242,.2);border-radius:12px;color:#aaa;text-align:center;font-size:11px;line-height:1.5}
+    @media(max-width:700px){.landing.exam-open{min-height:0;grid-template-columns:minmax(0,1fr)}.exam-tile,.exam-content,.exam-groups,.exam-group,.exam-group-content,.exam-subject-list{width:100%;min-width:0}.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.exam-content{padding:0 12px 25px}.exam-groups{gap:9px}.exam-group-toggle{min-height:50px;padding:11px 12px;font-size:11px}.exam-group-content{padding:0 10px 11px}.exam-subject-list{gap:8px;padding-top:10px}.exam-course-open{min-height:48px;padding:10px 11px;font-size:11px}.course-topic-choices,.topic-test-choices{gap:8px;margin:17px 0}.course-topic-choice{min-height:48px;padding:10px;font-size:11px}.topic-test-stats{gap:5px;padding:7px}.topic-test-stats>div{padding:6px}.topic-test-stats span{font-size:8px}.topic-test-stats strong{font-size:11px}.coming{-webkit-overflow-scrolling:touch;max-height:calc(100dvh - 24px);max-height:88svh}}
   </style>
   <style>
     .admin-panel.admin-chat-active{display:flex;flex-direction:column;gap:12px;max-height:min(58vh,540px);overflow:hidden}
@@ -159,6 +168,8 @@
     <div class="coming"><button class="view-back" id="viewBack" aria-label="Pencereyi kapat">×</button><p class="eyebrow" id="comingLabel">YAKINDA</p><h1 id="comingTitle">Çok Yakında...</h1><p id="comingDescription">Bu alan için hazırlıklarımız devam ediyor.</p>
       <div class="coming-soon" id="comingSoon"><strong>Çok Yakında...</strong><span>Hazırlıklarımız devam ediyor.</span></div>
       <div class="course-topic-choices" id="courseTopicChoices" hidden></div>
+      <div class="course-topic-choices" id="courseDifficultyChoices" hidden></div>
+      <div class="topic-test-choices" id="topicTestChoices" hidden></div>
       <form id="feedbackForm" class="form" hidden><label>Görüş türü<select name="category" required><option value="Öneri">Öneri</option><option value="Şikayet">Şikayet</option><option value="Diğer">Diğer</option></select></label><label>Konu<input name="subject" required minlength="3" maxlength="100" placeholder="Kısaca konu başlığı"></label><label>E-posta <span class="fine">(İsteğe bağlı, yanıt için)</span><input name="email" type="email" maxlength="254" placeholder="ornek@eposta.com"></label><label>Mesajın<textarea name="message" required minlength="10" maxlength="3000" rows="5" placeholder="Fikrini veya yaşadığın sorunu ayrıntılı yaz…"></textarea></label><button class="submit" type="submit">Gönder <span>→</span></button></form>
       <button class="outline" data-view-close>Geri dön</button>
     </div>
