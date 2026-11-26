@@ -76,7 +76,8 @@ const app = {
   client: null, user: null, profile: null, role: null, isPrimaryAdmin: false,
   adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null,
   activeCourseMenu: null, returnToCourseTopics: false,
-  db: { users: [], feedback: [], announcements: [], audit: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
+  chatLoading: false,
+  db: { users: [], feedback: [], announcements: [], audit: [], chatMessages: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
 };
 
 const legal = {
@@ -387,10 +388,46 @@ function renderAdmin() {
     panel.innerHTML = `<h3>Duyuru yayınla</h3><form class="admin-form" id="announcementForm"><label>Başlık<input name="title" required minlength="3" maxlength="100"></label><label>Metin<textarea name="message" required minlength="3" maxlength="1000" rows="3"></textarea></label><button class="submit">Duyuruyu yayınla →</button></form><h3>Yayındaki duyurular</h3>${announcementRows || '<p class="empty">Duyuru bulunmuyor.</p>'}`;
   } else if (app.adminTab === 'settings') {
     panel.innerHTML = `<h3>Site ayarları</h3><label class="setting"><span><strong>Yeni kayıtları kabul et</strong><small>Kapatıldığında yeni üye kaydı engellenir.</small></span><input type="checkbox" data-setting="registrations_open" ${db.settings.registrations_open ? 'checked' : ''}></label><label class="setting"><span><strong>Bakım modu</strong><small>Yönetici dışındaki ziyaretçilere bakım ekranı gösterilir.</small></span><input type="checkbox" data-setting="maintenance" ${db.settings.maintenance ? 'checked' : ''}></label><form class="admin-form" id="maintenanceForm"><label>Bakım mesajı<input name="message" maxlength="300" value="${esc(db.settings.maintenance_message || '')}"></label><button class="small-btn">Mesajı kaydet</button></form>`;
+  } else if (app.adminTab === 'chat') {
+    panel.innerHTML = `<h3>Admin sohbeti</h3><p class="fine">Bu alan yalnızca yöneticilere açıktır. Mesajlar ortak olarak saklanır.</p><div class="admin-chat-messages" id="adminChatMessages" aria-live="polite"></div><form class="admin-chat-form" id="adminChatForm"><label>Mesajın<textarea name="message" required maxlength="2000" rows="2" placeholder="Yöneticilere mesaj yaz..."></textarea></label><button class="submit" type="submit">Gönder <span>→</span></button></form>`;
+    renderAdminChatMessages();
+    loadAdminChat(false);
   } else if (app.adminTab === 'security' && isPrimaryAdmin()) {
     panel.innerHTML = `<h3>Yönetici kullanıcı adı</h3><form class="admin-form" id="adminUsernameForm"><label>Yeni kullanıcı adı<input name="username" required minlength="3" maxlength="24" value="${esc(app.profile?.username || '')}" autocomplete="username"></label><button class="submit">Kullanıcı adını güncelle →</button></form><h3>Yönetici şifresini değiştir</h3><form class="admin-form" id="passwordForm"><label>Yeni şifre<input name="next" type="password" required minlength="10" autocomplete="new-password"></label><button class="submit">Şifreyi güncelle →</button></form><p class="fine">Şifre Supabase Auth tarafından yönetilir. Yönetici yetkisi veritabanında tutulur.</p>`;
   } else {
     panel.innerHTML = `<h3>Son işlemler</h3>${db.audit.map((item) => `<article class="audit-row"><strong>${esc(item.action)}</strong><small>${esc(item.actor)} · ${esc(item.detail)} · ${date(item.created_at)}</small></article>`).join('') || '<p class="empty">Henüz işlem yok.</p>'}`;
+  }
+  panel.classList.toggle('admin-chat-active', app.adminTab === 'chat');
+}
+
+function renderAdminChatMessages() {
+  const box = $('#adminChatMessages');
+  if (!box) return;
+  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  box.innerHTML = app.db.chatMessages.map((item) => {
+    const mine = item.user_id === app.user?.id;
+    return `<article class="admin-chat-message ${mine ? 'mine' : ''}"><div class="admin-chat-meta"><strong>${esc(item.author || 'Yönetici')}</strong><time>${date(item.created_at)}</time></div><p>${esc(item.message)}</p></article>`;
+  }).join('') || '<p class="empty">Henüz sohbet mesajı yok.</p>';
+  if (wasAtBottom) requestAnimationFrame(() => { box.scrollTop = box.scrollHeight; });
+}
+
+async function loadAdminChat(showSetupNotice = false) {
+  if (!app.client || !isAdmin() || app.adminTab !== 'chat' || app.chatLoading) return;
+  app.chatLoading = true;
+  try {
+    const { data, error } = await app.client.from('admin_chat_messages')
+      .select('id,user_id,author,message,created_at')
+      .order('created_at', { ascending: false })
+      .limit(300);
+    if (error) throw error;
+    app.db.chatMessages = (data || []).reverse();
+    renderAdminChatMessages();
+  } catch (error) {
+    const box = $('#adminChatMessages');
+    if (box) box.innerHTML = '<p class="empty">Sohbet tablosu hazır değil. admin_chat.sql dosyasını Supabase SQL Editor’da bir kez çalıştır.</p>';
+    if (showSetupNotice) showToast('Admin sohbetini etkinleştirmek için admin_chat.sql dosyasını Supabase SQL Editor’da çalıştır.');
+  } finally {
+    app.chatLoading = false;
   }
 }
 
@@ -551,7 +588,7 @@ document.addEventListener('input', (event) => {
 
 document.addEventListener('submit', async (event) => {
   const form = event.target;
-  if (!['loginForm', 'registerForm', 'feedbackForm', 'announcementForm', 'maintenanceForm', 'passwordForm', 'adminUsernameForm'].includes(form.id)) return;
+  if (!['loginForm', 'registerForm', 'feedbackForm', 'announcementForm', 'maintenanceForm', 'passwordForm', 'adminUsernameForm', 'adminChatForm'].includes(form.id)) return;
   event.preventDefault();
   try {
     const client = await requireClient();
@@ -587,6 +624,21 @@ document.addEventListener('submit', async (event) => {
       const { error } = await client.from('announcements').insert({ title, message, author: app.profile?.username || 'Yönetici' });
       if (error) throw error;
       await loadState(); renderAdmin(); showToast('Duyuru yayınlandı.'); return;
+    }
+    if (form.id === 'adminChatForm') {
+      if (!isAdmin() || !app.user || !app.profile?.username) throw new Error('Yönetici girişi gerekli.');
+      const message = String(new FormData(form).get('message') || '').trim();
+      if (!message || message.length > 2000) throw new Error('Mesaj 1–2000 karakter arasında olmalı.');
+      const { data: sentMessage, error } = await client.from('admin_chat_messages')
+        .insert({ user_id: app.user.id, author: app.profile.username, message })
+        .select('id,user_id,author,message,created_at')
+        .single();
+      if (error) throw error;
+      form.reset();
+      app.db.chatMessages = [...app.db.chatMessages, sentMessage].slice(-300);
+      renderAdminChatMessages();
+      showToast('Mesaj gönderildi.');
+      return;
     }
     if (form.id === 'maintenanceForm') {
       const message = String(new FormData(form).get('message')).trim() || 'Site bakımda. Lütfen daha sonra tekrar deneyin.';
@@ -635,10 +687,16 @@ async function startApp() {
     setTimeout(() => loadState().catch((error) => showToast(normalizeError(error))), 0);
   });
   setInterval(() => {
-    if (document.visibilityState === 'visible') refreshPublicContent().catch(() => {});
+    if (document.visibilityState === 'visible') {
+      refreshPublicContent().catch(() => {});
+      if (isAdmin() && !$('#adminOverlay').hidden && app.adminTab === 'chat') loadAdminChat();
+    }
   }, 15000);
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') refreshPublicContent().catch(() => {});
+    if (document.visibilityState === 'visible') {
+      refreshPublicContent().catch(() => {});
+      if (isAdmin() && !$('#adminOverlay').hidden && app.adminTab === 'chat') loadAdminChat();
+    }
   });
   try { await loadState(); }
   catch (error) { updateHeader(); showToast(normalizeError(error)); }
