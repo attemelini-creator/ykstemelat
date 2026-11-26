@@ -10,26 +10,71 @@ const AVATARS = [
 ];
 const LESSONS = {
   TYT: ['Türkçe', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya', 'Felsefe', 'Din Kültürü ve Ahlak Bilgisi', 'Geometri'],
-  AYT: ['Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Türk Dili ve Edebiyatı', 'Tarih-1', 'Coğrafya-1', 'Tarih-2', 'Coğrafya-2', 'Felsefe Grubu', 'Din Kültürü ve Ahlak Bilgisi', 'Geometri']
+  AYT: ['Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Türk Dili ve Edebiyatı', 'Tarih-1', 'Coğrafya-1', 'Tarih-2', 'Coğrafya-2', 'Felsefe Grubu', 'Din Kültürü ve Ahlak Bilgisi', 'Geometri', 'Sosyal Bilimler-1', 'YDT']
 };
+const GEOMETRY_TOPICS = ['Doğruda ve Üçgende Açılar', 'Üçgenler', 'Üçgende Alan', 'Çokgenler ve Dörtgenler', 'Çember ve Daire', 'Analitik Geometri', 'Katı Cisimler'];
+const YDT_TOPICS = ['Kelime Bilgisi', 'Dil Bilgisi', 'Cümle Tamamlama', 'Anlamca Yakın Cümle', 'Çeviri', 'Paragraf Tamamlama', 'Diyalog Tamamlama', 'Anlam Bütünlüğünü Bozan Cümle', 'Okuma Parçaları'];
 const EXAM_GROUPS = {
   TYT: [
-    { id: 'turkce', title: 'Türkçe', subjects: ['Türkçe'] },
-    { id: 'matematik', title: 'Temel Matematik', subjects: ['Matematik', 'Geometri'] },
-    { id: 'fen', title: 'Fen Bilimleri', subjects: ['Fizik', 'Kimya', 'Biyoloji'] },
-    { id: 'sosyal', title: 'Sosyal Bilimler', subjects: ['Tarih', 'Coğrafya', 'Felsefe', 'Din Kültürü ve Ahlak Bilgisi'] }
+    { id: 'turkce', title: 'Türkçe', subjects: [
+      { id: 'turkce', title: 'Türkçe', topics: ['Sözcükte Anlam', 'Cümlede Anlam', 'Paragraf', 'Ses Bilgisi', 'Yazım Kuralları', 'Noktalama İşaretleri', 'Sözcükte Yapı', 'Sözcük Türleri', 'Fiiller', 'Fiilimsi', 'Cümlenin Ögeleri', 'Cümle Türleri', 'Anlatım Bozukluğu'] }
+    ] },
+    { id: 'matematik', title: 'Temel Matematik', subjects: [
+      { id: 'matematik', title: 'Matematik', topics: ['Temel Kavramlar', 'Sayı Basamakları', 'Bölme ve Bölünebilme', 'EBOB ve EKOK', 'Rasyonel Sayılar', 'Basit Eşitsizlikler', 'Mutlak Değer', 'Üslü Sayılar', 'Köklü Sayılar', 'Çarpanlara Ayırma', 'Oran ve Orantı', 'Denklem Çözme', 'Problemler', 'Kümeler', 'Mantık', 'Fonksiyonlar', 'Permütasyon ve Kombinasyon', 'Olasılık', 'Veri ve İstatistik'] }
+    ] },
+    { id: 'geometri', title: 'Geometri', subjects: [
+      { id: 'geometri', title: 'Geometri', topics: GEOMETRY_TOPICS, comingSoonTopics: true }
+    ] },
+    { id: 'fen', title: 'Fen Bilimleri', subjects: [
+      { id: 'fizik', title: 'Fizik', topics: ['Fizik Bilimine Giriş', 'Madde ve Özellikleri', 'Hareket ve Kuvvet', 'İş, Güç ve Enerji', 'Isı, Sıcaklık ve Genleşme', 'Basınç ve Kaldırma Kuvveti', 'Elektrostatik', 'Elektrik Akımı ve Devreler', 'Mıknatıslar', 'Dalgalar', 'Optik'] },
+      { id: 'kimya', title: 'Kimya', topics: ['Kimya Bilimi', 'Atom ve Periyodik Sistem', 'Kimyasal Türler Arası Etkileşimler', 'Maddenin Hâlleri', 'Doğa ve Kimya', 'Kimyanın Temel Kanunları', 'Kimyasal Hesaplamalar', 'Karışımlar', 'Asitler, Bazlar ve Tuzlar', 'Kimya Her Yerde'] },
+      { id: 'biyoloji', title: 'Biyoloji', topics: ['Yaşam Bilimi Biyoloji', 'Hücre', 'Canlılar Dünyası', 'Hücre Bölünmeleri', 'Kalıtım', 'Ekosistem Ekolojisi', 'Canlıların Sınıflandırılması', 'Hücre ve Organeller', 'Canlıların Temel Bileşenleri'] }
+    ] },
+    { id: 'sosyal', title: 'Sosyal Bilimler', subjects: [
+      { id: 'tarih', title: 'Tarih', topics: ['Tarih Bilimi', 'İlk Uygarlıklar', 'İlk ve Orta Çağlarda Türk Dünyası', 'İslam Medeniyetinin Doğuşu', 'Türklerin İslamiyet’i Kabulü', 'Türkiye Tarihi', 'Beylikten Devlete Osmanlı', 'Dünya Gücü Osmanlı', 'Değişim Çağında Dünya ve Osmanlı', 'Millî Mücadele', 'Atatürkçülük ve Türk İnkılabı'] },
+      { id: 'cografya', title: 'Coğrafya', topics: ['Doğa ve İnsan', 'Coğrafi Konum', 'Harita Bilgisi', 'Dünya’nın Şekli ve Hareketleri', 'İklim Bilgisi', 'Yerin Şekillenmesi', 'Su, Toprak ve Bitkiler', 'Nüfus ve Yerleşme', 'Ekonomik Faaliyetler', 'Bölgeler', 'Doğal Afetler'] },
+      { id: 'felsefe', title: 'Felsefe', topics: ['Felsefeye Giriş', 'Bilgi Felsefesi', 'Varlık Felsefesi', 'Bilim Felsefesi', 'Ahlak Felsefesi', 'Din Felsefesi', 'Siyaset Felsefesi', 'Sanat Felsefesi'] },
+      { id: 'din', title: 'Din Kültürü ve Ahlak Bilgisi', topics: ['Bilgi ve İnanç', 'Din ve İslam', 'İslam ve İbadet', 'Gençlik ve Değerler', 'Gönül Coğrafyamız', 'Allah-İnsan İlişkisi', 'Hz. Muhammed ve Gençlik', 'Ahlaki Tutum ve Davranışlar'] }
+    ] }
   ],
   AYT: [
-    { id: 'matematik', title: 'Matematik', subjects: ['Matematik', 'Geometri'] },
-    { id: 'fen', title: 'Fen Bilimleri', subjects: ['Fizik', 'Kimya', 'Biyoloji'] },
-    { id: 'edebiyat-sosyal-1', title: 'Türk Dili ve Edebiyatı–Sosyal Bilimler-1', subjects: ['Türk Dili ve Edebiyatı', 'Tarih-1', 'Coğrafya-1'] },
-    { id: 'sosyal-2', title: 'Sosyal Bilimler-2', subjects: ['Tarih-2', 'Coğrafya-2', 'Felsefe Grubu (Psikoloji, Sosyoloji, Mantık)', 'Din Kültürü ve Ahlak Bilgisi'] }
+    { id: 'matematik', title: 'Matematik', subjects: [
+      { id: 'matematik', title: 'Matematik', topics: ['Fonksiyonlar', 'Polinomlar', 'İkinci Dereceden Denklemler', 'Karmaşık Sayılar', 'Parabol', 'Eşitsizlikler', 'Permütasyon, Kombinasyon ve Binom', 'Olasılık', 'Trigonometri', 'Logaritma', 'Diziler', 'Limit ve Süreklilik', 'Türev', 'İntegral'] }
+    ] },
+    { id: 'geometri', title: 'Geometri', subjects: [
+      { id: 'geometri', title: 'Geometri', topics: GEOMETRY_TOPICS, comingSoonTopics: true }
+    ] },
+    { id: 'fen', title: 'Fen Bilimleri', subjects: [
+      { id: 'fizik', title: 'Fizik', topics: ['Vektörler', 'Kuvvet, Tork ve Denge', 'Kütle Merkezi', 'Basit Makineler', 'Hareket', 'Newton’ın Hareket Yasaları', 'İş, Güç ve Enerji', 'Atışlar', 'İtme ve Momentum', 'Elektrik Alan ve Potansiyel', 'Manyetizma ve Elektromanyetik İndüksiyon', 'Çembersel Hareket', 'Basit Harmonik Hareket', 'Dalga Mekaniği', 'Atom Fiziği ve Radyoaktivite'] },
+      { id: 'kimya', title: 'Kimya', topics: ['Modern Atom Teorisi', 'Gazlar', 'Sıvı Çözeltiler', 'Kimyasal Tepkimelerde Enerji', 'Tepkime Hızları', 'Kimyasal Denge', 'Asit-Baz Dengesi', 'Çözünürlük Dengesi', 'Kimya ve Elektrik', 'Organik Kimya'] },
+      { id: 'biyoloji', title: 'Biyoloji', topics: ['İnsan Fizyolojisi', 'Sinir Sistemi', 'Endokrin Sistem', 'Duyu Organları', 'Destek ve Hareket Sistemi', 'Sindirim Sistemi', 'Dolaşım ve Bağışıklık', 'Solunum Sistemi', 'Üriner Sistem', 'Üreme Sistemi ve Embriyonik Gelişim', 'Komünite ve Popülasyon Ekolojisi', 'Genden Proteine', 'Canlılarda Enerji Dönüşümleri', 'Bitki Biyolojisi'] }
+    ] },
+    { id: 'edebiyat', title: 'Türk Dili ve Edebiyatı', subjects: [
+      { id: 'edebiyat', title: 'Türk Dili ve Edebiyatı', topics: ['Şiir Bilgisi', 'Edebî Sanatlar', 'İslamiyet Öncesi Türk Edebiyatı', 'Halk Edebiyatı', 'Divan Edebiyatı', 'Tanzimat Edebiyatı', 'Servetifünun ve Fecriati', 'Millî Edebiyat', 'Cumhuriyet Dönemi Edebiyatı', 'Roman ve Hikâye', 'Tiyatro', 'Öğretici Metinler', 'Edebî Akımlar'] }
+    ] },
+    { id: 'sosyal-1', title: 'Sosyal Bilimler-1', subjects: [
+      { id: 'tarih-1', title: 'Tarih-1', topics: ['Tarih ve Zaman', 'İnsanlığın İlk Dönemleri', 'Orta Çağ’da Dünya', 'İlk ve Orta Çağlarda Türk Dünyası', 'İslam Medeniyetinin Doğuşu', 'Türklerin İslamiyet’i Kabulü ve İlk Türk-İslam Devletleri', 'Yerleşme ve Devletleşme Sürecinde Selçuklu Türkiyesi', 'Beylikten Devlete Osmanlı', 'Dünya Gücü Osmanlı', 'Değişen Dünya Dengeleri Karşısında Osmanlı', 'Millî Mücadele', 'Atatürkçülük ve Türk İnkılabı'], comingSoonTopics: true },
+      { id: 'cografya-1', title: 'Coğrafya-1', topics: ['Ekosistem', 'Nüfus Politikaları ve Şehirler', 'Ekonomik Faaliyetler ve Gelişmişlik', 'Türkiye’de Ekonomi', 'Doğal Kaynaklar ve Çevre', 'Küresel Ortam: Bölgeler ve Ülkeler', 'Ülkeler Arası Etkileşim', 'Çevre Sorunları ve Toplum', 'Doğal Afetler'], comingSoonTopics: true }
+    ] },
+    { id: 'sosyal-2', title: 'Sosyal Bilimler-2', subjects: [
+      { id: 'tarih-2', title: 'Tarih-2', topics: ['Tarih Bilimi', 'İlk Uygarlıklar', 'Türk ve İslam Devletleri', 'Osmanlı Tarihi', 'Avrupa Tarihi', '20. Yüzyılda Dünya', 'Millî Mücadele', 'Atatürkçülük ve Türk İnkılabı'] },
+      { id: 'cografya-2', title: 'Coğrafya-2', topics: ['Ekosistem', 'Nüfus ve Yerleşme', 'Ekonomik Faaliyetler', 'Türkiye’de Bölgeler', 'Ülkeler ve Bölgeler', 'Çevre Sorunları', 'Doğal Afetler'] },
+      { id: 'felsefe-grubu', title: 'Felsefe Grubu', topics: ['Psikolojiye Giriş', 'Öğrenme ve Bellek', 'Sosyal Psikoloji', 'Sosyolojiye Giriş', 'Toplumsal Yapı ve Değişme', 'Mantığa Giriş', 'Klasik Mantık', 'Sembolik Mantık'] },
+      { id: 'din', title: 'Din Kültürü ve Ahlak Bilgisi', topics: ['Dünya ve Ahiret', 'Kur’an’a Göre Hz. Muhammed', 'İslam Düşüncesinde Yorumlar', 'Din ve Laiklik', 'İslam ve Bilim', 'Anadolu’da İslam', 'İslam Düşüncesinde Tasavvufi Yorumlar'] }
+    ] },
+    { id: 'ydt', title: 'YDT', subjects: [
+      { id: 'ydt-ingilizce', title: 'İngilizce', topics: YDT_TOPICS, comingSoonTopics: true },
+      { id: 'ydt-almanca', title: 'Almanca', topics: YDT_TOPICS, comingSoonTopics: true },
+      { id: 'ydt-fransizca', title: 'Fransızca', topics: YDT_TOPICS, comingSoonTopics: true },
+      { id: 'ydt-rusca', title: 'Rusça', topics: YDT_TOPICS, comingSoonTopics: true },
+      { id: 'ydt-arapca', title: 'Arapça', topics: YDT_TOPICS, comingSoonTopics: true }
+    ] }
   ]
 };
 const BLOCKED_USERNAME_TERMS = ['amk', 'aq', 'aminakoyim', 'orospu', 'siktir', 'sikiyim', 'sikmek', 'yarak', 'yarrak', 'pic', 'ibne', 'pezevenk', 'kahpe', 'fuck', 'shit', 'bitch', 'asshole'];
 const app = {
   client: null, user: null, profile: null, role: null, isPrimaryAdmin: false,
-  adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null,
+  adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null, activeCourse: null,
   db: { users: [], feedback: [], announcements: [], audit: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
 };
 
@@ -113,7 +158,15 @@ function renderExamPanel() {
   if (!exam || !EXAM_GROUPS[exam]) return;
   $(`#examGroups${exam}`).innerHTML = EXAM_GROUPS[exam].map((group) => {
     const open = app.activeCourseGroup === group.id;
-    return `<section class="exam-group"><button class="exam-group-toggle" type="button" data-course-group="${esc(group.id)}" aria-expanded="${open}"><span>${esc(group.title)}</span><span class="exam-chevron" aria-hidden="true">⌄</span></button><div class="exam-group-content" ${open ? '' : 'hidden'}><div class="exam-subject-list">${group.subjects.map((subject) => `<span class="exam-subject">${esc(subject)}</span>`).join('')}</div></div></section>`;
+    const subjects = group.subjects.map((course) => {
+      const courseKey = `${group.id}:${course.id}`;
+      const courseOpen = app.activeCourse === courseKey;
+      const topics = course.topics.map((topic) => course.comingSoonTopics
+        ? `<button class="exam-topic exam-topic-button" type="button" data-coming-topic="${esc(`${course.title} · ${topic}`)}">${esc(topic)}</button>`
+        : `<span class="exam-topic">${esc(topic)}</span>`).join('');
+      return `<article class="exam-subject-card"><button class="exam-subject-toggle" type="button" data-course-key="${esc(courseKey)}" aria-expanded="${courseOpen}" aria-controls="examCourse-${esc(courseKey)}"><span>${esc(course.title)}</span><span class="exam-chevron" aria-hidden="true">⌄</span></button><div class="exam-subject-content" id="examCourse-${esc(courseKey)}" ${courseOpen ? '' : 'hidden'}><div class="exam-topic-list">${topics}</div></div></article>`;
+    }).join('');
+    return `<section class="exam-group"><button class="exam-group-toggle" type="button" data-course-group="${esc(group.id)}" aria-expanded="${open}"><span>${esc(group.title)}</span><span class="exam-chevron" aria-hidden="true">⌄</span></button><div class="exam-group-content" ${open ? '' : 'hidden'}><div class="exam-subject-list">${subjects}</div></div></section>`;
   }).join('');
 }
 function animateExamTile(element, beforeRect) {
@@ -132,6 +185,7 @@ function closeExamPanel() {
   const beforeRect = activeTile?.getBoundingClientRect();
   app.activeExam = null;
   app.activeCourseGroup = null;
+  app.activeCourse = null;
   renderExamPanel();
   if (activeTile) requestAnimationFrame(() => animateExamTile(activeTile, beforeRect));
 }
@@ -145,6 +199,7 @@ function setActiveExam(exam, toggleIfCurrent = true) {
   const beforeRect = selectedTile?.getBoundingClientRect();
   app.activeExam = exam;
   app.activeCourseGroup = null;
+  app.activeCourse = null;
   renderExamPanel();
   if (selectedTile) requestAnimationFrame(() => animateExamTile(selectedTile, beforeRect));
 }
@@ -353,9 +408,18 @@ document.addEventListener('click', async (event) => {
     setActiveExam(examToggle.dataset.examToggle);
     return;
   }
+  const comingTopic = target.closest('[data-coming-topic]');
+  if (comingTopic) { openComing(comingTopic.dataset.comingTopic); return; }
+  const courseToggle = target.closest('[data-course-key]');
+  if (courseToggle) {
+    app.activeCourse = app.activeCourse === courseToggle.dataset.courseKey ? null : courseToggle.dataset.courseKey;
+    renderExamPanel();
+    return;
+  }
   const courseGroup = target.closest('[data-course-group]');
   if (courseGroup) {
     app.activeCourseGroup = app.activeCourseGroup === courseGroup.dataset.courseGroup ? null : courseGroup.dataset.courseGroup;
+    app.activeCourse = null;
     renderExamPanel();
     return;
   }
