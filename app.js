@@ -8,10 +8,6 @@ const AVATARS = [
   { id: 'frog', emoji: '🐸', label: 'Kurbağa' }, { id: 'koala', emoji: '🐨', label: 'Koala' },
   { id: 'lion', emoji: '🦁', label: 'Aslan' }, { id: 'penguin', emoji: '🐧', label: 'Penguen' }
 ];
-const LESSONS = {
-  TYT: ['Türkçe', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Tarih', 'Coğrafya', 'Felsefe', 'Din Kültürü ve Ahlak Bilgisi', 'Geometri'],
-  AYT: ['Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Türk Dili ve Edebiyatı', 'Tarih-1', 'Coğrafya-1', 'Tarih-2', 'Coğrafya-2', 'Felsefe Grubu', 'Din Kültürü ve Ahlak Bilgisi', 'Geometri', 'Sosyal Bilimler-1', 'YDT']
-};
 const GEOMETRY_TOPICS = ['Doğruda ve Üçgende Açılar', 'Üçgenler', 'Üçgende Alan', 'Çokgenler ve Dörtgenler', 'Çember ve Daire', 'Analitik Geometri', 'Katı Cisimler'];
 const YDT_TOPICS = ['Kelime Bilgisi', 'Dil Bilgisi', 'Cümle Tamamlama', 'Anlamca Yakın Cümle', 'Çeviri', 'Paragraf Tamamlama', 'Diyalog Tamamlama', 'Anlam Bütünlüğünü Bozan Cümle', 'Okuma Parçaları'];
 const EXAM_GROUPS = {
@@ -89,8 +85,9 @@ const legal = {
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const date = (value) => value ? new Intl.DateTimeFormat('tr-TR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '—';
 const now = () => new Date().toISOString();
-const progressKey = (area, index) => `${area.toLowerCase()}_${index}`;
-const emptyProgress = () => Object.fromEntries(Object.entries(LESSONS).flatMap(([area, items]) => items.map((_, index) => [progressKey(area, index), 0])));
+const emptyProgress = () => ({ completed_topics: [] });
+const progressTopicKey = (exam, groupId, courseId, topic) => `${exam}:${groupId}:${courseId}:${topic}`;
+const topicIsComplete = (exam, groupId, courseId, topic, profile = app.profile) => profile?.progress?.completed_topics?.includes(progressTopicKey(exam, groupId, courseId, topic)) || false;
 const normalizeUsername = (value) => String(value || '').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/ı/g, 'i').replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't').replace(/[^a-z0-9]/g, '');
 const inappropriateUsername = (value) => BLOCKED_USERNAME_TERMS.some((term) => normalizeUsername(value).includes(term));
 const avatarFor = (id) => AVATARS.find((item) => item.id === id) || AVATARS[0];
@@ -133,6 +130,7 @@ function ensureProfile(record) {
   if (!record) return;
   if (!AVATARS.some((item) => item.id === record.avatar_id)) record.avatar_id = 'moon';
   record.progress = { ...emptyProgress(), ...(record.progress || {}) };
+  if (!Array.isArray(record.progress.completed_topics)) record.progress.completed_topics = [];
 }
 function showDrawer() {
   $('#drawer').classList.add('open'); $('#drawer').setAttribute('aria-hidden', 'false');
@@ -170,12 +168,17 @@ function openCourseTopics(course) {
   hideDrawer();
   app.activeCourseMenu = course;
   app.returnToCourseTopics = false;
-  $('#comingLabel').textContent = `${app.activeExam || 'YKS'} · KONU SEÇİMİ`;
+  const exam = course.exam || app.activeExam || 'YKS';
+  $('#comingLabel').textContent = `${exam} · KONU SEÇİMİ`;
   $('#comingTitle').textContent = course.title;
-  $('#comingDescription').textContent = 'Çalışmak istediğin konu başlığını seç.';
+  $('#comingDescription').textContent = 'Konuyu açmak için başlığa dokun; bitirdiğinde yanındaki “Bitti” düğmesine bas.';
   $('#comingSoon').hidden = true;
   $('#feedbackForm').hidden = true;
-  $('#courseTopicChoices').innerHTML = course.topics.map((topic) => `<button class="course-topic-choice" type="button" data-topic-choice="${esc(topic)}" data-course-title="${esc(course.title)}"><span>${esc(topic)}</span><span aria-hidden="true">›</span></button>`).join('');
+  $('#courseTopicChoices').innerHTML = course.topics.map((topic) => {
+    const topicKey = progressTopicKey(exam, course.groupId, course.id, topic);
+    const complete = topicIsComplete(exam, course.groupId, course.id, topic);
+    return `<div class="course-topic-row"><button class="course-topic-choice" type="button" data-topic-choice="${esc(topic)}" data-course-title="${esc(course.title)}"><span>${esc(topic)}</span><span aria-hidden="true">›</span></button><button class="topic-completion ${complete ? 'complete' : ''}" type="button" data-topic-complete="${esc(topicKey)}" aria-pressed="${complete}" aria-label="${esc(topic)} ${complete ? 'tamamlandı' : 'tamamlandı olarak işaretle'}"><span aria-hidden="true">${complete ? '✓' : '○'}</span><span>${complete ? 'Tamamlandı' : 'Bitti'}</span></button></div>`;
+  }).join('');
   $('#courseTopicChoices').hidden = false;
   $('#comingView').classList.add('show');
   $('#comingView').setAttribute('aria-hidden', 'false');
@@ -340,26 +343,34 @@ function renderProfile() {
   ensureProfile(record);
   const title = isAdmin() ? 'Admin Profilim' : 'Profilim';
   $('#profileTitle').textContent = title;
-  const avatar = avatarFor(record.avatar_id);
+  const avatar = isAdmin() ? { emoji: '🛠️' } : avatarFor(record.avatar_id);
   const fullName = [record.first_name, record.last_name].filter(Boolean).join(' ') || 'YKS Öğrencisi';
-  const avatarOptions = AVATARS.map((item) => `<button type="button" class="avatar-option ${item.id === record.avatar_id ? 'active' : ''}" data-avatar-option="${item.id}" aria-label="${esc(item.label)} avatarını seç" title="${esc(item.label)}">${item.emoji}</button>`).join('');
-  const rows = Object.entries(LESSONS).flatMap(([area, items]) => items.map((lesson, index) => {
-    const key = progressKey(area, index);
-    const value = Math.max(0, Math.min(100, Number(record.progress[key]) || 0));
-    return { area, lesson, key, value };
-  }));
-  const average = Math.round(rows.reduce((sum, item) => sum + item.value, 0) / rows.length);
-  const weakest = [...rows].sort((a, b) => a.value - b.value)[0];
-  const hasProgress = rows.some((item) => item.value > 0);
-  const advice = weakest.value < 40 ? 'Bu derse küçük ve düzenli çalışmalar ekle.' : weakest.value < 75 ? 'Temel ilerlemen oluşuyor; soru çözümünü artır.' : 'İlerlemen güçlü. Deneme ve tekrarlarla kalıcılaştır.';
-  const analysis = hasProgress
-    ? `<div class="analysis-card"><span class="analysis-kicker">OTOMATİK DERS ANALİZİ</span><h3>${average}% genel ilerleme</h3><p>En çok tekrar gerektiren dersin <strong>${esc(weakest.area + ' ' + weakest.lesson)}</strong> (%${weakest.value}).</p><p class="analysis-advice">${advice}</p></div>`
-    : '<div class="analysis-card"><span class="analysis-kicker">OTOMATİK DERS ANALİZİ</span><h3>İlerlemeni ekledikçe analiz oluşur.</h3><p>Ders ilerleme oranları girildiğinde güçlü ve tekrar gerektiren derslerin burada özetlenir.</p></div>';
-  const groups = Object.entries(LESSONS).map(([area, items]) => `<section class="progress-group"><h4>${area} Dersleri</h4>${items.map((lesson, index) => {
-    const key = progressKey(area, index), value = Math.max(0, Math.min(100, Number(record.progress[key]) || 0));
-    return `<div class="progress-row"><div class="progress-line"><span>${esc(lesson)}</span><output>${value}%</output></div><div class="progress-track"><i class="progress-fill" style="width:${value}%"></i></div><input class="progress-control" type="range" min="0" max="100" step="5" value="${value}" data-profile-progress="${key}" aria-label="${area} ${esc(lesson)} ilerleme oranı"></div>`;
-  }).join('')}</section>`).join('');
-  $('#profileContent').innerHTML = `<div class="profile-head"><div class="profile-avatar" aria-hidden="true">${avatar.emoji}</div><div><h3>${esc(fullName)}</h3><p class="public-handle">@${esc(record.username)}</p><p>Bu kullanıcı adı herkese görünür.</p></div></div><h3 class="profile-section-title">Profil fotoğrafı</h3><div class="avatar-grid" role="group" aria-label="Sabit profil avatarları">${avatarOptions}</div><p class="avatar-help">Yalnızca hazır avatarlar kullanılabilir; cihazdan fotoğraf yükleme kapalıdır.</p>${analysis}<h3 class="profile-section-title">Ders ilerlemelerim</h3><div class="progress-groups">${groups}</div><p class="progress-note">İlerleme oranlarını ders çalıştıkça kaydırıcıdan güncelleyebilirsin. TYT ve AYT dersleri ayrı ayrı saklanır; analiz bu oranlardan otomatik hesaplanır.</p>`;
+  const avatarOptions = isAdmin() ? '' : AVATARS.map((item) => `<button type="button" class="avatar-option ${item.id === record.avatar_id ? 'active' : ''}" data-avatar-option="${item.id}" aria-label="${esc(item.label)} avatarını seç" title="${esc(item.label)}">${item.emoji}</button>`).join('');
+  const avatarSection = isAdmin()
+    ? '<p class="avatar-help">Yönetici profil simgesi 🛠️ olarak ayarlandı.</p>'
+    : `<h3 class="profile-section-title">Profil fotoğrafı</h3><div class="avatar-grid" role="group" aria-label="Sabit profil avatarları">${avatarOptions}</div><p class="avatar-help">Yalnızca hazır avatarlar kullanılabilir; cihazdan fotoğraf yükleme kapalıdır.</p>`;
+  const progressGroups = Object.entries(EXAM_GROUPS).map(([exam, sections]) => {
+    const sectionRows = sections.map((section) => {
+      const rows = section.subjects.map((course) => {
+        const total = course.topics.length;
+        const completed = course.topics.filter((topic) => topicIsComplete(exam, section.id, course.id, topic, record)).length;
+        const value = total ? Math.round(completed / total * 100) : 0;
+        return { course, completed, total, value };
+      });
+      return { title: section.title, rows };
+    });
+    return { exam, sections: sectionRows };
+  });
+  const allCourses = progressGroups.flatMap((group) => group.sections.flatMap((section) => section.rows.map((row) => ({ ...row, area: group.exam }))));
+  const topicCount = allCourses.reduce((sum, row) => sum + row.total, 0);
+  const completedCount = allCourses.reduce((sum, row) => sum + row.completed, 0);
+  const average = topicCount ? Math.round(completedCount / topicCount * 100) : 0;
+  const weakest = [...allCourses].filter((row) => row.total).sort((a, b) => a.value - b.value)[0];
+  const analysis = completedCount
+    ? `<div class="analysis-card"><span class="analysis-kicker">OTOMATİK DERS ANALİZİ</span><h3>${average}% genel ilerleme</h3><p>${completedCount} / ${topicCount} konu tamamlandı.</p><p>Şu an en çok konu bekleyen dersin <strong>${esc(weakest.area + ' ' + weakest.course.title)}</strong> (%${weakest.value}).</p></div>`
+    : '<div class="analysis-card"><span class="analysis-kicker">OTOMATİK DERS ANALİZİ</span><h3>İlerlemen konuları tamamladıkça oluşur.</h3><p>Konu menüsünde bitirdiğin konuyu işaretle; ders yüzdesi otomatik hesaplanır.</p></div>';
+  const groups = progressGroups.map(({ exam, sections }) => `<section class="progress-group"><h4>${exam} Dersleri</h4>${sections.map((section) => `<div class="progress-subgroup"><h5>${esc(section.title)}</h5>${section.rows.map(({ course, completed, total, value }) => `<div class="progress-row"><div class="progress-line"><span>${esc(course.title)}</span><output>${value}% · ${completed}/${total}</output></div><div class="progress-track"><i class="progress-fill" style="width:${value}%"></i></div></div>`).join('')}</div>`).join('')}</section>`).join('');
+  $('#profileContent').innerHTML = `<div class="profile-head"><div class="profile-avatar" aria-hidden="true">${avatar.emoji}</div><div><h3>${esc(fullName)}</h3><p class="public-handle">@${esc(record.username)}</p><p>Bu kullanıcı adı herkese görünür.</p></div></div>${avatarSection}${analysis}<h3 class="profile-section-title">Ders ilerlemelerim</h3><div class="progress-groups">${groups}</div><p class="progress-note">Yüzdeler, tamamlanan konu sayısına göre otomatik hesaplanır. Bitirdiğin konuyu ilgili dersin konu menüsündeki “Bitti” düğmesiyle işaretle.</p>`;
 }
 
 function openProfile() {
@@ -431,6 +442,23 @@ async function loadAdminChat(showSetupNotice = false) {
   }
 }
 
+async function toggleTopicCompletion(topicKey) {
+  if (!app.user || !app.profile) { showToast('İlerlemeni kaydetmek için giriş yap.'); return; }
+  const record = profileRecord();
+  ensureProfile(record);
+  const completedTopics = new Set(record.progress.completed_topics);
+  const wasComplete = completedTopics.has(topicKey);
+  if (wasComplete) completedTopics.delete(topicKey);
+  else completedTopics.add(topicKey);
+  const nextProgress = { ...record.progress, completed_topics: [...completedTopics] };
+  const { error } = await app.client.from('profiles').update({ progress: nextProgress }).eq('id', app.user.id);
+  if (error) throw error;
+  record.progress = nextProgress;
+  if (!$('#profileOverlay').hidden) renderProfile();
+  if (app.activeCourseMenu) openCourseTopics(app.activeCourseMenu);
+  showToast(wasComplete ? 'Konu tamamlandı durumundan çıkarıldı.' : 'Konu tamamlandı, ilerlemen güncellendi.');
+}
+
 async function requireClient() {
   if (!app.client) throw new Error('Bağlantı ayarı eksik. config.js dosyasına Supabase URL ve publishable key eklenmeli.');
   return app.client;
@@ -472,6 +500,12 @@ document.addEventListener('click', async (event) => {
     setActiveExam(examToggle.dataset.examToggle);
     return;
   }
+  const completionToggle = target.closest('[data-topic-complete]');
+  if (completionToggle) {
+    try { await toggleTopicCompletion(completionToggle.dataset.topicComplete); }
+    catch (error) { showToast(normalizeError(error)); }
+    return;
+  }
   const topicChoice = target.closest('[data-topic-choice]');
   if (topicChoice) {
     openComing(`${topicChoice.dataset.courseTitle} · ${topicChoice.dataset.topicChoice}`, true);
@@ -482,7 +516,7 @@ document.addEventListener('click', async (event) => {
     const [groupId, courseId] = courseButton.dataset.courseKey.split(':');
     const group = EXAM_GROUPS[app.activeExam]?.find((item) => item.id === groupId);
     const course = group?.subjects.find((item) => item.id === courseId);
-    openCourseTopics(course);
+    openCourseTopics(course ? { ...course, exam: app.activeExam, groupId } : null);
     return;
   }
   const courseGroup = target.closest('[data-course-group]');
@@ -546,20 +580,6 @@ document.addEventListener('click', async (event) => {
 });
 
 document.addEventListener('change', async (event) => {
-  const progress = event.target.closest('[data-profile-progress]');
-  if (progress) {
-    try {
-      const record = profileRecord(); ensureProfile(record);
-      const value = Math.max(0, Math.min(100, Number(progress.value) || 0));
-      const nextProgress = { ...record.progress, [progress.dataset.profileProgress]: value };
-      const { error } = await app.client.from('profiles').update({ progress: nextProgress }).eq('id', app.user.id);
-      if (error) throw error;
-      record.progress = nextProgress; progress.value = value;
-      const row = progress.closest('.progress-row'); row.querySelector('output').value = `${value}%`; row.querySelector('.progress-fill').style.width = `${value}%`;
-      renderProfile();
-    } catch (error) { showToast(normalizeError(error)); }
-    return;
-  }
   const status = event.target.closest('[data-feedback-status]');
   if (status) {
     try {
