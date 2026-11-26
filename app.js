@@ -100,21 +100,21 @@ function openComing(name) {
 }
 function renderExamPanel() {
   const exam = app.activeExam;
+  $('.landing').classList.toggle('exam-open', !!exam);
+  for (const name of ['TYT', 'AYT']) {
+    const tile = $(`#examTile${name}`);
+    const active = name === exam;
+    tile.classList.toggle('active', active);
+    tile.querySelector('.side').classList.toggle('active', active);
+    tile.querySelector('.side').setAttribute('aria-expanded', String(active));
+    $(`#examContent${name}`).hidden = !active;
+  }
+  $$('[data-exam-toggle]').forEach((button) => button.classList.toggle('active', button.dataset.examToggle === exam));
   if (!exam || !EXAM_GROUPS[exam]) return;
-  $('#examPanel').hidden = false;
-  $('#examPanelKicker').textContent = exam === 'TYT' ? 'TEMEL YETERLİLİK TESTİ' : 'ALAN YETERLİLİK TESTLERİ';
-  $('#examPanelTitle').textContent = `${exam} Dersleri`;
-  $('#examPanelDescription').textContent = 'Bir ders grubuna basınca dersleri açılır. Aynı anda tek grup açık kalır.';
-  $('#examGroups').innerHTML = EXAM_GROUPS[exam].map((group) => {
+  $(`#examGroups${exam}`).innerHTML = EXAM_GROUPS[exam].map((group) => {
     const open = app.activeCourseGroup === group.id;
     return `<section class="exam-group"><button class="exam-group-toggle" type="button" data-course-group="${esc(group.id)}" aria-expanded="${open}"><span>${esc(group.title)}</span><span class="exam-chevron" aria-hidden="true">⌄</span></button><div class="exam-group-content" ${open ? '' : 'hidden'}><div class="exam-subject-list">${group.subjects.map((subject) => `<span class="exam-subject">${esc(subject)}</span>`).join('')}</div></div></section>`;
   }).join('');
-  $$('[data-exam-toggle]').forEach((button) => {
-    const active = button.dataset.examToggle === exam;
-    button.classList.toggle('active', active);
-    button.setAttribute('aria-expanded', String(active));
-    if (button.closest('#examPanel')) button.setAttribute('aria-selected', String(active));
-  });
 }
 function animateExamTile(element, beforeRect) {
   if (!element || !beforeRect || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -128,18 +128,11 @@ function animateExamTile(element, beforeRect) {
   ], { duration: 460, easing: 'cubic-bezier(.2,.75,.25,1)' });
 }
 function closeExamPanel() {
-  const landing = $('.landing');
-  const activeTile = landing.querySelector('.side.active');
+  const activeTile = app.activeExam ? $(`#examTile${app.activeExam} .side`) : null;
   const beforeRect = activeTile?.getBoundingClientRect();
   app.activeExam = null;
   app.activeCourseGroup = null;
-  $('#examPanel').hidden = true;
-  landing.classList.remove('exam-open');
-  $$('[data-exam-toggle]').forEach((button) => {
-    button.classList.remove('active');
-    button.setAttribute('aria-expanded', 'false');
-    if (button.closest('#examPanel')) button.setAttribute('aria-selected', 'false');
-  });
+  renderExamPanel();
   if (activeTile) requestAnimationFrame(() => animateExamTile(activeTile, beforeRect));
 }
 function setActiveExam(exam, toggleIfCurrent = true) {
@@ -148,11 +141,10 @@ function setActiveExam(exam, toggleIfCurrent = true) {
     if (toggleIfCurrent) closeExamPanel();
     return;
   }
-  const selectedTile = $(`.side[data-exam-toggle="${exam}"]`);
+  const selectedTile = $(`#examTile${exam} .side`);
   const beforeRect = selectedTile?.getBoundingClientRect();
   app.activeExam = exam;
   app.activeCourseGroup = null;
-  $('.landing').classList.add('exam-open');
   renderExamPanel();
   if (selectedTile) requestAnimationFrame(() => animateExamTile(selectedTile, beforeRect));
 }
@@ -358,8 +350,7 @@ document.addEventListener('click', async (event) => {
   }
   const examToggle = target.closest('[data-exam-toggle]');
   if (examToggle) {
-    const inPanel = !!examToggle.closest('#examPanel');
-    setActiveExam(examToggle.dataset.examToggle, !inPanel);
+    setActiveExam(examToggle.dataset.examToggle);
     return;
   }
   const courseGroup = target.closest('[data-course-group]');
@@ -368,7 +359,6 @@ document.addEventListener('click', async (event) => {
     renderExamPanel();
     return;
   }
-  if (target.closest('#examPanelClose')) { closeExamPanel(); return; }
   const coming = target.closest('[data-coming]');
   if (coming) { openComing(coming.dataset.coming); return; }
   if (target.closest('#viewBack,[data-view-close]')) { closeComing(); return; }
