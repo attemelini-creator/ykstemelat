@@ -66,7 +66,8 @@
   </style>
   <style>@media(max-width:640px){.analysis-card{padding:15px}.analysis-card h3{font-size:18px}}</style>
   <style>
-    .landing.exam-open{overflow:visible;align-items:start}
+    .landing.exam-open{overflow:visible;align-items:start;grid-template-columns:minmax(0,1fr)}
+    .landing.exam-open .exam-tile:not(.active){display:none}
     .landing.exam-open::before,.landing.exam-open .center-note,.landing.exam-open .bottom-note{display:none}
     .exam-tile{position:relative;z-index:1;min-width:0;display:flex;flex-direction:column;align-self:start}
     .side{width:100%;transition:opacity .32s ease,transform .42s ease,min-height .42s ease,max-height .42s ease,padding .42s ease}
@@ -74,22 +75,28 @@
     .side.active{min-height:142px;padding:18px 16px 10px;place-items:start center}
     .side.active .side-content{gap:7px;transform:none}
     .side.active .side-label{font-size:clamp(48px,7vw,76px)}
-    .side.active .side-caption{font-size:9px;letter-spacing:.16em}
+    .side.active .side-caption{display:none}
     .side.active .enter-mark{display:none}
     .side.active::after{border-color:rgba(245,245,242,.28);background:radial-gradient(ellipse at center,rgba(245,245,242,.07),transparent 68%)}
     .exam-content{position:relative;z-index:2;padding:0 clamp(18px,3vw,38px) 34px;animation:exam-content-in .32s ease both}
     @keyframes exam-content-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
     .exam-groups{display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
     .exam-group{min-width:0;align-self:start;overflow:hidden;border:1px solid #363636;border-radius:13px;background:#0b0b0b}
-    .exam-group-toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:54px;padding:12px 13px;border:0;background:transparent;color:var(--white);text-align:left;font-size:12px;line-height:1.45}
-    .exam-group-toggle span:first-child{min-width:0;overflow-wrap:anywhere}
-    .exam-group-toggle:hover,.exam-group-toggle[aria-expanded="true"]{background:#191919}
+    .exam-group-toggle,.exam-subject-toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:54px;padding:12px 13px;border:0;background:transparent;color:var(--white);text-align:left;font-size:12px;line-height:1.45}
+    .exam-group-toggle span:first-child,.exam-subject-toggle span:first-child{min-width:0;overflow-wrap:anywhere}
+    .exam-group-toggle:hover,.exam-group-toggle[aria-expanded="true"],.exam-subject-toggle:hover,.exam-subject-toggle[aria-expanded="true"]{background:#191919}
     .exam-chevron{flex:0 0 auto;color:#aaa;font-size:18px;transition:transform .18s}
-    .exam-group-toggle[aria-expanded="true"] .exam-chevron{transform:rotate(180deg)}
+    .exam-group-toggle[aria-expanded="true"] .exam-chevron,.exam-subject-toggle[aria-expanded="true"] .exam-chevron{transform:rotate(180deg)}
     .exam-group-content{padding:0 11px 12px;border-top:1px solid #292929}
-    .exam-subject-list{display:flex;flex-wrap:wrap;gap:6px;padding-top:10px}
-    .exam-subject{max-width:100%;padding:7px 9px;border:1px solid #333;border-radius:999px;background:#141414;color:#ddd;font-size:10px;line-height:1.4;overflow-wrap:anywhere}
-    @media(max-width:700px){.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.side.active .side-caption{font-size:8px;letter-spacing:.11em}.exam-content{padding:0 12px 25px}.exam-group-toggle{padding:10px 9px;font-size:11px}.exam-subject{padding:6px 8px;font-size:9px}}
+    .exam-subject-list{display:grid;gap:7px;padding-top:10px}
+    .exam-subject-card{min-width:0;overflow:hidden;border:1px solid #303030;border-radius:10px;background:#101010}
+    .exam-subject-toggle{min-height:44px;padding:10px 11px;font-size:11px}
+    .exam-subject-content{border-top:1px solid #292929}
+    .exam-topic-list{display:flex;flex-wrap:wrap;gap:6px;padding:10px}
+    .exam-topic{max-width:100%;padding:7px 9px;border:1px solid #333;border-radius:999px;background:#141414;color:#ddd;font-size:10px;line-height:1.4;text-align:left;overflow-wrap:anywhere}
+    .exam-topic-button{cursor:pointer}
+    .exam-topic-button:hover{border-color:#aaa;background:#202020;color:#fff}
+    @media(max-width:700px){.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.exam-content{padding:0 12px 25px}.exam-group-toggle{padding:10px 9px;font-size:11px}.exam-subject-toggle{padding:9px;font-size:10px}.exam-topic{padding:6px 8px;font-size:9px}}
   </style>
 </head>
 <body>
