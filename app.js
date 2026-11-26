@@ -81,9 +81,58 @@ const app = {
 };
 
 const legal = {
-  kvkk: { title: 'KVKK Aydınlatma Metni', html: '<p>Bu metin taslaktır. Siteyi işleten kişi/kurum, hangi verileri hangi amaçla işlediğini, ne kadar süre sakladığını ve başvuru iletişim yolunu gerçek kullanıma geçmeden önce açıklamalıdır.</p><p>Bu sürümde kayıt için ad, soyad, kullanıcı adı ve e-posta; hesap işlemleri için parola; profil için ders ilerlemesi; geri bildirim gönderirsen mesaj ve isteğe bağlı yanıt e-postası kullanılabilir. Parola Supabase Auth tarafından yönetilir ve uygulama tablolarına yazılmaz.</p><p class="legal-note">Bu örnek hukuki metin değildir. Canlı siteye uygun metin hazırlanmalıdır.</p>' },
-  terms: { title: 'Kullanım Koşulları', html: '<p>Bu uygulama YKS hazırlığı için bir başlangıç arayüzüdür. TYT, AYT ve liderlik alanları henüz hazırlık aşamasındadır.</p><p>Bu örnek metin, gerçek hizmet koşullarının ve site sahibinin iletişim bilgilerinin yerine geçmez.</p>' },
-  privacy: { title: 'Gizlilik ve Çerez Politikası', html: '<p>Bu sürümde hesap ve uygulama verileri ortak veritabanında saklanır. Supabase Auth oturum bilgisini tarayıcıda saklayabilir. Canlı siteye geçmeden önce barındırma, veri saklama süresi ve iletişim bilgileri açıklanmalıdır.</p><p>Bu örnek politika, gerçek hizmete göre düzenlenmelidir.</p>' }
+  kvkk: { title: 'KVKK Aydınlatma Metni', html: `
+    <p><strong>Son güncelleme:</strong> 27 Kasım 2026</p>
+    <p><strong>Veri sorumlusu:</strong> Hizmet adı YKS Temelini At'tır. Veri sorumlusu, bu hizmeti işleten gerçek kişi veya tüzel kişidir: <strong>[İŞLETMECİNİN GERÇEK ADI SOYADI / TİCARET UNVANI]</strong>. KVKK başvuruları için e-posta: <strong>[KVKK BAŞVURU E-POSTASI]</strong>; posta adresi: <strong>[POSTA ADRESİ]</strong>.</p>
+    <h3>İşlenen veriler ve amaçlar</h3>
+    <ul>
+      <li><strong>Kimlik ve hesap bilgileri:</strong> ad, soyad, kullanıcı adı, e-posta ve kimlik doğrulama bilgileri; hesap açma, oturum açma, hesabı yönetme ve hizmeti sunma amacıyla işlenir. Şifre uygulamanın profil tablosuna yazılmaz; Supabase Auth kimlik doğrulama hizmetine iletilir.</li>
+      <li><strong>Profil ve eğitim ilerlemesi:</strong> avatar tercihi, ders/konu ilerlemesi ve test sonuçları; profili göstermek ve ilerleme yüzdesini hesaplamak amacıyla işlenir.</li>
+      <li><strong>Görüş ve destek kayıtları:</strong> kategori, konu, mesaj, kullanıcı adı ve yalnızca paylaşılırsa yanıt e-postası; başvuruyu incelemek ve yanıtlamak amacıyla işlenir.</li>
+      <li><strong>Tercih ve işlem kayıtları:</strong> aydınlatmanın okunduğu, kullanım koşullarının kabul edildiği ve isteğe bağlı kampanya tercihi ile bunların sürüm/zaman bilgileri; tercihleri kaydetmek ve güvenliği sağlamak amacıyla işlenir.</li>
+      <li><strong>Güvenlik ve işlem kayıtları:</strong> hesap durumu, işlem türü ve zaman damgaları gibi uygulama kayıtları; hesap güvenliği, kötüye kullanımın önlenmesi ve gerektiğinde hakların korunması amacıyla işlenebilir.</li>
+    </ul>
+    <h3>Hukuki sebepler</h3>
+    <p>Hesap oluşturma, kimlik doğrulama, profil ve çalışma ilerlemesi hizmetlerinin sunulması için gerekli veriler 6698 sayılı Kanun'un 5/2-c maddesindeki sözleşmenin kurulması veya ifası için gerekli olma şartına dayanabilir. Güvenlik, kötüye kullanımın önlenmesi ve destek taleplerinin yürütülmesi için gerekli veriler, temel hak ve özgürlüklere zarar vermemek kaydıyla 5/2-f maddesindeki meşru menfaat şartına dayanabilir. Bir hukuki yükümlülüğün yerine getirilmesi veya bir hakkın tesisi, kullanılması ya da korunması gereken durumlarda ilgili kanuni şart uygulanır. Kampanya iletileri için tercih tamamen isteğe bağlıdır; açık rıza gerektiren bir iletişim yapılırsa bu rıza ayrı alınır ve geri alınabilir.</p>
+    <h3>Toplama yöntemi ve alıcılar</h3>
+    <p>Veriler kayıt, giriş, profil ve görüş formları ile uygulama kullanımı sırasında elektronik ortamda elde edilir. Hesap ve veritabanı hizmeti Supabase altyapısı üzerinden sağlanır; yetkili site yöneticileri hesap ve destek işlemleri için gerekli kayıtlara erişebilir. Supabase proje bölgesi: <strong>[SUPABASE PROJECT SETTINGS'TE GÖRÜNEN GERÇEK BÖLGE/ÜLKE]</strong>. Kanunen yetkili kamu kurumlarına, yalnızca yasal zorunluluk bulunduğunda aktarım yapılabilir.</p>
+    <p>Proje bölgesi Türkiye dışındaysa, aktarılabilecek veri kategorileri, ülke, alıcı ve 6698 sayılı Kanun'un güncel 9. maddesine uygun aktarım mekanizması işletmeci tarafından belirlenip burada açıkça yazılmalıdır: <strong>[YURT DIŞI AKTARIM VARSA ÜLKE VE UYGULANAN MEKANİZMA; YOKSA AKTARIM YAPILMADIĞI]</strong>. Bu bilgiler Supabase proje ayarları ve hizmet sözleşmeleri kontrol edilerek tamamlanmalıdır.</p>
+    <h3>Saklama süresi</h3>
+    <p>Veriler, hesabın ve ilgili hizmetin yürütülmesi için gerekli süre boyunca ve uygulanabilir yasal saklama süreleriyle sınırlı olarak tutulur; işleme amacı ve saklama zorunluluğu sona erdiğinde silinir, yok edilir veya anonim hâle getirilir. Hesap kapanışından sonraki kesin saklama süreleri ve silme takvimi işletmecinin saklama-imha politikasıyla belirlenmelidir: <strong>[HESAP, DESTEK VE GÜVENLİK KAYITLARI İÇİN SÜRELER]</strong>.</p>
+    <h3>Kanun kapsamındaki haklarınız</h3>
+    <p>6698 sayılı Kanun'un 11. maddesi uyarınca kişisel verilerinizin işlenip işlenmediğini öğrenebilir; işlenmişse bilgi talep edebilir; işleme amacını ve amaca uygun kullanımı öğrenebilir; verilerin aktarıldığı yurt içi veya yurt dışındaki alıcıları öğrenebilir; eksik/yanlış verilerin düzeltilmesini ve kanuni şartları varsa silinmesini veya yok edilmesini isteyebilir; bu işlemlerin alıcılara bildirilmesini talep edebilir; münhasıran otomatik analiz sonucuna itiraz edebilir ve kanuna aykırı işleme nedeniyle zararınız varsa giderilmesini talep edebilirsiniz.</p>
+    <p>Başvurularınızı kimliğinizi doğrulayabilecek bilgilerle <strong>[KVKK BAŞVURU E-POSTASI]</strong> adresine veya yukarıdaki posta adresine, Veri Sorumlusuna Başvuru Usul ve Esasları'na uygun şekilde iletebilirsiniz. Başvurular veri sorumlusu tarafından yasal süresi içinde sonuçlandırılır. Başvuru sonucu yetersiz kalırsa veya süresinde yanıt verilmezse, kanunda öngörülen usulle Kişisel Verileri Koruma Kuruluna şikâyet hakkınız saklıdır.</p>
+    <p class="legal-note"><strong>Yayına almadan önce tamamlanması gereken bilgiler:</strong> işletmecinin yasal kimliği ve iletişim adresleri, Supabase veri bölgesi ve varsa yurt dışı aktarım mekanizması, ayrıca gerçek saklama süreleri.</p>
+  ` },
+  terms: { title: 'Kullanım Koşulları', html: `
+    <p><strong>Son güncelleme:</strong> 27 Kasım 2026</p>
+    <p>Bu koşullar, YKS Temelini At hizmetini kullanan kişiler ile hizmeti işleten <strong>[İŞLETMECİNİN GERÇEK ADI SOYADI / TİCARET UNVANI]</strong> arasındaki kullanım kurallarını açıklar. Kayıt işlemini tamamlayarak bu koşulları kabul etmiş olursun.</p>
+    <h3>Hizmet</h3>
+    <p>Hizmet; TYT, AYT ve YDT ders/konu alanları, çalışma ilerlemesi, profil ve destek özelliklerinden oluşan bir YKS hazırlık platformudur. Bazı konu ve test ekranları henüz geliştirme aşamasındadır ve “Çok Yakında” olarak gösterilebilir. Platform ÖSYM'nin resmî hizmeti veya ÖSYM tarafından onaylanmış bir kaynak değildir.</p>
+    <h3>Hesap ve kullanım</h3>
+    <ul>
+      <li>Kayıt sırasında doğru ve güncel bilgi vermeli, hesabının güvenliğini ve şifreni korumalısın.</li>
+      <li>Hesabını başkasına kullandırmamalı; platformu hukuka aykırı faaliyet, spam, yetkisiz erişim denemesi veya hizmetin çalışmasını bozacak şekilde kullanmamalısın.</li>
+      <li>Görüş ve destek alanlarına başkasının özel bilgilerini, hukuka aykırı içeriği veya hakaret/tehdit içeren mesajları göndermemelisin.</li>
+      <li>Platformdaki metin, tasarım ve yazılım unsurlarını izin verilen kişisel kullanımın dışında kopyalamamalı veya yayımlamamalısın.</li>
+    </ul>
+    <h3>Eğitim içeriği ve hizmetin durumu</h3>
+    <p>İçerikler genel çalışma desteği sağlar; sınav sonucu, belirli bir başarı düzeyi veya kesintisiz erişim garantisi vermez. Geliştirme, bakım, güvenlik veya teknik nedenlerle içerik ve özellikler değişebilir, geçici olarak kullanılamayabilir ya da kaldırılabilir. Önemli değişiklikler platformda duyurulur.</p>
+    <h3>İhlal ve iletişim</h3>
+    <p>Koşulları veya yürürlükteki mevzuatı ihlal eden hesaplar, inceleme sonrasında sınırlandırılabilir veya askıya alınabilir. Hesap ve koşullarla ilgili başvurular için: <strong>[İŞLETMECİ İLETİŞİM E-POSTASI]</strong>. Kullanım koşulları güncellendiğinde yeni sürüm ve yürürlük tarihi bu ekranda yayımlanır.</p>
+    <p class="legal-note">Kayıt olurken kabul edilen kullanım koşulları ile KVKK aydınlatması ayrı metinlerdir. Kampanya tercihi ayrıca ve isteğe bağlıdır.</p>
+  ` },
+  privacy: { title: 'Gizlilik ve Çerez Politikası', html: `
+    <p><strong>Son güncelleme:</strong> 27 Kasım 2026</p>
+    <p>YKS Temelini At, hesap, profil, ders ilerlemesi ve destek verilerini KVKK Aydınlatma Metni'nde açıklanan amaçlarla işler. Veri sorumlusunun yasal kimliği, iletişim adresi, saklama süreleri ve Supabase proje bölgesi o metindeki işletmeci alanları tamamlanarak belirtilmelidir.</p>
+    <h3>Oturum bilgisi ve tarayıcı depolaması</h3>
+    <p>Supabase JavaScript istemcisi, oturumun hatırlanması ve yenilenmesi için oturum belirteçlerini varsayılan olarak tarayıcının yerel depolama alanında (localStorage) tutar. Bu, bu uygulama kodunda kullanılan yöntemdir; yerel depolama çerez değildir. Oturumu kapatman veya tarayıcı verilerini temizlemen kayıtlı oturumu kaldırabilir.</p>
+    <h3>Çerezler ve ölçüm araçları</h3>
+    <p>Mevcut uygulama kodunda reklam/analitik çerezi, reklam pikseli veya ziyaretçi takip aracı bulunmuyor. Barındırma sağlayıcısının teknik erişim kayıtları veya eklediği zorunlu çerezler bu koddan belirlenemediği için, site yayına alınmadan önce kullanılan hosting ve alan adı hizmetlerinin çerez/erişim kayıtları ayrıca kontrol edilmelidir. İleride zorunlu olmayan analitik veya reklam teknolojisi eklenirse, gerekli aydınlatma ve tercih mekanizması kurulmadan etkinleştirilmemelidir.</p>
+    <h3>Güvenlik ve başvurular</h3>
+    <p>Verilere yalnızca hizmetin yürütülmesi için yetkili kişilerin erişmesi amaçlanır. Verileriniz, alıcılar, saklama, yurt dışına aktarım ve haklarınız hakkındaki ayrıntılar için <strong>KVKK Aydınlatma Metni</strong>'ni incele. Başvuru e-postası: <strong>[KVKK BAŞVURU E-POSTASI]</strong>.</p>
+    <p class="legal-note">Bu politika, KVKK Aydınlatma Metni'nin yerine geçmez. İşletmeci, hosting ve veri bölgesi bilgileri netleştirildiğinde metinleri güncellemelidir.</p>
+  ` }
 };
 
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -730,7 +779,19 @@ document.addEventListener('submit', async (event) => {
       if (username.length < 3 || username.length > 24 || !/^[\p{L}\p{N}_.-]+$/u.test(username)) throw new Error('Kullanıcı adı 3–24 karakter olmalı; harf, rakam, nokta, tire ve alt çizgi kullan.');
       if (inappropriateUsername(username)) throw new Error('Küfür veya argo içeren kullanıcı adı seçemezsin.');
       if (password.length < 10) throw new Error('Şifre en az 10 karakter olmalı.');
-      const { data: result, error } = await client.auth.signUp({ email, password, options: { data: { username, first_name: String(data.get('firstName')).trim(), last_name: String(data.get('lastName')).trim(), marketing_consent: data.has('marketingConsent') } } });
+      const acceptedAt = now();
+      const marketingConsent = data.has('marketingConsent');
+      const { data: result, error } = await client.auth.signUp({ email, password, options: { data: {
+        username,
+        first_name: String(data.get('firstName')).trim(),
+        last_name: String(data.get('lastName')).trim(),
+        privacy_notice_acknowledged_at: data.has('noticeAcknowledged') ? acceptedAt : null,
+        privacy_notice_version: '2026-11-27',
+        terms_accepted_at: data.has('termsAccepted') ? acceptedAt : null,
+        terms_version: '2026-11-27',
+        marketing_consent: marketingConsent,
+        marketing_consent_at: marketingConsent ? acceptedAt : null
+      } } });
       if (error) throw error;
       form.reset();
       if (result.session) { closeOverlays(); showToast('Hesabın oluşturuldu. Hoş geldin!'); }
