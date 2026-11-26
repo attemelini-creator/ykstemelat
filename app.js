@@ -23,7 +23,7 @@ const EXAM_GROUPS = {
       { id: 'matematik', title: 'Matematik', topics: ['Temel Kavramlar', 'Sayı Basamakları', 'Bölme ve Bölünebilme', 'EBOB ve EKOK', 'Rasyonel Sayılar', 'Basit Eşitsizlikler', 'Mutlak Değer', 'Üslü Sayılar', 'Köklü Sayılar', 'Çarpanlara Ayırma', 'Oran ve Orantı', 'Denklem Çözme', 'Problemler', 'Kümeler', 'Mantık', 'Fonksiyonlar', 'Permütasyon ve Kombinasyon', 'Olasılık', 'Veri ve İstatistik'] }
     ] },
     { id: 'geometri', title: 'Geometri', subjects: [
-      { id: 'geometri', title: 'Geometri', topics: GEOMETRY_TOPICS, comingSoonTopics: true }
+      { id: 'geometri', title: 'Geometri', topics: GEOMETRY_TOPICS }
     ] },
     { id: 'fen', title: 'Fen Bilimleri', subjects: [
       { id: 'fizik', title: 'Fizik', topics: ['Fizik Bilimine Giriş', 'Madde ve Özellikleri', 'Hareket ve Kuvvet', 'İş, Güç ve Enerji', 'Isı, Sıcaklık ve Genleşme', 'Basınç ve Kaldırma Kuvveti', 'Elektrostatik', 'Elektrik Akımı ve Devreler', 'Mıknatıslar', 'Dalgalar', 'Optik'] },
@@ -42,7 +42,7 @@ const EXAM_GROUPS = {
       { id: 'matematik', title: 'Matematik', topics: ['Fonksiyonlar', 'Polinomlar', 'İkinci Dereceden Denklemler', 'Karmaşık Sayılar', 'Parabol', 'Eşitsizlikler', 'Permütasyon, Kombinasyon ve Binom', 'Olasılık', 'Trigonometri', 'Logaritma', 'Diziler', 'Limit ve Süreklilik', 'Türev', 'İntegral'] }
     ] },
     { id: 'geometri', title: 'Geometri', subjects: [
-      { id: 'geometri', title: 'Geometri', topics: GEOMETRY_TOPICS, comingSoonTopics: true }
+      { id: 'geometri', title: 'Geometri', topics: GEOMETRY_TOPICS }
     ] },
     { id: 'fen', title: 'Fen Bilimleri', subjects: [
       { id: 'fizik', title: 'Fizik', topics: ['Vektörler', 'Kuvvet, Tork ve Denge', 'Kütle Merkezi', 'Basit Makineler', 'Hareket', 'Newton’ın Hareket Yasaları', 'İş, Güç ve Enerji', 'Atışlar', 'İtme ve Momentum', 'Elektrik Alan ve Potansiyel', 'Manyetizma ve Elektromanyetik İndüksiyon', 'Çembersel Hareket', 'Basit Harmonik Hareket', 'Dalga Mekaniği', 'Atom Fiziği ve Radyoaktivite'] },
@@ -53,8 +53,8 @@ const EXAM_GROUPS = {
       { id: 'edebiyat', title: 'Türk Dili ve Edebiyatı', topics: ['Şiir Bilgisi', 'Edebî Sanatlar', 'İslamiyet Öncesi Türk Edebiyatı', 'Halk Edebiyatı', 'Divan Edebiyatı', 'Tanzimat Edebiyatı', 'Servetifünun ve Fecriati', 'Millî Edebiyat', 'Cumhuriyet Dönemi Edebiyatı', 'Roman ve Hikâye', 'Tiyatro', 'Öğretici Metinler', 'Edebî Akımlar'] }
     ] },
     { id: 'sosyal-1', title: 'Sosyal Bilimler-1', subjects: [
-      { id: 'tarih-1', title: 'Tarih-1', topics: ['Tarih ve Zaman', 'İnsanlığın İlk Dönemleri', 'Orta Çağ’da Dünya', 'İlk ve Orta Çağlarda Türk Dünyası', 'İslam Medeniyetinin Doğuşu', 'Türklerin İslamiyet’i Kabulü ve İlk Türk-İslam Devletleri', 'Yerleşme ve Devletleşme Sürecinde Selçuklu Türkiyesi', 'Beylikten Devlete Osmanlı', 'Dünya Gücü Osmanlı', 'Değişen Dünya Dengeleri Karşısında Osmanlı', 'Millî Mücadele', 'Atatürkçülük ve Türk İnkılabı'], comingSoonTopics: true },
-      { id: 'cografya-1', title: 'Coğrafya-1', topics: ['Ekosistem', 'Nüfus Politikaları ve Şehirler', 'Ekonomik Faaliyetler ve Gelişmişlik', 'Türkiye’de Ekonomi', 'Doğal Kaynaklar ve Çevre', 'Küresel Ortam: Bölgeler ve Ülkeler', 'Ülkeler Arası Etkileşim', 'Çevre Sorunları ve Toplum', 'Doğal Afetler'], comingSoonTopics: true }
+      { id: 'tarih-1', title: 'Tarih-1', topics: ['Tarih ve Zaman', 'İnsanlığın İlk Dönemleri', 'Orta Çağ’da Dünya', 'İlk ve Orta Çağlarda Türk Dünyası', 'İslam Medeniyetinin Doğuşu', 'Türklerin İslamiyet’i Kabulü ve İlk Türk-İslam Devletleri', 'Yerleşme ve Devletleşme Sürecinde Selçuklu Türkiyesi', 'Beylikten Devlete Osmanlı', 'Dünya Gücü Osmanlı', 'Değişen Dünya Dengeleri Karşısında Osmanlı', 'Millî Mücadele', 'Atatürkçülük ve Türk İnkılabı'] },
+      { id: 'cografya-1', title: 'Coğrafya-1', topics: ['Ekosistem', 'Nüfus Politikaları ve Şehirler', 'Ekonomik Faaliyetler ve Gelişmişlik', 'Türkiye’de Ekonomi', 'Doğal Kaynaklar ve Çevre', 'Küresel Ortam: Bölgeler ve Ülkeler', 'Ülkeler Arası Etkileşim', 'Çevre Sorunları ve Toplum', 'Doğal Afetler'] }
     ] },
     { id: 'sosyal-2', title: 'Sosyal Bilimler-2', subjects: [
       { id: 'tarih-2', title: 'Tarih-2', topics: ['Tarih Bilimi', 'İlk Uygarlıklar', 'Türk ve İslam Devletleri', 'Osmanlı Tarihi', 'Avrupa Tarihi', '20. Yüzyılda Dünya', 'Millî Mücadele', 'Atatürkçülük ve Türk İnkılabı'] },
@@ -63,18 +63,18 @@ const EXAM_GROUPS = {
       { id: 'din', title: 'Din Kültürü ve Ahlak Bilgisi', topics: ['Dünya ve Ahiret', 'Kur’an’a Göre Hz. Muhammed', 'İslam Düşüncesinde Yorumlar', 'Din ve Laiklik', 'İslam ve Bilim', 'Anadolu’da İslam', 'İslam Düşüncesinde Tasavvufi Yorumlar'] }
     ] },
     { id: 'ydt', title: 'YDT', subjects: [
-      { id: 'ydt-ingilizce', title: 'İngilizce', topics: YDT_TOPICS, comingSoonTopics: true },
-      { id: 'ydt-almanca', title: 'Almanca', topics: YDT_TOPICS, comingSoonTopics: true },
-      { id: 'ydt-fransizca', title: 'Fransızca', topics: YDT_TOPICS, comingSoonTopics: true },
-      { id: 'ydt-rusca', title: 'Rusça', topics: YDT_TOPICS, comingSoonTopics: true },
-      { id: 'ydt-arapca', title: 'Arapça', topics: YDT_TOPICS, comingSoonTopics: true }
+      { id: 'ydt-ingilizce', title: 'İngilizce', topics: YDT_TOPICS },
+      { id: 'ydt-almanca', title: 'Almanca', topics: YDT_TOPICS },
+      { id: 'ydt-fransizca', title: 'Fransızca', topics: YDT_TOPICS },
+      { id: 'ydt-rusca', title: 'Rusça', topics: YDT_TOPICS },
+      { id: 'ydt-arapca', title: 'Arapça', topics: YDT_TOPICS }
     ] }
   ]
 };
 const BLOCKED_USERNAME_TERMS = ['amk', 'aq', 'aminakoyim', 'orospu', 'siktir', 'sikiyim', 'sikmek', 'yarak', 'yarrak', 'pic', 'ibne', 'pezevenk', 'kahpe', 'fuck', 'shit', 'bitch', 'asshole'];
 const app = {
   client: null, user: null, profile: null, role: null, isPrimaryAdmin: false,
-  adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null, activeCourse: null,
+  adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null,
   db: { users: [], feedback: [], announcements: [], audit: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
 };
 
@@ -137,11 +137,25 @@ function closeComing() { $('#comingView').classList.remove('show'); $('#comingVi
 function openComing(name) {
   const feedback = name === 'Şikayet ve Önerileriniz';
   hideDrawer();
+  $('#courseTopicChoices').hidden = true;
   $('#comingLabel').textContent = feedback ? 'GERİ BİLDİRİM' : name.toLocaleUpperCase('tr-TR');
   $('#comingTitle').textContent = feedback ? name : 'Çok Yakında...';
   $('#comingDescription').textContent = feedback ? 'Şikayetini, önerini veya yaşadığın sorunu bize ilet.' : `${name} bölümü için hazırlıklarımız devam ediyor.`;
   $('#comingSoon').hidden = feedback; $('#feedbackForm').hidden = !feedback;
   $('#comingView').classList.add('show'); $('#comingView').setAttribute('aria-hidden', 'false');
+}
+function openCourseTopics(course) {
+  if (!course) return;
+  hideDrawer();
+  $('#comingLabel').textContent = `${app.activeExam || 'YKS'} · KONU SEÇİMİ`;
+  $('#comingTitle').textContent = course.title;
+  $('#comingDescription').textContent = 'Çalışmak istediğin konu başlığını seç.';
+  $('#comingSoon').hidden = true;
+  $('#feedbackForm').hidden = true;
+  $('#courseTopicChoices').innerHTML = course.topics.map((topic) => `<button class="course-topic-choice" type="button" data-topic-choice="${esc(topic)}" data-course-title="${esc(course.title)}"><span>${esc(topic)}</span><span aria-hidden="true">›</span></button>`).join('');
+  $('#courseTopicChoices').hidden = false;
+  $('#comingView').classList.add('show');
+  $('#comingView').setAttribute('aria-hidden', 'false');
 }
 function renderExamPanel() {
   const exam = app.activeExam;
@@ -158,14 +172,7 @@ function renderExamPanel() {
   if (!exam || !EXAM_GROUPS[exam]) return;
   $(`#examGroups${exam}`).innerHTML = EXAM_GROUPS[exam].map((group) => {
     const open = app.activeCourseGroup === group.id;
-    const subjects = group.subjects.map((course) => {
-      const courseKey = `${group.id}:${course.id}`;
-      const courseOpen = app.activeCourse === courseKey;
-      const topics = course.topics.map((topic) => course.comingSoonTopics
-        ? `<button class="exam-topic exam-topic-button" type="button" data-coming-topic="${esc(`${course.title} · ${topic}`)}">${esc(topic)}</button>`
-        : `<span class="exam-topic">${esc(topic)}</span>`).join('');
-      return `<article class="exam-subject-card"><button class="exam-subject-toggle" type="button" data-course-key="${esc(courseKey)}" aria-expanded="${courseOpen}" aria-controls="examCourse-${esc(courseKey)}"><span>${esc(course.title)}</span><span class="exam-chevron" aria-hidden="true">⌄</span></button><div class="exam-subject-content" id="examCourse-${esc(courseKey)}" ${courseOpen ? '' : 'hidden'}><div class="exam-topic-list">${topics}</div></div></article>`;
-    }).join('');
+    const subjects = group.subjects.map((course) => `<article class="exam-subject-card"><button class="exam-course-open" type="button" data-course-key="${esc(`${group.id}:${course.id}`)}"><span>${esc(course.title)}</span><span class="exam-course-arrow" aria-hidden="true">↗</span></button></article>`).join('');
     return `<section class="exam-group"><button class="exam-group-toggle" type="button" data-course-group="${esc(group.id)}" aria-expanded="${open}"><span>${esc(group.title)}</span><span class="exam-chevron" aria-hidden="true">⌄</span></button><div class="exam-group-content" ${open ? '' : 'hidden'}><div class="exam-subject-list">${subjects}</div></div></section>`;
   }).join('');
 }
@@ -185,7 +192,6 @@ function closeExamPanel() {
   const beforeRect = activeTile?.getBoundingClientRect();
   app.activeExam = null;
   app.activeCourseGroup = null;
-  app.activeCourse = null;
   renderExamPanel();
   if (activeTile) requestAnimationFrame(() => animateExamTile(activeTile, beforeRect));
 }
@@ -199,7 +205,6 @@ function setActiveExam(exam, toggleIfCurrent = true) {
   const beforeRect = selectedTile?.getBoundingClientRect();
   app.activeExam = exam;
   app.activeCourseGroup = null;
-  app.activeCourse = null;
   renderExamPanel();
   if (selectedTile) requestAnimationFrame(() => animateExamTile(selectedTile, beforeRect));
 }
@@ -408,18 +413,22 @@ document.addEventListener('click', async (event) => {
     setActiveExam(examToggle.dataset.examToggle);
     return;
   }
-  const comingTopic = target.closest('[data-coming-topic]');
-  if (comingTopic) { openComing(comingTopic.dataset.comingTopic); return; }
-  const courseToggle = target.closest('[data-course-key]');
-  if (courseToggle) {
-    app.activeCourse = app.activeCourse === courseToggle.dataset.courseKey ? null : courseToggle.dataset.courseKey;
-    renderExamPanel();
+  const topicChoice = target.closest('[data-topic-choice]');
+  if (topicChoice) {
+    openComing(`${topicChoice.dataset.courseTitle} · ${topicChoice.dataset.topicChoice}`);
+    return;
+  }
+  const courseButton = target.closest('[data-course-key]');
+  if (courseButton) {
+    const [groupId, courseId] = courseButton.dataset.courseKey.split(':');
+    const group = EXAM_GROUPS[app.activeExam]?.find((item) => item.id === groupId);
+    const course = group?.subjects.find((item) => item.id === courseId);
+    openCourseTopics(course);
     return;
   }
   const courseGroup = target.closest('[data-course-group]');
   if (courseGroup) {
     app.activeCourseGroup = app.activeCourseGroup === courseGroup.dataset.courseGroup ? null : courseGroup.dataset.courseGroup;
-    app.activeCourse = null;
     renderExamPanel();
     return;
   }
