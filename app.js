@@ -158,6 +158,22 @@ async function loadState() {
   refresh();
 }
 
+// Keep the public announcement banner and maintenance screen in sync across
+// visitors who already have the page open. Supabase RLS allows public reads
+// for these two shared tables.
+async function refreshPublicContent() {
+  if (!app.client) return;
+  const [settingsResult, announcementsResult] = await Promise.all([
+    app.client.from('site_settings').select('registrations_open,maintenance,maintenance_message').eq('id', 1).maybeSingle(),
+    app.client.from('announcements').select('id,title,message,author,created_at').order('created_at', { ascending: false }).limit(50)
+  ]);
+  if (settingsResult.error || announcementsResult.error) return;
+  app.db.settings = settingsResult.data || { registrations_open: true, maintenance: false, maintenance_message: '' };
+  app.db.announcements = announcementsResult.data || [];
+  updateHeader();
+  if (isAdmin() && !$('#adminOverlay').hidden && app.adminTab === 'settings') renderAdmin();
+}
+
 function renderProfile() {
   const record = profileRecord();
   if (!record) return;
@@ -433,6 +449,12 @@ async function startApp() {
   app.client.auth.onAuthStateChange((_event, session) => {
     app.user = session?.user || null;
     setTimeout(() => loadState().catch((error) => showToast(normalizeError(error))), 0);
+  });
+  setInterval(() => {
+    if (document.visibilityState === 'visible') refreshPublicContent().catch(() => {});
+  }, 15000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') refreshPublicContent().catch(() => {});
   });
   try { await loadState(); }
   catch (error) { updateHeader(); showToast(normalizeError(error)); }
