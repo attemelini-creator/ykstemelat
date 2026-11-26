@@ -130,6 +130,27 @@
     .admin-chat-form .submit{width:auto;min-width:116px;margin:0}
     @media(max-width:700px){.admin-panel.admin-chat-active{max-height:62vh}.admin-chat-messages{min-height:160px;max-height:48vh;padding:9px}.admin-chat-message{max-width:94%;padding:10px 11px}.admin-chat-form{grid-template-columns:minmax(0,1fr);gap:8px}.admin-chat-form .submit{width:100%;min-height:45px}}
   </style>
+  <style>
+    .landing{grid-template-columns:minmax(0,1fr) minmax(0,1fr);transition:grid-template-columns .44s cubic-bezier(.2,.75,.25,1)}
+    .landing.exam-open:not(.exam-open-ayt){overflow:visible;align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,0fr)}
+    .landing.exam-open.exam-open-ayt{overflow:visible;align-items:start;grid-template-columns:minmax(0,0fr) minmax(0,1fr)}
+    .landing.exam-open .exam-tile:not(.active){display:flex;min-width:0;min-height:0;width:100%;height:0;max-height:0;overflow:hidden;opacity:0;transform:scale(.97);pointer-events:none;transition:opacity .28s ease,transform .44s cubic-bezier(.2,.75,.25,1),height .44s ease,max-height .44s ease}
+    .exam-tile{transition:opacity .28s ease,transform .44s cubic-bezier(.2,.75,.25,1)}
+    .side.active::after{inset:8px clamp(12px,2vw,24px) 0;border-color:rgba(245,245,242,.28);border-radius:16px 16px 5px 5px;background:radial-gradient(ellipse at center,rgba(245,245,242,.07),transparent 72%)}
+    .exam-content{width:min(100%,1040px);max-height:0;margin-inline:auto;padding:0 clamp(18px,3vw,38px);overflow:hidden;opacity:0;transform:translateY(-9px);pointer-events:none;animation:none;transition:max-height .44s cubic-bezier(.2,.75,.25,1),opacity .28s ease,transform .44s cubic-bezier(.2,.75,.25,1),padding-bottom .44s ease}
+    .exam-content.is-open{max-height:3600px;padding-bottom:34px;opacity:1;transform:translateY(0);pointer-events:auto}
+    .coming{width:min(100%,680px)}
+    .course-topic-choice{min-height:52px;padding:14px 16px;font-size:13px}
+    .topic-test-card.is-open{border-color:rgba(245,245,242,.32);background:#131313}
+    .topic-test-card.is-open .topic-test-open{border-bottom-color:var(--line)}
+    .topic-test-chevron{transition:transform .2s ease}
+    .topic-test-card.is-open .topic-test-chevron{transform:rotate(180deg)}
+    .topic-test-info{padding:5px 9px 10px;animation:topic-test-expand .2s ease both}
+    @keyframes topic-test-expand{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+    .topic-test-start{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;padding:10px 13px;border:1px solid rgba(245,245,242,.24);border-radius:10px;background:#202020;color:var(--white);font-size:12px;text-align:left}
+    .topic-test-start:hover{border-color:var(--white);background:var(--white);color:var(--black)}
+    @media(max-width:700px){.landing.exam-open:not(.exam-open-ayt){grid-template-columns:minmax(0,1fr) minmax(0,0fr)}.landing.exam-open.exam-open-ayt{grid-template-columns:minmax(0,0fr) minmax(0,1fr)}.exam-content{padding-inline:12px}.exam-content.is-open{padding-bottom:25px}.course-topic-choice{min-height:50px;padding:12px;font-size:12px}.coming{padding:25px 18px}}
+  </style>
 </head>
 <body>
   <header class="topbar">
