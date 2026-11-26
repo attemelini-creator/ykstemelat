@@ -116,28 +116,45 @@ function renderExamPanel() {
     if (button.closest('#examPanel')) button.setAttribute('aria-selected', String(active));
   });
 }
+function animateExamTile(element, beforeRect) {
+  if (!element || !beforeRect || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const afterRect = element.getBoundingClientRect();
+  const dx = beforeRect.left - afterRect.left;
+  const dy = beforeRect.top - afterRect.top;
+  if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+  element.animate([
+    { transform: `translate(${dx}px, ${dy}px)` },
+    { transform: 'translate(0, 0)' }
+  ], { duration: 460, easing: 'cubic-bezier(.2,.75,.25,1)' });
+}
 function closeExamPanel() {
+  const landing = $('.landing');
+  const activeTile = landing.querySelector('.side.active');
+  const beforeRect = activeTile?.getBoundingClientRect();
   app.activeExam = null;
   app.activeCourseGroup = null;
   $('#examPanel').hidden = true;
-  $('.landing').classList.remove('exam-open');
+  landing.classList.remove('exam-open');
   $$('[data-exam-toggle]').forEach((button) => {
     button.classList.remove('active');
     button.setAttribute('aria-expanded', 'false');
     if (button.closest('#examPanel')) button.setAttribute('aria-selected', 'false');
   });
+  if (activeTile) requestAnimationFrame(() => animateExamTile(activeTile, beforeRect));
 }
-function setActiveExam(exam, toggleIfCurrent = true, scrollToPanel = true) {
+function setActiveExam(exam, toggleIfCurrent = true) {
   if (!EXAM_GROUPS[exam]) return;
   if (app.activeExam === exam) {
     if (toggleIfCurrent) closeExamPanel();
     return;
   }
+  const selectedTile = $(`.side[data-exam-toggle="${exam}"]`);
+  const beforeRect = selectedTile?.getBoundingClientRect();
   app.activeExam = exam;
   app.activeCourseGroup = null;
   $('.landing').classList.add('exam-open');
   renderExamPanel();
-  if (scrollToPanel) $('#examPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (selectedTile) requestAnimationFrame(() => animateExamTile(selectedTile, beforeRect));
 }
 function setAuthTab(tab) {
   const register = tab === 'register';
@@ -342,7 +359,7 @@ document.addEventListener('click', async (event) => {
   const examToggle = target.closest('[data-exam-toggle]');
   if (examToggle) {
     const inPanel = !!examToggle.closest('#examPanel');
-    setActiveExam(examToggle.dataset.examToggle, !inPanel, !inPanel);
+    setActiveExam(examToggle.dataset.examToggle, !inPanel);
     return;
   }
   const courseGroup = target.closest('[data-course-group]');
