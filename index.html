@@ -80,23 +80,28 @@
     .side.active::after{border-color:rgba(245,245,242,.28);background:radial-gradient(ellipse at center,rgba(245,245,242,.07),transparent 68%)}
     .exam-content{position:relative;z-index:2;padding:0 clamp(18px,3vw,38px) 34px;animation:exam-content-in .32s ease both}
     @keyframes exam-content-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-    .exam-groups{display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
-    .exam-group{min-width:0;align-self:start;overflow:hidden;border:1px solid #363636;border-radius:13px;background:#0b0b0b}
-    .exam-group-toggle,.exam-subject-toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:54px;padding:12px 13px;border:0;background:transparent;color:var(--white);text-align:left;font-size:12px;line-height:1.45}
-    .exam-group-toggle span:first-child,.exam-subject-toggle span:first-child{min-width:0;overflow-wrap:anywhere}
-    .exam-group-toggle:hover,.exam-group-toggle[aria-expanded="true"],.exam-subject-toggle:hover,.exam-subject-toggle[aria-expanded="true"]{background:#191919}
-    .exam-chevron{flex:0 0 auto;color:#aaa;font-size:18px;transition:transform .18s}
-    .exam-group-toggle[aria-expanded="true"] .exam-chevron,.exam-subject-toggle[aria-expanded="true"] .exam-chevron{transform:rotate(180deg)}
-    .exam-group-content{padding:0 11px 12px;border-top:1px solid #292929}
-    .exam-subject-list{display:grid;gap:7px;padding-top:10px}
-    .exam-subject-card{min-width:0;overflow:hidden;border:1px solid #303030;border-radius:10px;background:#101010}
-    .exam-subject-toggle{min-height:44px;padding:10px 11px;font-size:11px}
-    .exam-subject-content{border-top:1px solid #292929}
-    .exam-topic-list{display:flex;flex-wrap:wrap;gap:6px;padding:10px}
-    .exam-topic{max-width:100%;padding:7px 9px;border:1px solid #333;border-radius:999px;background:#141414;color:#ddd;font-size:10px;line-height:1.4;text-align:left;overflow-wrap:anywhere}
-    .exam-topic-button{cursor:pointer}
-    .exam-topic-button:hover{border-color:#aaa;background:#202020;color:#fff}
-    @media(max-width:700px){.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.exam-content{padding:0 12px 25px}.exam-group-toggle{padding:10px 9px;font-size:11px}.exam-subject-toggle{padding:9px;font-size:10px}.exam-topic{padding:6px 8px;font-size:9px}}
+    .exam-groups{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+    .exam-group{min-width:0;align-self:start;overflow:hidden;border:1px solid var(--line);border-radius:15px;background:var(--panel)}
+    .exam-group-toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:56px;padding:14px 16px;border:0;background:transparent;color:var(--white);text-align:left;font-size:12px;line-height:1.45}
+    .exam-group-toggle span:first-child{min-width:0;overflow-wrap:anywhere}
+    .exam-group-toggle:hover,.exam-group-toggle[aria-expanded="true"]{background:#1b1b1b}
+    .exam-group-toggle[aria-expanded="true"]{font-weight:600}
+    .exam-chevron{flex:0 0 auto;color:var(--muted);font-size:18px;transition:transform .18s}
+    .exam-group-toggle[aria-expanded="true"] .exam-chevron{transform:rotate(180deg)}
+    .exam-group-content{padding:0 14px 15px;border-top:1px solid var(--line)}
+    .exam-subject-list{display:grid;gap:10px;padding-top:13px}
+    .exam-subject-card{min-width:0;overflow:hidden;border:1px solid rgba(245,245,242,.13);border-radius:12px;background:var(--panel-raised)}
+    .exam-course-open{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:48px;padding:12px 14px;border:0;background:transparent;color:var(--white);text-align:left;font-size:11px;line-height:1.45}
+    .exam-course-open:hover{background:#202020}
+    .exam-course-open span:first-child{min-width:0;overflow-wrap:anywhere}
+    .exam-course-arrow{flex:0 0 auto;color:var(--muted);font-size:16px}
+    .course-topic-choices{display:grid;gap:9px;margin:22px 0}
+    .course-topic-choice{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:46px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#101010;color:var(--white);text-align:left;font-size:12px;line-height:1.45}
+    .course-topic-choice span:first-child{min-width:0;overflow-wrap:anywhere}
+    .course-topic-choice span:last-child{flex:none;color:var(--muted);font-size:16px}
+    .course-topic-choice:hover{border-color:var(--white);background:var(--white);color:var(--black)}
+    .course-topic-choice:hover span:last-child{color:#555}
+    @media(max-width:700px){.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.exam-content{padding:0 12px 25px}.exam-groups{gap:9px}.exam-group-toggle{padding:11px 12px;font-size:11px}.exam-group-content{padding:0 10px 11px}.exam-subject-list{gap:8px;padding-top:10px}.exam-course-open{padding:10px 11px;font-size:10px}.course-topic-choices{gap:8px;margin:17px 0}.course-topic-choice{min-height:43px;padding:10px 12px;font-size:11px}}
   </style>
 </head>
 <body>
@@ -135,6 +140,7 @@
   <section class="view" id="comingView" aria-hidden="true">
     <div class="coming"><button class="view-back" id="viewBack" aria-label="Pencereyi kapat">×</button><p class="eyebrow" id="comingLabel">YAKINDA</p><h1 id="comingTitle">Çok Yakında...</h1><p id="comingDescription">Bu alan için hazırlıklarımız devam ediyor.</p>
       <div class="coming-soon" id="comingSoon"><strong>Çok Yakında...</strong><span>Hazırlıklarımız devam ediyor.</span></div>
+      <div class="course-topic-choices" id="courseTopicChoices" hidden></div>
       <form id="feedbackForm" class="form" hidden><label>Görüş türü<select name="category" required><option value="Öneri">Öneri</option><option value="Şikayet">Şikayet</option><option value="Diğer">Diğer</option></select></label><label>Konu<input name="subject" required minlength="3" maxlength="100" placeholder="Kısaca konu başlığı"></label><label>E-posta <span class="fine">(İsteğe bağlı, yanıt için)</span><input name="email" type="email" maxlength="254" placeholder="ornek@eposta.com"></label><label>Mesajın<textarea name="message" required minlength="10" maxlength="3000" rows="5" placeholder="Fikrini veya yaşadığın sorunu ayrıntılı yaz…"></textarea></label><button class="submit" type="submit">Gönder <span>→</span></button></form>
       <button class="outline" data-view-close>Geri dön</button>
     </div>
