@@ -56,11 +56,11 @@
     .progress-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
     .progress-group{padding:15px;border:1px solid #303030;border-radius:14px;background:#0d0d0d}
     .progress-group h4{margin:0 0 14px;font-family:var(--serif);font-size:19px;font-weight:400}
+    .progress-subgroup{margin-top:16px}.progress-subgroup h5{margin:0 0 10px;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:.04em}.progress-subgroup+.progress-subgroup{padding-top:12px;border-top:1px solid rgba(245,245,242,.08)}
     .progress-row{margin:0 0 15px}.progress-row:last-child{margin-bottom:0}
     .progress-line{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:7px;color:#d7d7d2;font-size:12px}
     .progress-line output{color:#aaa;font-variant-numeric:tabular-nums}
     .progress-track{height:3px;overflow:hidden;border-radius:9px;background:#303030}.progress-fill{display:block;height:100%;background:#eee;transition:width .18s}
-    .progress-control{display:block;width:100%;height:19px;margin:4px 0 0;accent-color:#eee;cursor:pointer}
     .progress-note{margin:12px 0 0;color:#83837d;font-size:10px;line-height:1.5}
     @media(max-width:600px){.avatar-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.progress-groups{grid-template-columns:1fr}.profile-head{padding:13px}.profile-avatar{width:60px;height:60px;font-size:30px}}
   </style>
@@ -96,12 +96,16 @@
     .exam-course-open span:first-child{min-width:0;overflow-wrap:anywhere}
     .exam-course-arrow{flex:0 0 auto;color:var(--muted);font-size:16px}
     .course-topic-choices{display:grid;gap:9px;margin:22px 0}
+    .course-topic-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;gap:8px}
     .course-topic-choice{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:46px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#101010;color:var(--white);text-align:left;font-size:12px;line-height:1.45}
     .course-topic-choice span:first-child{min-width:0;overflow-wrap:anywhere}
     .course-topic-choice span:last-child{flex:none;color:var(--muted);font-size:16px}
     .course-topic-choice:hover{border-color:var(--white);background:var(--white);color:var(--black)}
     .course-topic-choice:hover span:last-child{color:#555}
-    @media(max-width:700px){.landing.exam-open{min-height:0;grid-template-columns:minmax(0,1fr)}.exam-tile,.exam-content,.exam-groups,.exam-group,.exam-group-content,.exam-subject-list{width:100%;min-width:0}.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.exam-content{padding:0 12px 25px}.exam-groups{gap:9px}.exam-group-toggle{min-height:50px;padding:11px 12px;font-size:11px}.exam-group-content{padding:0 10px 11px}.exam-subject-list{gap:8px;padding-top:10px}.exam-course-open{min-height:48px;padding:10px 11px;font-size:11px}.course-topic-choices{gap:8px;margin:17px 0}.course-topic-choice{min-height:48px;padding:11px 12px;font-size:12px}.coming{-webkit-overflow-scrolling:touch;max-height:calc(100dvh - 24px);max-height:88svh}}
+    .topic-completion{display:flex;justify-content:center;align-items:center;gap:6px;min-width:106px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#101010;color:#ccc;font-size:10px;white-space:nowrap}
+    .topic-completion:hover,.topic-completion.complete{border-color:var(--white);background:var(--white);color:var(--black)}
+    .topic-completion span:first-child{font-size:14px}
+    @media(max-width:700px){.landing.exam-open{min-height:0;grid-template-columns:minmax(0,1fr)}.exam-tile,.exam-content,.exam-groups,.exam-group,.exam-group-content,.exam-subject-list{width:100%;min-width:0}.side.active{min-height:124px;padding:16px 8px 8px}.side.active .side-label{font-size:clamp(43px,12vw,60px)}.exam-content{padding:0 12px 25px}.exam-groups{gap:9px}.exam-group-toggle{min-height:50px;padding:11px 12px;font-size:11px}.exam-group-content{padding:0 10px 11px}.exam-subject-list{gap:8px;padding-top:10px}.exam-course-open{min-height:48px;padding:10px 11px;font-size:11px}.course-topic-choices{gap:8px;margin:17px 0}.course-topic-row{gap:6px}.course-topic-choice{min-height:48px;padding:10px;font-size:11px}.topic-completion{min-width:86px;padding:7px 8px;font-size:9px}.coming{-webkit-overflow-scrolling:touch;max-height:calc(100dvh - 24px);max-height:88svh}}
   </style>
   <style>
     .admin-panel.admin-chat-active{display:flex;flex-direction:column;gap:12px;max-height:min(58vh,540px);overflow:hidden}
