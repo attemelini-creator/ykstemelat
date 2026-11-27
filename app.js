@@ -11,8 +11,11 @@ const AVATARS = [
 const GEOMETRY_TOPICS = ['Doğruda ve Üçgende Açılar', 'Üçgenler', 'Üçgende Alan', 'Çokgenler ve Dörtgenler', 'Çember ve Daire', 'Analitik Geometri', 'Katı Cisimler'];
 const YDT_TOPICS = ['Kelime Bilgisi', 'Dil Bilgisi', 'Cümle Tamamlama', 'Anlamca Yakın Cümle', 'Çeviri', 'Paragraf Tamamlama', 'Diyalog Tamamlama', 'Anlam Bütünlüğünü Bozan Cümle', 'Okuma Parçaları'];
 const DIFFICULTIES = ['Kolay', 'Orta', 'Zor'];
-const EXTRA_EASY_COURSE_IDS = new Set(['matematik', 'fizik', 'kimya']);
+const EXTRA_EASY_COURSE_IDS = new Set(['fizik', 'kimya']);
 const TESTS_PER_DIFFICULTY = 15;
+const TEMEL_ATMA_TOPIC = 'Temel Kavramlar';
+const TEMEL_ATMA_DIFFICULTY = 'Çok Kolay';
+const TEMEL_ATMA_TEST_COUNT = 20;
 const EXAM_GROUPS = {
   TYT: [
     { id: 'turkce', title: 'Türkçe', subjects: [
@@ -76,6 +79,7 @@ const app = {
   adminTab: 'overview', toastTimer: null, activeExam: null, activeCourseGroup: null,
   activeCourseMenu: null, activeCourseTopic: null, activeDifficulty: null,
   activeTestNumber: null, courseMenuView: null, returnToMenuView: null,
+  quizSession: null, localTestResults: null,
   examPanelTimers: {},
   chatLoading: false,
   db: { users: [], feedback: [], announcements: [], audit: [], chatMessages: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
@@ -141,9 +145,34 @@ const date = (value) => value ? new Intl.DateTimeFormat('tr-TR', { dateStyle: 'm
 const now = () => new Date().toISOString();
 const emptyProgress = () => ({ completed_topics: [], test_results: {} });
 const progressTopicKey = (exam, groupId, courseId, topic) => `${exam}:${groupId}:${courseId}:${topic}`;
-const difficultiesForCourse = (courseId) => EXTRA_EASY_COURSE_IDS.has(courseId) ? ['Çok Kolay', ...DIFFICULTIES] : DIFFICULTIES;
+const difficultiesForCourse = (exam, courseId) => (exam === 'TYT' && courseId === 'matematik') || (['TYT', 'AYT'].includes(exam) && EXTRA_EASY_COURSE_IDS.has(courseId))
+  ? ['Çok Kolay', ...DIFFICULTIES]
+  : DIFFICULTIES;
+const testCountForDifficulty = (exam, courseId, topic, difficulty) => exam === 'TYT'
+  && courseId === 'matematik'
+  && topic === TEMEL_ATMA_TOPIC
+  && difficulty === TEMEL_ATMA_DIFFICULTY
+  ? Math.min(TEMEL_ATMA_TEST_COUNT, window.YKS_TEMEL_TESTS?.length || 0)
+  : TESTS_PER_DIFFICULTY;
+const testSlotsForTopic = (exam, courseId, topic) => difficultiesForCourse(exam, courseId).map((difficulty) => ({
+  difficulty,
+  count: testCountForDifficulty(exam, courseId, topic, difficulty)
+}));
+function localTestResults() {
+  if (app.localTestResults) return app.localTestResults;
+  try {
+    const parsed = JSON.parse(localStorage.getItem('yks-temel-test-results') || '{}');
+    app.localTestResults = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch { app.localTestResults = {}; }
+  return app.localTestResults;
+}
+function localTestResultFor(topicKey, difficulty, testNumber) {
+  const owner = app.user?.id || 'guest';
+  return localTestResults()?.[owner]?.[topicKey]?.[difficulty]?.[testNumber] || {};
+}
 const testResultFor = (topicKey, difficulty, testNumber, profile = app.profile) => {
-  const result = profile?.progress?.test_results?.[topicKey]?.[difficulty]?.[testNumber] || {};
+  const saved = profile?.progress?.test_results?.[topicKey]?.[difficulty]?.[testNumber];
+  const result = saved && Object.keys(saved).length ? saved : localTestResultFor(topicKey, difficulty, testNumber);
   return {
     completed: result.completed === true,
     correct: Math.max(0, Number(result.correct) || 0),
@@ -151,10 +180,10 @@ const testResultFor = (topicKey, difficulty, testNumber, profile = app.profile) 
     blank: Math.max(0, Number(result.blank) || 0)
   };
 };
-const topicCompletedTestCount = (topicKey, profile = app.profile, difficulties = DIFFICULTIES) => difficulties.reduce((sum, difficulty) => sum + Array.from({ length: TESTS_PER_DIFFICULTY }, (_, index) => testResultFor(topicKey, difficulty, index + 1, profile).completed ? 1 : 0).reduce((a, b) => a + b, 0), 0);
+const topicCompletedTestCount = (topicKey, profile = app.profile, testSlots = DIFFICULTIES.map((difficulty) => ({ difficulty, count: TESTS_PER_DIFFICULTY })) ) => testSlots.reduce((sum, slot) => sum + Array.from({ length: slot.count }, (_, index) => testResultFor(topicKey, slot.difficulty, index + 1, profile).completed ? 1 : 0).reduce((a, b) => a + b, 0), 0);
 const topicIsComplete = (exam, groupId, courseId, topic, profile = app.profile) => {
-  const difficulties = difficultiesForCourse(courseId);
-  return topicCompletedTestCount(progressTopicKey(exam, groupId, courseId, topic), profile, difficulties) === difficulties.length * TESTS_PER_DIFFICULTY;
+  const slots = testSlotsForTopic(exam, courseId, topic);
+  return topicCompletedTestCount(progressTopicKey(exam, groupId, courseId, topic), profile, slots) === slots.reduce((sum, slot) => sum + slot.count, 0);
 };
 const normalizeUsername = (value) => String(value || '').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/ı/g, 'i').replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't').replace(/[^a-z0-9]/g, '');
 const inappropriateUsername = (value) => BLOCKED_USERNAME_TERMS.some((term) => normalizeUsername(value).includes(term));
@@ -210,6 +239,12 @@ function hideDrawer() {
   $('#menuButton').setAttribute('aria-expanded', 'false'); $('#menuButton').setAttribute('aria-label', 'Menüyü aç'); $('#scrim').hidden = true;
 }
 function closeComing() {
+  if (app.courseMenuView === 'quiz') {
+    app.quizSession = null;
+    app.returnToMenuView = null;
+    openTopicTests(app.activeDifficulty);
+    return;
+  }
   if (app.courseMenuView === 'coming' && app.returnToMenuView === 'tests') {
     app.returnToMenuView = null;
     openTopicTests(app.activeDifficulty);
@@ -237,6 +272,8 @@ function openComing(name, returnToMenuView = null) {
   hideDrawer();
   app.courseMenuView = 'coming';
   app.returnToMenuView = returnToMenuView;
+  $('#comingView').classList.remove('quiz-mode');
+  $('#quizScreen').hidden = true;
   if (!returnToMenuView) {
     app.activeCourseMenu = null;
     app.activeCourseTopic = null;
@@ -261,6 +298,8 @@ function openCourseTopics(course) {
   app.activeTestNumber = null;
   app.courseMenuView = 'topics';
   app.returnToMenuView = null;
+  $('#comingView').classList.remove('quiz-mode');
+  $('#quizScreen').hidden = true;
   const exam = course.exam || app.activeExam || 'YKS';
   $('#comingLabel').textContent = `${exam} · KONU SEÇİMİ`;
   $('#comingTitle').textContent = course.title;
@@ -285,6 +324,8 @@ function openDifficultyChoices(topic) {
   app.activeTestNumber = null;
   app.courseMenuView = 'difficulties';
   app.returnToMenuView = null;
+  $('#comingView').classList.remove('quiz-mode');
+  $('#quizScreen').hidden = true;
   $('#comingLabel').textContent = `${app.activeCourseMenu.exam || app.activeExam || 'YKS'} · ZORLUK SEÇİMİ`;
   $('#comingTitle').textContent = topic;
   $('#comingDescription').textContent = 'Testleri görmek için zorluk seviyesini seç.';
@@ -292,28 +333,38 @@ function openDifficultyChoices(topic) {
   $('#feedbackForm').hidden = true;
   $('#courseTopicChoices').hidden = true;
   $('#topicTestChoices').hidden = true;
-  $('#courseDifficultyChoices').innerHTML = difficultiesForCourse(app.activeCourseMenu.id).map((difficulty) => `<button class="course-topic-choice difficulty-choice" type="button" data-topic-difficulty="${difficulty}"><span>${difficulty}</span><span aria-hidden="true">›</span></button>`).join('');
+  const exam = app.activeCourseMenu.exam || app.activeExam || 'YKS';
+  $('#courseDifficultyChoices').innerHTML = difficultiesForCourse(exam, app.activeCourseMenu.id).map((difficulty) => {
+    const label = exam === 'TYT' && app.activeCourseMenu.id === 'matematik' && difficulty === 'Çok Kolay' ? 'Çok Kolay (Temel Atanlar için)' : difficulty;
+    return `<button class="course-topic-choice difficulty-choice" type="button" data-topic-difficulty="${difficulty}"><span>${label}</span><span aria-hidden="true">›</span></button>`;
+  }).join('');
   $('#courseDifficultyChoices').hidden = false;
   $('#comingView').classList.add('show');
   $('#comingView').setAttribute('aria-hidden', 'false');
 }
 function openTopicTests(difficulty) {
-  if (!app.activeCourseMenu || !app.activeCourseTopic || !difficultiesForCourse(app.activeCourseMenu.id).includes(difficulty)) return;
+  const exam = app.activeCourseMenu?.exam || app.activeExam || 'YKS';
+  if (!app.activeCourseMenu || !app.activeCourseTopic || !difficultiesForCourse(exam, app.activeCourseMenu.id).includes(difficulty)) return;
   hideDrawer();
   app.activeDifficulty = difficulty;
   app.courseMenuView = 'tests';
   app.returnToMenuView = null;
+  app.quizSession = null;
+  $('#comingView').classList.remove('quiz-mode');
+  $('#quizScreen').hidden = true;
   const course = app.activeCourseMenu;
-  const exam = course.exam || app.activeExam || 'YKS';
   const topicKey = progressTopicKey(exam, course.groupId, course.id, app.activeCourseTopic);
+  const testCount = testCountForDifficulty(exam, course.id, app.activeCourseTopic, difficulty);
   $('#comingLabel').textContent = `${exam} · ${difficulty.toLocaleUpperCase('tr-TR')} TESTLERİ`;
   $('#comingTitle').textContent = app.activeCourseTopic;
-  $('#comingDescription').textContent = `${difficulty} seviyesindeki testlerden birini seç.`;
+  $('#comingDescription').textContent = isTemelAtmaRoute()
+    ? 'Temel işlem pratiği için test seç. İlk 15 testte 10, son 5 testte 15 soru var.'
+    : `${difficulty} seviyesindeki testlerden birini seç.`;
   $('#comingSoon').hidden = true;
   $('#feedbackForm').hidden = true;
   $('#courseTopicChoices').hidden = true;
   $('#courseDifficultyChoices').hidden = true;
-  $('#topicTestChoices').innerHTML = Array.from({ length: TESTS_PER_DIFFICULTY }, (_, index) => {
+  $('#topicTestChoices').innerHTML = Array.from({ length: testCount }, (_, index) => {
     const testNumber = index + 1;
     const result = testResultFor(topicKey, difficulty, testNumber);
     const attempts = result.correct + result.wrong + result.blank;
@@ -325,6 +376,218 @@ function openTopicTests(difficulty) {
   $('#topicTestChoices').hidden = false;
   $('#comingView').classList.add('show');
   $('#comingView').setAttribute('aria-hidden', 'false');
+}
+function isTemelAtmaRoute() {
+  return app.activeCourseMenu?.exam === 'TYT'
+    && app.activeCourseMenu?.id === 'matematik'
+    && app.activeCourseTopic === TEMEL_ATMA_TOPIC
+    && app.activeDifficulty === TEMEL_ATMA_DIFFICULTY;
+}
+function parseTurkishNumber(value) {
+  const normalized = String(value).replace(/[−]/g, '-');
+  const number = normalized.includes(',') ? normalized.replace(/\./g, '').replace(',', '.') : normalized.replace(/\./g, '');
+  const parsed = Number(number);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+function formatTurkishNumber(value, decimals = 0) {
+  return new Intl.NumberFormat('tr-TR', {
+    useGrouping: true,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  }).format(value);
+}
+function optionNumericValue(text) {
+  const value = String(text).trim();
+  let match = value.match(/^([−-]?\d+)\s+tam\s+(\d+)\/(\d+)(.*)$/i);
+  if (match) return Number(match[1]) + Number(match[2]) / Number(match[3]);
+  match = value.match(/^([−-]?\d+)\/(\d+)(.*)$/);
+  if (match) return Number(match[1]) / Number(match[2]);
+  match = value.match(/^%\s*([−-]?\d+(?:,\d+)?)(.*)$/);
+  if (match) return parseTurkishNumber(match[1]) / 100;
+  match = value.match(/^([−-]?\d+(?:\.\d+)*(?:,\d+)?)(.*)$/);
+  return match ? parseTurkishNumber(match[1]) : null;
+}
+function questionDistractors(answer) {
+  const value = String(answer).trim();
+  let match = value.match(/^Bölüm\s+(\d+),\s*kalan\s+(\d+)$/i);
+  if (match) {
+    const quotient = Number(match[1]), remainder = Number(match[2]);
+    return [`Bölüm ${quotient - 1}, kalan ${remainder}`, `Bölüm ${quotient + 1}, kalan ${remainder}`, `Bölüm ${quotient}, kalan ${remainder + 1}`, `Bölüm ${quotient}, kalan ${Math.max(0, remainder - 1)}`];
+  }
+  match = value.match(/^([−-]?\d+)\s+tam\s+(\d+)\/(\d+)(.*)$/i);
+  if (match) {
+    const whole = Number(match[1]), numerator = Number(match[2]), denominator = Number(match[3]), suffix = match[4];
+    return [
+      `${whole} tam ${Math.max(0, numerator - 1)}/${denominator}${suffix}`,
+      `${whole} tam ${numerator + 1}/${denominator}${suffix}`,
+      `${whole} tam ${numerator}/${denominator + 1}${suffix}`,
+      `${whole} tam ${numerator}/${Math.max(1, denominator - 1)}${suffix}`
+    ];
+  }
+  match = value.match(/^([−-]?\d+)\/(\d+)(.*)$/);
+  if (match) {
+    const numerator = Number(match[1]), denominator = Number(match[2]), suffix = match[3];
+    return [
+      `${numerator - 1}/${denominator}${suffix}`,
+      `${numerator + 1}/${denominator}${suffix}`,
+      `${numerator}/${denominator + 1}${suffix}`,
+      `${numerator}/${Math.max(1, denominator - 1)}${suffix}`
+    ];
+  }
+  const percent = value.match(/^%\s*([−-]?\d+(?:,\d+)?)(.*)$/);
+  const numberMatch = percent ? null : value.match(/^([−-]?\d+(?:\.\d+)*(?:,\d+)?)(.*)$/);
+  if (percent || numberMatch) {
+    const rawNumber = percent ? percent[1] : numberMatch[1];
+    const suffix = percent ? percent[2] : numberMatch[2];
+    const number = parseTurkishNumber(rawNumber);
+    const decimals = (rawNumber.split(',')[1] || '').length;
+    const step = decimals ? 10 ** -decimals : 1;
+    const deltas = decimals ? [-step, step, -2 * step, 2 * step, 10 * step, -10 * step] : [-1, 1, -2, 2, -10, 10];
+    return deltas.map((delta) => {
+      const formatted = formatTurkishNumber(number + delta, decimals);
+      return `${percent ? '%' : ''}${formatted}${suffix}`;
+    });
+  }
+  return [];
+}
+function stableShuffle(items, seedText) {
+  let seed = 2166136261;
+  for (const character of seedText) seed = Math.imul(seed ^ character.charCodeAt(0), 16777619) >>> 0;
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index--) {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    const swap = seed % (index + 1);
+    [shuffled[index], shuffled[swap]] = [shuffled[swap], shuffled[index]];
+  }
+  return shuffled;
+}
+function optionsForQuestion(question, testNumber, questionIndex) {
+  const correct = String(question.answer).trim();
+  const numericCorrect = optionNumericValue(correct);
+  const distractors = [];
+  for (const choice of questionDistractors(correct)) {
+    const numericChoice = optionNumericValue(choice);
+    if (choice === correct || distractors.includes(choice)) continue;
+    if (numericCorrect !== null && numericChoice !== null && Math.abs(numericCorrect - numericChoice) < 1e-10) continue;
+    if (distractors.some((existing) => {
+      const existingNumber = optionNumericValue(existing);
+      return numericChoice !== null && existingNumber !== null && Math.abs(numericChoice - existingNumber) < 1e-10;
+    })) continue;
+    distractors.push(choice);
+    if (distractors.length === 3) break;
+  }
+  if (distractors.length < 3 && numericCorrect !== null) {
+    const decimals = String(correct).match(/,(\d+)/)?.[1].length || 0;
+    const step = decimals ? 10 ** -decimals : 1;
+    for (const delta of [3, -3, 4, -4, 5, -5]) {
+      const candidate = `${formatTurkishNumber(numericCorrect + delta * step, decimals)}${String(correct).replace(/^[−-]?[\d.,]+/, '')}`;
+      if (candidate !== correct && !distractors.includes(candidate) && !distractors.some((existing) => Math.abs(optionNumericValue(existing) - (numericCorrect + delta * step)) < 1e-10)) distractors.push(candidate);
+      if (distractors.length === 3) break;
+    }
+  }
+  while (distractors.length < 3) distractors.push(`Seçenek ${distractors.length + 1}`);
+  const shuffled = stableShuffle([correct, ...distractors], `${testNumber}:${questionIndex}:${question.prompt}`);
+  return shuffled.map((text, index) => ({ text, letter: 'ABCD'[index], correct: text === correct }));
+}
+function startQuestionTest(testNumber) {
+  if (!isTemelAtmaRoute()) return false;
+  const test = window.YKS_TEMEL_TESTS?.find((item) => item.test === testNumber);
+  if (!test) return false;
+  hideDrawer();
+  app.activeTestNumber = testNumber;
+  app.quizSession = { test, questionIndex: 0, answers: Array(test.questions.length).fill(null), saving: false };
+  app.courseMenuView = 'quiz';
+  app.returnToMenuView = 'tests';
+  $('#comingView').classList.add('show', 'quiz-mode');
+  $('#comingView').setAttribute('aria-hidden', 'false');
+  $('#comingLabel').textContent = 'TYT MATEMATİK · TEMEL ATANLAR İÇİN';
+  $('#comingTitle').textContent = `Test ${testNumber}`;
+  $('#comingDescription').textContent = 'Cevabını işaretledikten sonra değiştiremezsin. Sorular arasında oklarla gezebilirsin.';
+  $('#comingSoon').hidden = true;
+  $('#feedbackForm').hidden = true;
+  $('#courseTopicChoices').hidden = true;
+  $('#courseDifficultyChoices').hidden = true;
+  $('#topicTestChoices').hidden = true;
+  $('#quizScreen').hidden = false;
+  renderQuestionTest();
+  return true;
+}
+function renderQuestionTest() {
+  const session = app.quizSession;
+  if (!session) return;
+  const questionIndex = session.questionIndex;
+  const question = session.test.questions[questionIndex];
+  const options = optionsForQuestion(question, session.test.test, questionIndex);
+  const selected = session.answers[questionIndex];
+  const answered = selected !== null;
+  const optionsHtml = options.map((option, index) => {
+    const stateClass = answered && option.correct ? 'is-correct' : answered && selected === index ? 'is-wrong' : '';
+    return `<button class="quiz-option ${stateClass}" type="button" data-quiz-answer="${index}" aria-pressed="${selected === index}" ${answered ? 'disabled' : ''}><span class="quiz-option-letter">${option.letter}</span><span class="quiz-option-text">${esc(option.text)}</span><span class="quiz-option-state" aria-hidden="true">${stateClass === 'is-correct' ? '✓' : stateClass === 'is-wrong' ? '×' : ''}</span></button>`;
+  }).join('');
+  const feedback = answered
+    ? `<p class="quiz-feedback ${options[selected]?.correct ? 'is-correct' : 'is-wrong'}" aria-live="polite">${options[selected]?.correct ? 'Doğru cevap.' : 'Yanlış cevap. Doğru seçenek yeşil renkle gösterildi.'} Cevabın kilitlendi ve değiştirilemez.</p>`
+    : '<p class="quiz-feedback" aria-live="polite">Bir seçenek işaretle ya da boş bırakıp sonraki soruya geç.</p>';
+  const previousDisabled = questionIndex === 0 ? 'disabled' : '';
+  const actionButton = questionIndex === session.test.questions.length - 1
+    ? `<button class="quiz-nav-button quiz-finish" type="button" data-quiz-finish ${session.saving ? 'disabled' : ''}>${session.saving ? 'Kaydediliyor…' : 'Testi Bitir'} <span aria-hidden="true">✓</span></button>`
+    : '<button class="quiz-nav-button quiz-next" type="button" data-quiz-next>Sonraki <span aria-hidden="true">→</span></button>';
+  $('#quizScreen').innerHTML = `<section class="quiz-card" aria-labelledby="quizQuestionText"><div class="quiz-progress-line"><span>TEST ${session.test.test} · SORU ${questionIndex + 1}</span><span>${questionIndex + 1} / ${session.test.questions.length}</span></div><div class="quiz-progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="${session.test.questions.length}" aria-valuenow="${questionIndex + 1}"><i style="width:${((questionIndex + 1) / session.test.questions.length) * 100}%"></i></div><h2 class="quiz-question" id="quizQuestionText">${esc(question.prompt)}</h2><div class="quiz-options" role="group" aria-label="Cevap seçenekleri">${optionsHtml}</div>${feedback}<nav class="quiz-navigation" aria-label="Sorular arası gezinme"><button class="quiz-nav-button quiz-previous" type="button" data-quiz-previous ${previousDisabled}><span aria-hidden="true">←</span> Önceki</button>${actionButton}</nav></section>`;
+}
+function selectQuizAnswer(index) {
+  const session = app.quizSession;
+  if (!session || !Number.isInteger(index) || session.answers[session.questionIndex] !== null) return;
+  if (index < 0 || index > 3) return;
+  session.answers[session.questionIndex] = index;
+  renderQuestionTest();
+}
+function saveLocalTestResult(topicKey, difficulty, testNumber, result) {
+  const owner = app.user?.id || 'guest';
+  const records = localTestResults();
+  records[owner] ||= {};
+  records[owner][topicKey] ||= {};
+  records[owner][topicKey][difficulty] ||= {};
+  records[owner][topicKey][difficulty][testNumber] = result;
+  try { localStorage.setItem('yks-temel-test-results', JSON.stringify(records)); } catch { /* Session memory still shows the completed result. */ }
+}
+async function saveQuestionTestResult(session, result) {
+  const topicKey = progressTopicKey('TYT', app.activeCourseMenu.groupId, app.activeCourseMenu.id, app.activeCourseTopic);
+  if (app.user?.id && app.client && app.profile) {
+    const progress = JSON.parse(JSON.stringify(app.profile.progress || emptyProgress()));
+    progress.test_results ||= {};
+    progress.test_results[topicKey] ||= {};
+    progress.test_results[topicKey][TEMEL_ATMA_DIFFICULTY] ||= {};
+    progress.test_results[topicKey][TEMEL_ATMA_DIFFICULTY][session.test.test] = result;
+    const { error } = await app.client.from('profiles').update({ progress }).eq('id', app.user.id);
+    if (!error) {
+      app.profile.progress = progress;
+      return 'account';
+    }
+  }
+  saveLocalTestResult(topicKey, TEMEL_ATMA_DIFFICULTY, session.test.test, result);
+  return 'device';
+}
+async function finishQuestionTest() {
+  const session = app.quizSession;
+  if (!session || session.saving) return;
+  session.saving = true;
+  renderQuestionTest();
+  const optionsByQuestion = session.test.questions.map((question, index) => optionsForQuestion(question, session.test.test, index));
+  let correct = 0, wrong = 0;
+  session.answers.forEach((selected, index) => {
+    if (selected === null) return;
+    if (optionsByQuestion[index][selected]?.correct) correct++;
+    else wrong++;
+  });
+  const blank = session.answers.length - correct - wrong;
+  const result = { completed: true, correct, wrong, blank, completed_at: now() };
+  let savedTo = 'device';
+  try { savedTo = await saveQuestionTestResult(session, result); }
+  catch { saveLocalTestResult(progressTopicKey('TYT', app.activeCourseMenu.groupId, app.activeCourseMenu.id, app.activeCourseTopic), TEMEL_ATMA_DIFFICULTY, session.test.test, result); }
+  const testNumber = session.test.test;
+  app.quizSession = null;
+  app.activeTestNumber = testNumber;
+  openTopicTests(TEMEL_ATMA_DIFFICULTY);
+  showToast(`Test tamamlandı · ${correct} doğru, ${wrong} yanlış, ${blank} boş${savedTo === 'device' ? ' · Bu cihazda kaydedildi' : ''}.`);
 }
 function renderExamPanel() {
   const exam = app.activeExam;
@@ -516,9 +779,9 @@ function renderProfile() {
   const progressGroups = Object.entries(EXAM_GROUPS).map(([exam, sections]) => {
     const sectionRows = sections.map((section) => {
       const rows = section.subjects.map((course) => {
-        const difficulties = difficultiesForCourse(course.id);
-        const total = course.topics.length * difficulties.length * TESTS_PER_DIFFICULTY;
-        const completed = course.topics.reduce((sum, topic) => sum + topicCompletedTestCount(progressTopicKey(exam, section.id, course.id, topic), record, difficulties), 0);
+        const topicSlots = course.topics.map((topic) => ({ topic, slots: testSlotsForTopic(exam, course.id, topic) }));
+        const total = topicSlots.reduce((sum, item) => sum + item.slots.reduce((slotSum, slot) => slotSum + slot.count, 0), 0);
+        const completed = topicSlots.reduce((sum, item) => sum + topicCompletedTestCount(progressTopicKey(exam, section.id, course.id, item.topic), record, item.slots), 0);
         const value = total ? Math.round(completed / total * 100) : 0;
         return { course, completed, total, value };
       });
@@ -665,10 +928,23 @@ document.addEventListener('click', async (event) => {
     openTopicTests(app.activeDifficulty);
     return;
   }
+  const quizAnswer = target.closest('[data-quiz-answer]');
+  if (quizAnswer) { selectQuizAnswer(Number(quizAnswer.dataset.quizAnswer)); return; }
+  if (target.closest('[data-quiz-previous]')) {
+    if (app.quizSession && app.quizSession.questionIndex > 0) { app.quizSession.questionIndex--; renderQuestionTest(); }
+    return;
+  }
+  if (target.closest('[data-quiz-next]')) {
+    if (app.quizSession && app.quizSession.questionIndex < app.quizSession.test.questions.length - 1) { app.quizSession.questionIndex++; renderQuestionTest(); }
+    return;
+  }
+  if (target.closest('[data-quiz-finish]')) { await finishQuestionTest(); return; }
   const startTest = target.closest('[data-start-test]');
   if (startTest) {
+    const testNumber = Number(startTest.dataset.startTest);
+    if (startQuestionTest(testNumber)) return;
     const courseTitle = app.activeCourseMenu?.title || '';
-    openComing(`${courseTitle} · ${app.activeCourseTopic} · ${app.activeDifficulty} · Test ${startTest.dataset.startTest}`, 'tests');
+    openComing(`${courseTitle} · ${app.activeCourseTopic} · ${app.activeDifficulty} · Test ${testNumber}`, 'tests');
     return;
   }
   const courseButton = target.closest('[data-course-key]');
