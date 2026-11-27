@@ -11,6 +11,7 @@ const AVATARS = [
 const GEOMETRY_TOPICS = ['Doğruda ve Üçgende Açılar', 'Üçgenler', 'Üçgende Alan', 'Çokgenler ve Dörtgenler', 'Çember ve Daire', 'Analitik Geometri', 'Katı Cisimler'];
 const YDT_TOPICS = ['Kelime Bilgisi', 'Dil Bilgisi', 'Cümle Tamamlama', 'Anlamca Yakın Cümle', 'Çeviri', 'Paragraf Tamamlama', 'Diyalog Tamamlama', 'Anlam Bütünlüğünü Bozan Cümle', 'Okuma Parçaları'];
 const DIFFICULTIES = ['Kolay', 'Orta', 'Zor'];
+const EXTRA_EASY_COURSE_IDS = new Set(['matematik', 'fizik', 'kimya']);
 const TESTS_PER_DIFFICULTY = 15;
 const EXAM_GROUPS = {
   TYT: [
@@ -140,6 +141,7 @@ const date = (value) => value ? new Intl.DateTimeFormat('tr-TR', { dateStyle: 'm
 const now = () => new Date().toISOString();
 const emptyProgress = () => ({ completed_topics: [], test_results: {} });
 const progressTopicKey = (exam, groupId, courseId, topic) => `${exam}:${groupId}:${courseId}:${topic}`;
+const difficultiesForCourse = (courseId) => EXTRA_EASY_COURSE_IDS.has(courseId) ? ['Çok Kolay', ...DIFFICULTIES] : DIFFICULTIES;
 const testResultFor = (topicKey, difficulty, testNumber, profile = app.profile) => {
   const result = profile?.progress?.test_results?.[topicKey]?.[difficulty]?.[testNumber] || {};
   return {
@@ -149,8 +151,11 @@ const testResultFor = (topicKey, difficulty, testNumber, profile = app.profile) 
     blank: Math.max(0, Number(result.blank) || 0)
   };
 };
-const topicCompletedTestCount = (topicKey, profile = app.profile) => DIFFICULTIES.reduce((sum, difficulty) => sum + Array.from({ length: TESTS_PER_DIFFICULTY }, (_, index) => testResultFor(topicKey, difficulty, index + 1, profile).completed ? 1 : 0).reduce((a, b) => a + b, 0), 0);
-const topicIsComplete = (exam, groupId, courseId, topic, profile = app.profile) => topicCompletedTestCount(progressTopicKey(exam, groupId, courseId, topic), profile) === DIFFICULTIES.length * TESTS_PER_DIFFICULTY;
+const topicCompletedTestCount = (topicKey, profile = app.profile, difficulties = DIFFICULTIES) => difficulties.reduce((sum, difficulty) => sum + Array.from({ length: TESTS_PER_DIFFICULTY }, (_, index) => testResultFor(topicKey, difficulty, index + 1, profile).completed ? 1 : 0).reduce((a, b) => a + b, 0), 0);
+const topicIsComplete = (exam, groupId, courseId, topic, profile = app.profile) => {
+  const difficulties = difficultiesForCourse(courseId);
+  return topicCompletedTestCount(progressTopicKey(exam, groupId, courseId, topic), profile, difficulties) === difficulties.length * TESTS_PER_DIFFICULTY;
+};
 const normalizeUsername = (value) => String(value || '').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/ı/g, 'i').replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't').replace(/[^a-z0-9]/g, '');
 const inappropriateUsername = (value) => BLOCKED_USERNAME_TERMS.some((term) => normalizeUsername(value).includes(term));
 const avatarFor = (id) => AVATARS.find((item) => item.id === id) || AVATARS[0];
@@ -287,13 +292,13 @@ function openDifficultyChoices(topic) {
   $('#feedbackForm').hidden = true;
   $('#courseTopicChoices').hidden = true;
   $('#topicTestChoices').hidden = true;
-  $('#courseDifficultyChoices').innerHTML = DIFFICULTIES.map((difficulty) => `<button class="course-topic-choice difficulty-choice" type="button" data-topic-difficulty="${difficulty}"><span>${difficulty}</span><span aria-hidden="true">›</span></button>`).join('');
+  $('#courseDifficultyChoices').innerHTML = difficultiesForCourse(app.activeCourseMenu.id).map((difficulty) => `<button class="course-topic-choice difficulty-choice" type="button" data-topic-difficulty="${difficulty}"><span>${difficulty}</span><span aria-hidden="true">›</span></button>`).join('');
   $('#courseDifficultyChoices').hidden = false;
   $('#comingView').classList.add('show');
   $('#comingView').setAttribute('aria-hidden', 'false');
 }
 function openTopicTests(difficulty) {
-  if (!app.activeCourseMenu || !app.activeCourseTopic || !DIFFICULTIES.includes(difficulty)) return;
+  if (!app.activeCourseMenu || !app.activeCourseTopic || !difficultiesForCourse(app.activeCourseMenu.id).includes(difficulty)) return;
   hideDrawer();
   app.activeDifficulty = difficulty;
   app.courseMenuView = 'tests';
@@ -511,8 +516,9 @@ function renderProfile() {
   const progressGroups = Object.entries(EXAM_GROUPS).map(([exam, sections]) => {
     const sectionRows = sections.map((section) => {
       const rows = section.subjects.map((course) => {
-        const total = course.topics.length * DIFFICULTIES.length * TESTS_PER_DIFFICULTY;
-        const completed = course.topics.reduce((sum, topic) => sum + topicCompletedTestCount(progressTopicKey(exam, section.id, course.id, topic), record), 0);
+        const difficulties = difficultiesForCourse(course.id);
+        const total = course.topics.length * difficulties.length * TESTS_PER_DIFFICULTY;
+        const completed = course.topics.reduce((sum, topic) => sum + topicCompletedTestCount(progressTopicKey(exam, section.id, course.id, topic), record, difficulties), 0);
         const value = total ? Math.round(completed / total * 100) : 0;
         return { course, completed, total, value };
       });
