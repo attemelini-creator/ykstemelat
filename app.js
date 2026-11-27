@@ -1,4 +1,1007 @@
 'use strict';
+window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
+  {
+    "test": 1,
+    "questions": [
+      {
+        "prompt": "38 + 47 işleminin sonucu kaçtır?",
+        "answer": "85"
+      },
+      {
+        "prompt": "126 + 89 işleminin sonucu kaçtır?",
+        "answer": "215"
+      },
+      {
+        "prompt": "500 − 278 işleminin sonucu kaçtır?",
+        "answer": "222"
+      },
+      {
+        "prompt": "1.000 − 647 işleminin sonucu kaçtır?",
+        "answer": "353"
+      },
+      {
+        "prompt": "74 + 38 − 29 işleminin sonucu kaçtır?",
+        "answer": "83"
+      },
+      {
+        "prompt": "315 − 96 + 42 işleminin sonucu kaçtır?",
+        "answer": "261"
+      },
+      {
+        "prompt": "280 sayısına kaç eklenirse 500 olur?",
+        "answer": "220"
+      },
+      {
+        "prompt": "Hangi sayıdan 175 çıkarılırsa 268 kalır?",
+        "answer": "443"
+      },
+      {
+        "prompt": "643 sayısından kaç çıkarılırsa 297 kalır?",
+        "answer": "346"
+      },
+      {
+        "prompt": "Bir sayının 4 katı 96’dır. Bu sayıdan 7 çıkarılırsa sonuç kaç olur?",
+        "answer": "17"
+      }
+    ]
+  },
+  {
+    "test": 2,
+    "questions": [
+      {
+        "prompt": "5.072 sayısındaki yüzler basamağında hangi rakam vardır?",
+        "answer": "0"
+      },
+      {
+        "prompt": "8 binlik, 6 yüzlük ve 3 birlikten oluşan sayı kaçtır?",
+        "answer": "8.603"
+      },
+      {
+        "prompt": "4.985 sayısı en yakın yüzlüğe yuvarlanırsa kaç olur?",
+        "answer": "5.000"
+      },
+      {
+        "prompt": "6.746 sayısı en yakın onluğa yuvarlanırsa kaç olur?",
+        "answer": "6.750"
+      },
+      {
+        "prompt": "3.489 sayısına 1.000 eklenirse kaç elde edilir?",
+        "answer": "4.489"
+      },
+      {
+        "prompt": "10.000 − 2.506 işleminin sonucu kaçtır?",
+        "answer": "7.494"
+      },
+      {
+        "prompt": "3, 5 ve 7 rakamlarını birer kez kullanarak yazılabilecek en küçük üç basamaklı sayı kaçtır?",
+        "answer": "357"
+      },
+      {
+        "prompt": "427 sayısının rakamları ters çevrilince oluşan sayı ile 427 arasındaki fark kaçtır?",
+        "answer": "297"
+      },
+      {
+        "prompt": "5 yüzlük, 14 onluk ve 6 birlikten oluşan sayı kaçtır?",
+        "answer": "646"
+      },
+      {
+        "prompt": "En küçük dört basamaklı sayı ile en büyük üç basamaklı sayı arasındaki fark kaçtır?",
+        "answer": "1"
+      }
+    ]
+  },
+  {
+    "test": 3,
+    "questions": [
+      {
+        "prompt": "8 × 7 işleminin sonucu kaçtır?",
+        "answer": "56"
+      },
+      {
+        "prompt": "14 × 6 işleminin sonucu kaçtır?",
+        "answer": "84"
+      },
+      {
+        "prompt": "25 × 8 işleminin sonucu kaçtır?",
+        "answer": "200"
+      },
+      {
+        "prompt": "36 × 5 işleminin sonucu kaçtır?",
+        "answer": "180"
+      },
+      {
+        "prompt": "19 × 12 işleminin sonucu kaçtır?",
+        "answer": "228"
+      },
+      {
+        "prompt": "42 × 15 işleminin sonucu kaçtır?",
+        "answer": "630"
+      },
+      {
+        "prompt": "125 × 8 işleminin sonucu kaçtır?",
+        "answer": "1.000"
+      },
+      {
+        "prompt": "24 × 25 işleminin sonucu kaçtır?",
+        "answer": "600"
+      },
+      {
+        "prompt": "48 × 19 işleminin sonucu kaçtır?",
+        "answer": "912"
+      },
+      {
+        "prompt": "Her birinde 24 kalem bulunan 18 kutuda toplam kaç kalem vardır?",
+        "answer": "432"
+      }
+    ]
+  },
+  {
+    "test": 4,
+    "questions": [
+      {
+        "prompt": "63 ÷ 9 işleminin sonucu kaçtır?",
+        "answer": "7"
+      },
+      {
+        "prompt": "144 ÷ 12 işleminin sonucu kaçtır?",
+        "answer": "12"
+      },
+      {
+        "prompt": "360 ÷ 6 işleminin sonucu kaçtır?",
+        "answer": "60"
+      },
+      {
+        "prompt": "945 ÷ 9 işleminin sonucu kaçtır?",
+        "answer": "105"
+      },
+      {
+        "prompt": "1.248 ÷ 8 işleminin sonucu kaçtır?",
+        "answer": "156"
+      },
+      {
+        "prompt": "2.400 ÷ 16 işleminin sonucu kaçtır?",
+        "answer": "150"
+      },
+      {
+        "prompt": "875 ÷ 5 işleminin sonucu kaçtır?",
+        "answer": "175"
+      },
+      {
+        "prompt": "1.005 sayısı 8’e bölündüğünde bölüm ve kalan kaç olur?",
+        "answer": "Bölüm 125, kalan 5"
+      },
+      {
+        "prompt": "738 ÷ 6 işleminin sonucu kaçtır?",
+        "answer": "123"
+      },
+      {
+        "prompt": "96 kurabiye önce 4 takıma, sonra her takımın kurabiyeleri 6 oyuncuya eşit paylaştırılıyor. Bir oyuncu kaç kurabiye alır?",
+        "answer": "4"
+      }
+    ]
+  },
+  {
+    "test": 5,
+    "questions": [
+      {
+        "prompt": "8 + 3 × 4 işleminin sonucu kaçtır?",
+        "answer": "20"
+      },
+      {
+        "prompt": "(8 + 3) × 4 işleminin sonucu kaçtır?",
+        "answer": "44"
+      },
+      {
+        "prompt": "72 ÷ 8 + 6 işleminin sonucu kaçtır?",
+        "answer": "15"
+      },
+      {
+        "prompt": "72 ÷ (8 + 4) işleminin sonucu kaçtır?",
+        "answer": "6"
+      },
+      {
+        "prompt": "50 − 18 ÷ 3 × 4 işleminin sonucu kaçtır?",
+        "answer": "26"
+      },
+      {
+        "prompt": "5 × (12 − 7) + 9 işleminin sonucu kaçtır?",
+        "answer": "34"
+      },
+      {
+        "prompt": "84 − 24 ÷ 6 + 3 × 2 işleminin sonucu kaçtır?",
+        "answer": "86"
+      },
+      {
+        "prompt": "(45 − 21) ÷ 6 + 8 işleminin sonucu kaçtır?",
+        "answer": "12"
+      },
+      {
+        "prompt": "3 × (28 ÷ 4 + 5) işleminin sonucu kaçtır?",
+        "answer": "36"
+      },
+      {
+        "prompt": "144 ÷ (3 × 4) + (18 − 7) × 2 işleminin sonucu kaçtır?",
+        "answer": "34"
+      }
+    ]
+  },
+  {
+    "test": 6,
+    "questions": [
+      {
+        "prompt": "Bir sepette 38 elma vardı. 27 elma daha kondu, ardından 19 elma alındı. Sepette kaç elma kaldı?",
+        "answer": "46"
+      },
+      {
+        "prompt": "320 sayfalık bir kitabın ilk gün 48, ikinci gün 67 sayfası okundu. Okunmamış kaç sayfa kaldı?",
+        "answer": "205"
+      },
+      {
+        "prompt": "Her birinde 18 kalem bulunan 7 kutudan 39 kalem dağıtıldı. Kaç kalem kaldı?",
+        "answer": "87"
+      },
+      {
+        "prompt": "Tanesi 72 TL olan 5 bilet için 400 TL veriliyor. Kaç TL para üstü alınır?",
+        "answer": "40 TL"
+      },
+      {
+        "prompt": "240 TL’si olan Ece, tanesi 34 TL olan 3 defter alıyor. Ece’nin kaç TL’si kalır?",
+        "answer": "138 TL"
+      },
+      {
+        "prompt": "Her biri 42 koltuklu 6 otobüste 217 koltuk doludur. Kaç koltuk boştur?",
+        "answer": "35"
+      },
+      {
+        "prompt": "Bir salonda 24 sıra ve her sırada 16 sandalye vardır. Toplam kaç sandalye vardır?",
+        "answer": "384"
+      },
+      {
+        "prompt": "810 litre su 9 eşit tanka paylaştırılıyor. 4 tankta toplam kaç litre su bulunur?",
+        "answer": "360 litre"
+      },
+      {
+        "prompt": "Bir atölye saatte 23 parça üretiyor. 5 saatte üretilen parçaların 18’i hatalıysa kaç sağlam parça vardır?",
+        "answer": "97"
+      },
+      {
+        "prompt": "Bir matbaa 840 sayfalık işi 4 günde tamamlayacak. İlk 3 gün her gün 185 sayfa basarsa son gün kaç sayfa basmalıdır?",
+        "answer": "285 sayfa"
+      }
+    ]
+  },
+  {
+    "test": 7,
+    "questions": [
+      {
+        "prompt": "46’nın yarısı kaçtır?",
+        "answer": "23"
+      },
+      {
+        "prompt": "120’nin dörtte biri kaçtır?",
+        "answer": "30"
+      },
+      {
+        "prompt": "45’in beşte üçü kaçtır?",
+        "answer": "27"
+      },
+      {
+        "prompt": "2/7 + 3/7 işleminin sonucu kaçtır?",
+        "answer": "5/7"
+      },
+      {
+        "prompt": "7/9 − 2/9 işleminin sonucu kaçtır?",
+        "answer": "5/9"
+      },
+      {
+        "prompt": "18/24 kesrinin sadeleşmiş hâli nedir?",
+        "answer": "3/4"
+      },
+      {
+        "prompt": "5/6 ile 7/9 kesirlerinden hangisi daha büyüktür?",
+        "answer": "5/6"
+      },
+      {
+        "prompt": "32’nin dörtte üçü kaçtır?",
+        "answer": "24"
+      },
+      {
+        "prompt": "Bir sayının 2/5’i 14 ise bu sayı kaçtır?",
+        "answer": "35"
+      },
+      {
+        "prompt": "1 litrelik bir şişeden önce 3/8 litre, sonra 1/4 litre su içiliyor. Şişede kaç litre su kalır?",
+        "answer": "3/8 litre"
+      }
+    ]
+  },
+  {
+    "test": 8,
+    "questions": [
+      {
+        "prompt": "1/2 + 1/3 işleminin sonucu kaçtır?",
+        "answer": "5/6"
+      },
+      {
+        "prompt": "5/6 − 1/4 işleminin sonucu kaçtır?",
+        "answer": "7/12"
+      },
+      {
+        "prompt": "20’nin 3/5’i kaçtır?",
+        "answer": "12"
+      },
+      {
+        "prompt": "2/3 × 3/4 işleminin sonucu kaçtır?",
+        "answer": "1/2"
+      },
+      {
+        "prompt": "5/8 ÷ 1/4 işleminin sonucu kaçtır?",
+        "answer": "5/2"
+      },
+      {
+        "prompt": "1 tam 1/3 + 2 tam 1/6 işleminin sonucu kaçtır?",
+        "answer": "3 tam 1/2"
+      },
+      {
+        "prompt": "2/5’in 3/4’ü kaçtır?",
+        "answer": "3/10"
+      },
+      {
+        "prompt": "7/10 − 1/4 işleminin sonucu kaçtır?",
+        "answer": "9/20"
+      },
+      {
+        "prompt": "4/9 ÷ 2/3 işleminin sonucu kaçtır?",
+        "answer": "2/3"
+      },
+      {
+        "prompt": "Bir tarifte bir tepsi için 3/4 su bardağı süt kullanılıyor. 6 tepsi için kaç su bardağı süt gerekir?",
+        "answer": "4 tam 1/2 su bardağı"
+      }
+    ]
+  },
+  {
+    "test": 9,
+    "questions": [
+      {
+        "prompt": "3,75 + 2,6 işleminin sonucu kaçtır?",
+        "answer": "6,35"
+      },
+      {
+        "prompt": "10 − 4,78 işleminin sonucu kaçtır?",
+        "answer": "5,22"
+      },
+      {
+        "prompt": "0,7 × 8 işleminin sonucu kaçtır?",
+        "answer": "5,6"
+      },
+      {
+        "prompt": "15,6 ÷ 4 işleminin sonucu kaçtır?",
+        "answer": "3,9"
+      },
+      {
+        "prompt": "2,45 + 0,38 işleminin sonucu kaçtır?",
+        "answer": "2,83"
+      },
+      {
+        "prompt": "8,2 − 3,75 işleminin sonucu kaçtır?",
+        "answer": "4,45"
+      },
+      {
+        "prompt": "0,25 × 28 işleminin sonucu kaçtır?",
+        "answer": "7"
+      },
+      {
+        "prompt": "9,6 ÷ 0,8 işleminin sonucu kaçtır?",
+        "answer": "12"
+      },
+      {
+        "prompt": "1,35 metre ile 75 santimetrenin toplamı kaç metredir?",
+        "answer": "2,10 metre"
+      },
+      {
+        "prompt": "Her biri 2,4 metre olan 3 kumaş parçasından toplam 1,75 metre kesiliyor. Kaç metre kumaş kalır?",
+        "answer": "5,45 metre"
+      }
+    ]
+  },
+  {
+    "test": 10,
+    "questions": [
+      {
+        "prompt": "340’ın yüzde 10’u kaçtır?",
+        "answer": "34"
+      },
+      {
+        "prompt": "96’nın yüzde 25’i kaçtır?",
+        "answer": "24"
+      },
+      {
+        "prompt": "218’in yüzde 50’si kaçtır?",
+        "answer": "109"
+      },
+      {
+        "prompt": "450’nin yüzde 20’si kaçtır?",
+        "answer": "90"
+      },
+      {
+        "prompt": "72 sorunun 18’i doğru cevaplandı. Doğru cevapların yüzdesi kaçtır?",
+        "answer": "%25"
+      },
+      {
+        "prompt": "3/5 kesri yüzde kaçtır?",
+        "answer": "%60"
+      },
+      {
+        "prompt": "500 TL’lik bir ürüne yüzde 12 indirim yapılırsa indirimli fiyat kaç TL olur?",
+        "answer": "440 TL"
+      },
+      {
+        "prompt": "160 sayısı yüzde 15 artırılırsa yeni sayı kaç olur?",
+        "answer": "184"
+      },
+      {
+        "prompt": "Bir sepetteki kırmızı ve mavi topların oranı 2:3, toplam top sayısı 50’dir. Kırmızı top sayısı kaçtır?",
+        "answer": "20"
+      },
+      {
+        "prompt": "Kırmızı ve mavi boncukların oranı 4:7’dir. 20 kırmızı boncuk varsa toplam kaç boncuk vardır?",
+        "answer": "55"
+      }
+    ]
+  },
+  {
+    "test": 11,
+    "questions": [
+      {
+        "prompt": "x + 28 = 73 ise x kaçtır?",
+        "answer": "45"
+      },
+      {
+        "prompt": "x − 36 = 29 ise x kaçtır?",
+        "answer": "65"
+      },
+      {
+        "prompt": "8x = 104 ise x kaçtır?",
+        "answer": "13"
+      },
+      {
+        "prompt": "x ÷ 7 = 16 ise x kaçtır?",
+        "answer": "112"
+      },
+      {
+        "prompt": "3x + 4 = 31 ise x kaçtır?",
+        "answer": "9"
+      },
+      {
+        "prompt": "5(x − 2) = 35 ise x kaçtır?",
+        "answer": "9"
+      },
+      {
+        "prompt": "2x + 7 = 25 ise x kaçtır?",
+        "answer": "9"
+      },
+      {
+        "prompt": "6x − 15 = 33 ise x kaçtır?",
+        "answer": "8"
+      },
+      {
+        "prompt": "4x + 3x = 56 ise x kaçtır?",
+        "answer": "8"
+      },
+      {
+        "prompt": "(x + 5) ÷ 3 = 9 ise x kaçtır?",
+        "answer": "22"
+      }
+    ]
+  },
+  {
+    "test": 12,
+    "questions": [
+      {
+        "prompt": "−5 + 12 işleminin sonucu kaçtır?",
+        "answer": "7"
+      },
+      {
+        "prompt": "4 − 13 işleminin sonucu kaçtır?",
+        "answer": "−9"
+      },
+      {
+        "prompt": "−7 − 6 işleminin sonucu kaçtır?",
+        "answer": "−13"
+      },
+      {
+        "prompt": "(−6) × (−8) işleminin sonucu kaçtır?",
+        "answer": "48"
+      },
+      {
+        "prompt": "−72 ÷ 9 işleminin sonucu kaçtır?",
+        "answer": "−8"
+      },
+      {
+        "prompt": "15 − (−4) işleminin sonucu kaçtır?",
+        "answer": "19"
+      },
+      {
+        "prompt": "Hava sıcaklığı −3 °C iken 11 °C yükseliyor. Yeni sıcaklık kaç °C olur?",
+        "answer": "8 °C"
+      },
+      {
+        "prompt": "Hesabında 50 TL olan biri 62 TL harcıyor. Harcama sonrası bakiye kaç TL olur?",
+        "answer": "−12 TL"
+      },
+      {
+        "prompt": "Asansör 2. kattan 7 kat aşağı iniyor. Hangi katta durur?",
+        "answer": "−5. kat"
+      },
+      {
+        "prompt": "−3 × (4 − 9) işleminin sonucu kaçtır?",
+        "answer": "15"
+      }
+    ]
+  },
+  {
+    "test": 13,
+    "questions": [
+      {
+        "prompt": "Bir otobüste 52 yolcu vardır. 19 yolcu iner, 7 yolcu biner. Otobüste kaç yolcu olur?",
+        "answer": "40"
+      },
+      {
+        "prompt": "Tanesi 135 TL olan 4 bilet için 600 TL veriliyor. Kaç TL para üstü alınır?",
+        "answer": "60 TL"
+      },
+      {
+        "prompt": "Kilogramı 32 TL olan elmadan 5 kg, kilogramı 45 TL olan armuttan 2 kg alınıyor. Toplam kaç TL ödenir?",
+        "answer": "250 TL"
+      },
+      {
+        "prompt": "40 öğrencinin 3/8’i erkektir. Sınıfta kaç kız öğrenci vardır?",
+        "answer": "25"
+      },
+      {
+        "prompt": "300 km’lik yolun 2/5’i gidildi. Gidilecek kaç kilometre kaldı?",
+        "answer": "180 km"
+      },
+      {
+        "prompt": "2.400 TL’nin yüzde 12,5’i birikime ayrılıyor. Kaç TL biriktirilir?",
+        "answer": "300 TL"
+      },
+      {
+        "prompt": "Günde 6,5 saat çalışan biri 4 günde toplam kaç saat çalışır?",
+        "answer": "26 saat"
+      },
+      {
+        "prompt": "Her birinde 24 yumurta bulunan 9 kolide 7 yumurta kırılmıştır. Kaç sağlam yumurta vardır?",
+        "answer": "209"
+      },
+      {
+        "prompt": "1.125 TL’lik hesap 5 arkadaş arasında eşit paylaşılıyor. Kişi başı kaç TL düşer?",
+        "answer": "225 TL"
+      },
+      {
+        "prompt": "80 sorunun önce 3/4’ü, sonra kalan soruların yarısı çözülüyor. Çözülmeden kaç soru kalır?",
+        "answer": "10 soru"
+      }
+    ]
+  },
+  {
+    "test": 14,
+    "questions": [
+      {
+        "prompt": "142, 175 ve 283 sayılarından hangisi 5’e tam bölünür?",
+        "answer": "175"
+      },
+      {
+        "prompt": "7, 12, 17, 22, … örüntüsünde sıradaki sayı kaçtır?",
+        "answer": "27"
+      },
+      {
+        "prompt": "9’a tam bölünebilen en küçük üç basamaklı sayı kaçtır?",
+        "answer": "108"
+      },
+      {
+        "prompt": "24 sayısının pozitif bölenlerinin sayısı kaçtır?",
+        "answer": "8"
+      },
+      {
+        "prompt": "91 ÷ 7 işleminin sonucu kaçtır?",
+        "answer": "13"
+      },
+      {
+        "prompt": "67 sayısı 8’e bölündüğünde kalan kaçtır?",
+        "answer": "3"
+      },
+      {
+        "prompt": "3, 6, 12, 24, … örüntüsünde sıradaki sayı kaçtır?",
+        "answer": "48"
+      },
+      {
+        "prompt": "2, 5 ve 8 rakamlarını birer kez kullanarak yazılabilecek en büyük çift üç basamaklı sayı kaçtır?",
+        "answer": "852"
+      },
+      {
+        "prompt": "6 ve 8 sayılarının en küçük ortak katı kaçtır?",
+        "answer": "24"
+      },
+      {
+        "prompt": "2, 3 ve 5’e tam bölünebilen en küçük üç basamaklı sayı kaçtır?",
+        "answer": "120"
+      }
+    ]
+  },
+  {
+    "test": 15,
+    "questions": [
+      {
+        "prompt": "Ardışık üç tam sayının toplamı 123’tür. Ortanca sayı kaçtır?",
+        "answer": "41"
+      },
+      {
+        "prompt": "8 kalem 96 TL ise aynı kalemlerden 11 tane kaç TL tutar?",
+        "answer": "132 TL"
+      },
+      {
+        "prompt": "240 TL’lik ürüne yüzde 20 indirim uygulanıyor. İndirimli fiyat kaç TL olur?",
+        "answer": "192 TL"
+      },
+      {
+        "prompt": "Bir sayının 2/5’inin 8 fazlası 32’dir. Bu sayı kaçtır?",
+        "answer": "60"
+      },
+      {
+        "prompt": "Bir sayı 5’e bölünüp sonuca 9 eklenince 21 bulunuyor. Başlangıçtaki sayı kaçtır?",
+        "answer": "60"
+      },
+      {
+        "prompt": "Dikdörtgenin uzun kenarı 21 cm, kısa kenarı uzun kenarın 2/3’üdür. Dikdörtgenin çevresi kaç santimetredir?",
+        "answer": "70 cm"
+      },
+      {
+        "prompt": "Üç defter ve bir kalem toplam 54 TL’dir. Bir defter 15 TL ise kalem kaç TL’dir?",
+        "answer": "9 TL"
+      },
+      {
+        "prompt": "Toplamları 92 olan dört ardışık pozitif çift sayının en büyüğü kaçtır?",
+        "answer": "26"
+      },
+      {
+        "prompt": "Her birinde 20 yumurta bulunan 6 tepsideki yumurtaların yüzde 5’i kırılmıştır. Kaç sağlam yumurta vardır?",
+        "answer": "114"
+      },
+      {
+        "prompt": "Kapasitesi 54 litre olan bir depo 2/3 doludur. Depoya 9 litre daha eklenirse deponun ne kadarı dolu olur?",
+        "answer": "5/6 dolu"
+      }
+    ]
+  },
+  {
+    "test": 16,
+    "questions": [
+      {
+        "prompt": "468 + 257 − 139 işleminin sonucu kaçtır?",
+        "answer": "586"
+      },
+      {
+        "prompt": "7.053 sayısındaki yüzler basamağında hangi rakam vardır?",
+        "answer": "0"
+      },
+      {
+        "prompt": "32 × 25 işleminin sonucu kaçtır?",
+        "answer": "800"
+      },
+      {
+        "prompt": "1.176 ÷ 8 işleminin sonucu kaçtır?",
+        "answer": "147"
+      },
+      {
+        "prompt": "90 − 6 × (8 + 3) işleminin sonucu kaçtır?",
+        "answer": "24"
+      },
+      {
+        "prompt": "Her birinde 26 ürün bulunan 4 kutudan 17 ürün satılıyor. Kaç ürün kalır?",
+        "answer": "87"
+      },
+      {
+        "prompt": "56’nın 3/8’i kaçtır?",
+        "answer": "21"
+      },
+      {
+        "prompt": "2/3 + 5/12 işleminin sonucu kaçtır?",
+        "answer": "1 tam 1/12"
+      },
+      {
+        "prompt": "4,8 − 1,35 işleminin sonucu kaçtır?",
+        "answer": "3,45"
+      },
+      {
+        "prompt": "240 TL’lik ürüne yüzde 15 indirim yapılırsa indirimli fiyat kaç TL olur?",
+        "answer": "204 TL"
+      },
+      {
+        "prompt": "5x − 8 = 37 ise x kaçtır?",
+        "answer": "9"
+      },
+      {
+        "prompt": "−8 + 3 × 5 işleminin sonucu kaçtır?",
+        "answer": "7"
+      },
+      {
+        "prompt": "Üç çocuk tanesi 85 TL olan birer kitap alıyor ve toplam 300 TL veriyor. Kaç TL para üstü alırlar?",
+        "answer": "45 TL"
+      },
+      {
+        "prompt": "6’ya tam bölünebilen en küçük üç basamaklı sayı kaçtır?",
+        "answer": "102"
+      },
+      {
+        "prompt": "72 litrelik deponun 3/4’ü doludur. 18 litre su kullanılırsa kaç litre su kalır?",
+        "answer": "36 litre"
+      }
+    ]
+  },
+  {
+    "test": 17,
+    "questions": [
+      {
+        "prompt": "350 sayısı yüzde 20 artırılırsa kaç olur?",
+        "answer": "420"
+      },
+      {
+        "prompt": "905 − 478 + 36 işleminin sonucu kaçtır?",
+        "answer": "463"
+      },
+      {
+        "prompt": "3/4 ÷ 1/2 işleminin sonucu kaçtır?",
+        "answer": "1 tam 1/2"
+      },
+      {
+        "prompt": "7x + 9 = 58 ise x kaçtır?",
+        "answer": "7"
+      },
+      {
+        "prompt": "9 yüzlük, 4 onluk ve 2 birlikten oluşan sayı kaçtır?",
+        "answer": "942"
+      },
+      {
+        "prompt": "−12 − (−5) işleminin sonucu kaçtır?",
+        "answer": "−7"
+      },
+      {
+        "prompt": "27 × 16 işleminin sonucu kaçtır?",
+        "answer": "432"
+      },
+      {
+        "prompt": "6,25 ÷ 2,5 işleminin sonucu kaçtır?",
+        "answer": "2,5"
+      },
+      {
+        "prompt": "200’den büyük, 9’a tam bölünebilen en küçük sayı kaçtır?",
+        "answer": "207"
+      },
+      {
+        "prompt": "1.365 ÷ 7 işleminin sonucu kaçtır?",
+        "answer": "195"
+      },
+      {
+        "prompt": "96’nın 5/8’i kaçtır?",
+        "answer": "60"
+      },
+      {
+        "prompt": "96 − 7 × 8 + 36 ÷ 6 işleminin sonucu kaçtır?",
+        "answer": "46"
+      },
+      {
+        "prompt": "420 km’lik yolun önce 3/7’si, sonra 95 km’si gidiliyor. Kaç kilometre yol kalır?",
+        "answer": "145 km"
+      },
+      {
+        "prompt": "Her birinde 22 kalem bulunan 9 kutudan 26 kalem dağıtılıyor. Kalan kalemler 4 gruba eşit paylaştırılırsa her gruba kaç kalem düşer?",
+        "answer": "43"
+      },
+      {
+        "prompt": "Kapasitesi 180 litre olan tankın 2/5’i doludur. Tanka 54 litre daha eklenirse tankın ne kadarı dolu olur?",
+        "answer": "7/10 dolu"
+      }
+    ]
+  },
+  {
+    "test": 18,
+    "questions": [
+      {
+        "prompt": "Hangi sayıya 284 eklenirse 700 olur?",
+        "answer": "416"
+      },
+      {
+        "prompt": "48.763 sayısı en yakın yüzlüğe yuvarlanırsa kaç olur?",
+        "answer": "48.800"
+      },
+      {
+        "prompt": "125 × 24 işleminin sonucu kaçtır?",
+        "answer": "3.000"
+      },
+      {
+        "prompt": "1.008 ÷ 12 işleminin sonucu kaçtır?",
+        "answer": "84"
+      },
+      {
+        "prompt": "(64 − 28) ÷ 4 + 9 işleminin sonucu kaçtır?",
+        "answer": "18"
+      },
+      {
+        "prompt": "Tanesi 145 TL olan 3 bilet ve tanesi 35 TL olan 2 atıştırmalık alınıyor. 600 TL verilirse kaç TL para üstü alınır?",
+        "answer": "95 TL"
+      },
+      {
+        "prompt": "42’nin 5/6’sı kaçtır?",
+        "answer": "35"
+      },
+      {
+        "prompt": "7/8 − 1/3 işleminin sonucu kaçtır?",
+        "answer": "13/24"
+      },
+      {
+        "prompt": "0,45 × 20 işleminin sonucu kaçtır?",
+        "answer": "9"
+      },
+      {
+        "prompt": "5:7 oranındaki iki miktarın toplamı 96’dır. Küçük miktar kaçtır?",
+        "answer": "40"
+      },
+      {
+        "prompt": "(x − 6) ÷ 4 = 8 ise x kaçtır?",
+        "answer": "38"
+      },
+      {
+        "prompt": "(−9) × 4 + 6 işleminin sonucu kaçtır?",
+        "answer": "−30"
+      },
+      {
+        "prompt": "1.000 sayfalık kitabın ilk üç gününde her gün 185 sayfa okunuyor. Okunmamış kaç sayfa kalır?",
+        "answer": "445 sayfa"
+      },
+      {
+        "prompt": "134 sayısı 9’a bölündüğünde kalan kaçtır?",
+        "answer": "8"
+      },
+      {
+        "prompt": "Uzun kenarı 22 cm olan bir dikdörtgenin çevresi 72 cm’dir. Kısa kenarı kaç santimetredir?",
+        "answer": "14 cm"
+      }
+    ]
+  },
+  {
+    "test": 19,
+    "questions": [
+      {
+        "prompt": "1.250 sayısından hangi sayı çıkarılırsa 785 kalır?",
+        "answer": "465"
+      },
+      {
+        "prompt": "1, 4 ve 7 rakamlarını birer kez kullanarak yazılabilecek en büyük tek üç basamaklı sayı kaçtır?",
+        "answer": "741"
+      },
+      {
+        "prompt": "48 × 125 işleminin sonucu kaçtır?",
+        "answer": "6.000"
+      },
+      {
+        "prompt": "2.016 ÷ 16 işleminin sonucu kaçtır?",
+        "answer": "126"
+      },
+      {
+        "prompt": "5 + 3 × (18 − 10) işleminin sonucu kaçtır?",
+        "answer": "29"
+      },
+      {
+        "prompt": "Her birinde 15 ürün bulunan 12 paketten 68 ürün dağıtılıyor. Kaç ürün kalır?",
+        "answer": "112"
+      },
+      {
+        "prompt": "90’ın 7/10’u kaçtır?",
+        "answer": "63"
+      },
+      {
+        "prompt": "3/5 × 5/9 işleminin sonucu kaçtır?",
+        "answer": "1/3"
+      },
+      {
+        "prompt": "2,7 + 0,85 işleminin sonucu kaçtır?",
+        "answer": "3,55"
+      },
+      {
+        "prompt": "80 sayısı 100’e çıkarsa yüzde kaç artmış olur?",
+        "answer": "%25"
+      },
+      {
+        "prompt": "2(x + 5) = 34 ise x kaçtır?",
+        "answer": "12"
+      },
+      {
+        "prompt": "−4 + (−3) × 6 işleminin sonucu kaçtır?",
+        "answer": "−22"
+      },
+      {
+        "prompt": "90 öğrencinin 2/3’ü bir etkinliğe katılıyor. Etkinliğe katılmayan kaç öğrenci vardır?",
+        "answer": "30"
+      },
+      {
+        "prompt": "322, 327 ve 341 sayılarından hangisi 3’e tam bölünür?",
+        "answer": "327"
+      },
+      {
+        "prompt": "Bir tren 240 km’lik yolun önce 3/8’ini, sonra 95 km’sini gidiyor. Kaç kilometre yolu kalır?",
+        "answer": "55 km"
+      }
+    ]
+  },
+  {
+    "test": 20,
+    "questions": [
+      {
+        "prompt": "576 sayısına hangi sayı eklenirse 1.000 olur?",
+        "answer": "424"
+      },
+      {
+        "prompt": "6 binlik, 12 yüzlük, 3 onluk ve 4 birlikten oluşan sayı kaçtır?",
+        "answer": "7.234"
+      },
+      {
+        "prompt": "75 × 16 işleminin sonucu kaçtır?",
+        "answer": "1.200"
+      },
+      {
+        "prompt": "2.500 ÷ 25 işleminin sonucu kaçtır?",
+        "answer": "100"
+      },
+      {
+        "prompt": "120 − (36 ÷ 3 + 8 × 4) işleminin sonucu kaçtır?",
+        "answer": "76"
+      },
+      {
+        "prompt": "Her biri 2,4 kg olan 5 pirinç paketinden 3,5 kg kullanılıyor. Kaç kilogram pirinç kalır?",
+        "answer": "8,5 kg"
+      },
+      {
+        "prompt": "144’ün 5/12’si kaçtır?",
+        "answer": "60"
+      },
+      {
+        "prompt": "2 tam 1/4 ÷ 3/8 işleminin sonucu kaçtır?",
+        "answer": "6"
+      },
+      {
+        "prompt": "4,5 ÷ 0,15 işleminin sonucu kaçtır?",
+        "answer": "30"
+      },
+      {
+        "prompt": "280 sayısı yüzde 25 artırılırsa kaç olur?",
+        "answer": "350"
+      },
+      {
+        "prompt": "9x + 2 = 83 ise x kaçtır?",
+        "answer": "9"
+      },
+      {
+        "prompt": "7 − (−5) − 14 işleminin sonucu kaçtır?",
+        "answer": "−2"
+      },
+      {
+        "prompt": "500 TL ile tanesi 145 TL olan 2 bilet ve 68 TL’lik bir ürün alınıyor. Kaç TL kalır?",
+        "answer": "142 TL"
+      },
+      {
+        "prompt": "5, 11, 23, 47, … sayı örüntüsünde sıradaki sayı kaçtır?",
+        "answer": "95"
+      },
+      {
+        "prompt": "Bir kutuda 96 bilye vardır. Bilyelerin 3/8’i mavidir. Kırmızı bilyelerin 1/4’ü verildiğine göre kutuda kaç kırmızı bilye kalır?",
+        "answer": "45 bilye"
+      }
+    ]
+  }
+];
+
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -152,7 +1155,7 @@ const testCountForDifficulty = (exam, courseId, topic, difficulty) => exam === '
   && courseId === 'matematik'
   && topic === TEMEL_ATMA_TOPIC
   && difficulty === TEMEL_ATMA_DIFFICULTY
-  ? Math.min(TEMEL_ATMA_TEST_COUNT, window.YKS_TEMEL_TESTS?.length || 0)
+  ? Math.min(TEMEL_ATMA_TEST_COUNT, window.YKS_TEMEL_TESTS?.length || TEMEL_ATMA_TEST_COUNT)
   : TESTS_PER_DIFFICULTY;
 const testSlotsForTopic = (exam, courseId, topic) => difficultiesForCourse(exam, courseId).map((difficulty) => ({
   difficulty,
