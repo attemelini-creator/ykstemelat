@@ -5,43 +5,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "38 + 47 işleminin sonucu kaçtır?",
-        "answer": "85"
+        "answer": "85",
+        "options": [
+          "85",
+          "84",
+          "87",
+          "83",
+          "86"
+        ]
       },
       {
         "prompt": "126 + 89 işleminin sonucu kaçtır?",
-        "answer": "215"
+        "answer": "215",
+        "options": [
+          "214",
+          "213",
+          "217",
+          "216",
+          "215"
+        ]
       },
       {
         "prompt": "500 − 278 işleminin sonucu kaçtır?",
-        "answer": "222"
+        "answer": "222",
+        "options": [
+          "223",
+          "224",
+          "221",
+          "222",
+          "220"
+        ]
       },
       {
         "prompt": "1.000 − 647 işleminin sonucu kaçtır?",
-        "answer": "353"
+        "answer": "353",
+        "options": [
+          "353",
+          "351",
+          "354",
+          "355",
+          "352"
+        ]
       },
       {
         "prompt": "74 + 38 − 29 işleminin sonucu kaçtır?",
-        "answer": "83"
+        "answer": "83",
+        "options": [
+          "82",
+          "83",
+          "81",
+          "84",
+          "85"
+        ]
       },
       {
         "prompt": "315 − 96 + 42 işleminin sonucu kaçtır?",
-        "answer": "261"
+        "answer": "261",
+        "options": [
+          "263",
+          "259",
+          "262",
+          "261",
+          "260"
+        ]
       },
       {
         "prompt": "280 sayısına kaç eklenirse 500 olur?",
-        "answer": "220"
+        "answer": "220",
+        "options": [
+          "219",
+          "220",
+          "222",
+          "221",
+          "218"
+        ]
       },
       {
         "prompt": "Hangi sayıdan 175 çıkarılırsa 268 kalır?",
-        "answer": "443"
+        "answer": "443",
+        "options": [
+          "445",
+          "441",
+          "443",
+          "444",
+          "442"
+        ]
       },
       {
         "prompt": "643 sayısından kaç çıkarılırsa 297 kalır?",
-        "answer": "346"
+        "answer": "346",
+        "options": [
+          "347",
+          "348",
+          "346",
+          "345",
+          "344"
+        ]
       },
       {
         "prompt": "Bir sayının 4 katı 96’dır. Bu sayıdan 7 çıkarılırsa sonuç kaç olur?",
-        "answer": "17"
+        "answer": "17",
+        "options": [
+          "16",
+          "18",
+          "15",
+          "19",
+          "17"
+        ]
       }
     ]
   },
@@ -50,43 +120,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "5.072 sayısındaki yüzler basamağında hangi rakam vardır?",
-        "answer": "0"
+        "answer": "0",
+        "options": [
+          "-2",
+          "0",
+          "-1",
+          "2",
+          "1"
+        ]
       },
       {
         "prompt": "8 binlik, 6 yüzlük ve 3 birlikten oluşan sayı kaçtır?",
-        "answer": "8.603"
+        "answer": "8.603",
+        "options": [
+          "8.602",
+          "8.601",
+          "8.605",
+          "8.603",
+          "8.604"
+        ]
       },
       {
         "prompt": "4.985 sayısı en yakın yüzlüğe yuvarlanırsa kaç olur?",
-        "answer": "5.000"
+        "answer": "5.000",
+        "options": [
+          "5.002",
+          "4.998",
+          "5.001",
+          "5.000",
+          "4.999"
+        ]
       },
       {
         "prompt": "6.746 sayısı en yakın onluğa yuvarlanırsa kaç olur?",
-        "answer": "6.750"
+        "answer": "6.750",
+        "options": [
+          "6.751",
+          "6.749",
+          "6.750",
+          "6.748",
+          "6.752"
+        ]
       },
       {
         "prompt": "3.489 sayısına 1.000 eklenirse kaç elde edilir?",
-        "answer": "4.489"
+        "answer": "4.489",
+        "options": [
+          "4.488",
+          "4.487",
+          "4.490",
+          "4.489",
+          "4.491"
+        ]
       },
       {
         "prompt": "10.000 − 2.506 işleminin sonucu kaçtır?",
-        "answer": "7.494"
+        "answer": "7.494",
+        "options": [
+          "7.496",
+          "7.492",
+          "7.493",
+          "7.494",
+          "7.495"
+        ]
       },
       {
         "prompt": "3, 5 ve 7 rakamlarını birer kez kullanarak yazılabilecek en küçük üç basamaklı sayı kaçtır?",
-        "answer": "357"
+        "answer": "357",
+        "options": [
+          "356",
+          "359",
+          "358",
+          "357",
+          "355"
+        ]
       },
       {
         "prompt": "427 sayısının rakamları ters çevrilince oluşan sayı ile 427 arasındaki fark kaçtır?",
-        "answer": "297"
+        "answer": "297",
+        "options": [
+          "297",
+          "295",
+          "298",
+          "296",
+          "299"
+        ]
       },
       {
         "prompt": "5 yüzlük, 14 onluk ve 6 birlikten oluşan sayı kaçtır?",
-        "answer": "646"
+        "answer": "646",
+        "options": [
+          "645",
+          "646",
+          "644",
+          "648",
+          "647"
+        ]
       },
       {
         "prompt": "En küçük dört basamaklı sayı ile en büyük üç basamaklı sayı arasındaki fark kaçtır?",
-        "answer": "1"
+        "answer": "1",
+        "options": [
+          "-1",
+          "3",
+          "0",
+          "2",
+          "1"
+        ]
       }
     ]
   },
@@ -95,43 +235,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "8 × 7 işleminin sonucu kaçtır?",
-        "answer": "56"
+        "answer": "56",
+        "options": [
+          "55",
+          "57",
+          "54",
+          "58",
+          "56"
+        ]
       },
       {
         "prompt": "14 × 6 işleminin sonucu kaçtır?",
-        "answer": "84"
+        "answer": "84",
+        "options": [
+          "84",
+          "85",
+          "82",
+          "83",
+          "86"
+        ]
       },
       {
         "prompt": "25 × 8 işleminin sonucu kaçtır?",
-        "answer": "200"
+        "answer": "200",
+        "options": [
+          "199",
+          "202",
+          "200",
+          "201",
+          "198"
+        ]
       },
       {
         "prompt": "36 × 5 işleminin sonucu kaçtır?",
-        "answer": "180"
+        "answer": "180",
+        "options": [
+          "179",
+          "178",
+          "181",
+          "182",
+          "180"
+        ]
       },
       {
         "prompt": "19 × 12 işleminin sonucu kaçtır?",
-        "answer": "228"
+        "answer": "228",
+        "options": [
+          "227",
+          "228",
+          "226",
+          "230",
+          "229"
+        ]
       },
       {
         "prompt": "42 × 15 işleminin sonucu kaçtır?",
-        "answer": "630"
+        "answer": "630",
+        "options": [
+          "632",
+          "628",
+          "629",
+          "630",
+          "631"
+        ]
       },
       {
         "prompt": "125 × 8 işleminin sonucu kaçtır?",
-        "answer": "1.000"
+        "answer": "1.000",
+        "options": [
+          "1.001",
+          "999",
+          "1.002",
+          "998",
+          "1.000"
+        ]
       },
       {
         "prompt": "24 × 25 işleminin sonucu kaçtır?",
-        "answer": "600"
+        "answer": "600",
+        "options": [
+          "602",
+          "599",
+          "600",
+          "598",
+          "601"
+        ]
       },
       {
         "prompt": "48 × 19 işleminin sonucu kaçtır?",
-        "answer": "912"
+        "answer": "912",
+        "options": [
+          "912",
+          "911",
+          "914",
+          "910",
+          "913"
+        ]
       },
       {
         "prompt": "Her birinde 24 kalem bulunan 18 kutuda toplam kaç kalem vardır?",
-        "answer": "432"
+        "answer": "432",
+        "options": [
+          "433",
+          "430",
+          "431",
+          "434",
+          "432"
+        ]
       }
     ]
   },
@@ -140,43 +350,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "63 ÷ 9 işleminin sonucu kaçtır?",
-        "answer": "7"
+        "answer": "7",
+        "options": [
+          "9",
+          "7",
+          "6",
+          "8",
+          "5"
+        ]
       },
       {
         "prompt": "144 ÷ 12 işleminin sonucu kaçtır?",
-        "answer": "12"
+        "answer": "12",
+        "options": [
+          "12",
+          "14",
+          "10",
+          "11",
+          "13"
+        ]
       },
       {
         "prompt": "360 ÷ 6 işleminin sonucu kaçtır?",
-        "answer": "60"
+        "answer": "60",
+        "options": [
+          "62",
+          "61",
+          "58",
+          "59",
+          "60"
+        ]
       },
       {
         "prompt": "945 ÷ 9 işleminin sonucu kaçtır?",
-        "answer": "105"
+        "answer": "105",
+        "options": [
+          "104",
+          "107",
+          "103",
+          "106",
+          "105"
+        ]
       },
       {
         "prompt": "1.248 ÷ 8 işleminin sonucu kaçtır?",
-        "answer": "156"
+        "answer": "156",
+        "options": [
+          "156",
+          "154",
+          "158",
+          "155",
+          "157"
+        ]
       },
       {
         "prompt": "2.400 ÷ 16 işleminin sonucu kaçtır?",
-        "answer": "150"
+        "answer": "150",
+        "options": [
+          "149",
+          "150",
+          "152",
+          "151",
+          "148"
+        ]
       },
       {
         "prompt": "875 ÷ 5 işleminin sonucu kaçtır?",
-        "answer": "175"
+        "answer": "175",
+        "options": [
+          "176",
+          "174",
+          "175",
+          "177",
+          "173"
+        ]
       },
       {
         "prompt": "1.005 sayısı 8’e bölündüğünde bölüm ve kalan kaç olur?",
-        "answer": "Bölüm 125, kalan 5"
+        "answer": "Bölüm 125, kalan 5",
+        "options": [
+          "Bölüm 126, kalan 5",
+          "Bölüm 124, kalan 5",
+          "Bölüm 125, kalan 5",
+          "Bölüm 125, kalan 4",
+          "Bölüm 125, kalan 6"
+        ]
       },
       {
         "prompt": "738 ÷ 6 işleminin sonucu kaçtır?",
-        "answer": "123"
+        "answer": "123",
+        "options": [
+          "125",
+          "124",
+          "121",
+          "123",
+          "122"
+        ]
       },
       {
         "prompt": "96 kurabiye önce 4 takıma, sonra her takımın kurabiyeleri 6 oyuncuya eşit paylaştırılıyor. Bir oyuncu kaç kurabiye alır?",
-        "answer": "4"
+        "answer": "4",
+        "options": [
+          "3",
+          "2",
+          "4",
+          "6",
+          "5"
+        ]
       }
     ]
   },
@@ -185,43 +465,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "8 + 3 × 4 işleminin sonucu kaçtır?",
-        "answer": "20"
+        "answer": "20",
+        "options": [
+          "20",
+          "21",
+          "22",
+          "19",
+          "18"
+        ]
       },
       {
         "prompt": "(8 + 3) × 4 işleminin sonucu kaçtır?",
-        "answer": "44"
+        "answer": "44",
+        "options": [
+          "45",
+          "42",
+          "44",
+          "43",
+          "46"
+        ]
       },
       {
         "prompt": "72 ÷ 8 + 6 işleminin sonucu kaçtır?",
-        "answer": "15"
+        "answer": "15",
+        "options": [
+          "15",
+          "17",
+          "13",
+          "14",
+          "16"
+        ]
       },
       {
         "prompt": "72 ÷ (8 + 4) işleminin sonucu kaçtır?",
-        "answer": "6"
+        "answer": "6",
+        "options": [
+          "7",
+          "5",
+          "6",
+          "4",
+          "8"
+        ]
       },
       {
         "prompt": "50 − 18 ÷ 3 × 4 işleminin sonucu kaçtır?",
-        "answer": "26"
+        "answer": "26",
+        "options": [
+          "28",
+          "24",
+          "26",
+          "25",
+          "27"
+        ]
       },
       {
         "prompt": "5 × (12 − 7) + 9 işleminin sonucu kaçtır?",
-        "answer": "34"
+        "answer": "34",
+        "options": [
+          "35",
+          "32",
+          "36",
+          "34",
+          "33"
+        ]
       },
       {
         "prompt": "84 − 24 ÷ 6 + 3 × 2 işleminin sonucu kaçtır?",
-        "answer": "86"
+        "answer": "86",
+        "options": [
+          "88",
+          "84",
+          "87",
+          "86",
+          "85"
+        ]
       },
       {
         "prompt": "(45 − 21) ÷ 6 + 8 işleminin sonucu kaçtır?",
-        "answer": "12"
+        "answer": "12",
+        "options": [
+          "11",
+          "10",
+          "13",
+          "12",
+          "14"
+        ]
       },
       {
         "prompt": "3 × (28 ÷ 4 + 5) işleminin sonucu kaçtır?",
-        "answer": "36"
+        "answer": "36",
+        "options": [
+          "34",
+          "36",
+          "35",
+          "38",
+          "37"
+        ]
       },
       {
         "prompt": "144 ÷ (3 × 4) + (18 − 7) × 2 işleminin sonucu kaçtır?",
-        "answer": "34"
+        "answer": "34",
+        "options": [
+          "34",
+          "36",
+          "33",
+          "32",
+          "35"
+        ]
       }
     ]
   },
@@ -230,43 +580,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "Bir sepette 38 elma vardı. 27 elma daha kondu, ardından 19 elma alındı. Sepette kaç elma kaldı?",
-        "answer": "46"
+        "answer": "46",
+        "options": [
+          "45",
+          "44",
+          "47",
+          "46",
+          "48"
+        ]
       },
       {
         "prompt": "320 sayfalık bir kitabın ilk gün 48, ikinci gün 67 sayfası okundu. Okunmamış kaç sayfa kaldı?",
-        "answer": "205"
+        "answer": "205",
+        "options": [
+          "205",
+          "203",
+          "206",
+          "204",
+          "207"
+        ]
       },
       {
         "prompt": "Her birinde 18 kalem bulunan 7 kutudan 39 kalem dağıtıldı. Kaç kalem kaldı?",
-        "answer": "87"
+        "answer": "87",
+        "options": [
+          "86",
+          "88",
+          "85",
+          "89",
+          "87"
+        ]
       },
       {
         "prompt": "Tanesi 72 TL olan 5 bilet için 400 TL veriliyor. Kaç TL para üstü alınır?",
-        "answer": "40 TL"
+        "answer": "40 TL",
+        "options": [
+          "39 TL",
+          "38 TL",
+          "42 TL",
+          "41 TL",
+          "40 TL"
+        ]
       },
       {
         "prompt": "240 TL’si olan Ece, tanesi 34 TL olan 3 defter alıyor. Ece’nin kaç TL’si kalır?",
-        "answer": "138 TL"
+        "answer": "138 TL",
+        "options": [
+          "140 TL",
+          "138 TL",
+          "136 TL",
+          "139 TL",
+          "137 TL"
+        ]
       },
       {
         "prompt": "Her biri 42 koltuklu 6 otobüste 217 koltuk doludur. Kaç koltuk boştur?",
-        "answer": "35"
+        "answer": "35",
+        "options": [
+          "37",
+          "33",
+          "35",
+          "36",
+          "34"
+        ]
       },
       {
         "prompt": "Bir salonda 24 sıra ve her sırada 16 sandalye vardır. Toplam kaç sandalye vardır?",
-        "answer": "384"
+        "answer": "384",
+        "options": [
+          "386",
+          "382",
+          "384",
+          "383",
+          "385"
+        ]
       },
       {
         "prompt": "810 litre su 9 eşit tanka paylaştırılıyor. 4 tankta toplam kaç litre su bulunur?",
-        "answer": "360 litre"
+        "answer": "360 litre",
+        "options": [
+          "362 litre",
+          "361 litre",
+          "358 litre",
+          "360 litre",
+          "359 litre"
+        ]
       },
       {
         "prompt": "Bir atölye saatte 23 parça üretiyor. 5 saatte üretilen parçaların 18’i hatalıysa kaç sağlam parça vardır?",
-        "answer": "97"
+        "answer": "97",
+        "options": [
+          "98",
+          "96",
+          "99",
+          "95",
+          "97"
+        ]
       },
       {
         "prompt": "Bir matbaa 840 sayfalık işi 4 günde tamamlayacak. İlk 3 gün her gün 185 sayfa basarsa son gün kaç sayfa basmalıdır?",
-        "answer": "285 sayfa"
+        "answer": "285 sayfa",
+        "options": [
+          "285 sayfa",
+          "283 sayfa",
+          "286 sayfa",
+          "287 sayfa",
+          "284 sayfa"
+        ]
       }
     ]
   },
@@ -275,43 +695,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "46’nın yarısı kaçtır?",
-        "answer": "23"
+        "answer": "23",
+        "options": [
+          "24",
+          "21",
+          "25",
+          "23",
+          "22"
+        ]
       },
       {
         "prompt": "120’nin dörtte biri kaçtır?",
-        "answer": "30"
+        "answer": "30",
+        "options": [
+          "28",
+          "30",
+          "29",
+          "31",
+          "32"
+        ]
       },
       {
         "prompt": "45’in beşte üçü kaçtır?",
-        "answer": "27"
+        "answer": "27",
+        "options": [
+          "26",
+          "25",
+          "28",
+          "29",
+          "27"
+        ]
       },
       {
         "prompt": "2/7 + 3/7 işleminin sonucu kaçtır?",
-        "answer": "5/7"
+        "answer": "5/7",
+        "options": [
+          "6/7",
+          "5/6",
+          "5/7",
+          "4/7",
+          "5/8"
+        ]
       },
       {
         "prompt": "7/9 − 2/9 işleminin sonucu kaçtır?",
-        "answer": "5/9"
+        "answer": "5/9",
+        "options": [
+          "6/9",
+          "5/8",
+          "5/9",
+          "5/10",
+          "4/9"
+        ]
       },
       {
         "prompt": "18/24 kesrinin sadeleşmiş hâli nedir?",
-        "answer": "3/4"
+        "answer": "3/4",
+        "options": [
+          "-2/4",
+          "3/5",
+          "3/4",
+          "4/4",
+          "2/4"
+        ]
       },
       {
         "prompt": "5/6 ile 7/9 kesirlerinden hangisi daha büyüktür?",
-        "answer": "5/6"
+        "answer": "5/6",
+        "options": [
+          "4/6",
+          "5/7",
+          "5/6",
+          "6/6",
+          "-2/6"
+        ]
       },
       {
         "prompt": "32’nin dörtte üçü kaçtır?",
-        "answer": "24"
+        "answer": "24",
+        "options": [
+          "26",
+          "25",
+          "23",
+          "22",
+          "24"
+        ]
       },
       {
         "prompt": "Bir sayının 2/5’i 14 ise bu sayı kaçtır?",
-        "answer": "35"
+        "answer": "35",
+        "options": [
+          "34",
+          "33",
+          "36",
+          "35",
+          "37"
+        ]
       },
       {
         "prompt": "1 litrelik bir şişeden önce 3/8 litre, sonra 1/4 litre su içiliyor. Şişede kaç litre su kalır?",
-        "answer": "3/8 litre"
+        "answer": "3/8 litre",
+        "options": [
+          "2/8 litre",
+          "3/8 litre",
+          "3/7 litre",
+          "4/8 litre",
+          "3/9 litre"
+        ]
       }
     ]
   },
@@ -320,43 +810,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "1/2 + 1/3 işleminin sonucu kaçtır?",
-        "answer": "5/6"
+        "answer": "5/6",
+        "options": [
+          "5/6",
+          "6/6",
+          "5/7",
+          "4/6",
+          "-2/6"
+        ]
       },
       {
         "prompt": "5/6 − 1/4 işleminin sonucu kaçtır?",
-        "answer": "7/12"
+        "answer": "7/12",
+        "options": [
+          "6/12",
+          "7/12",
+          "7/13",
+          "8/12",
+          "7/11"
+        ]
       },
       {
         "prompt": "20’nin 3/5’i kaçtır?",
-        "answer": "12"
+        "answer": "12",
+        "options": [
+          "12",
+          "14",
+          "13",
+          "11",
+          "10"
+        ]
       },
       {
         "prompt": "2/3 × 3/4 işleminin sonucu kaçtır?",
-        "answer": "1/2"
+        "answer": "1/2",
+        "options": [
+          "1/2",
+          "2/2",
+          "1/3",
+          "4/2",
+          "0/2"
+        ]
       },
       {
         "prompt": "5/8 ÷ 1/4 işleminin sonucu kaçtır?",
-        "answer": "5/2"
+        "answer": "5/2",
+        "options": [
+          "4/2",
+          "6/2",
+          "5/1",
+          "5/2",
+          "5/3"
+        ]
       },
       {
         "prompt": "1 tam 1/3 + 2 tam 1/6 işleminin sonucu kaçtır?",
-        "answer": "3 tam 1/2"
+        "answer": "3 tam 1/2",
+        "options": [
+          "3 tam 2/2",
+          "3 tam 0/2",
+          "3 tam 1/2",
+          "3 tam 1/3",
+          "7 tam 1/2"
+        ]
       },
       {
         "prompt": "2/5’in 3/4’ü kaçtır?",
-        "answer": "3/10"
+        "answer": "3/10",
+        "options": [
+          "4/10",
+          "3/9",
+          "3/10",
+          "2/10",
+          "3/11"
+        ]
       },
       {
         "prompt": "7/10 − 1/4 işleminin sonucu kaçtır?",
-        "answer": "9/20"
+        "answer": "9/20",
+        "options": [
+          "10/20",
+          "8/20",
+          "9/20",
+          "9/19",
+          "9/21"
+        ]
       },
       {
         "prompt": "4/9 ÷ 2/3 işleminin sonucu kaçtır?",
-        "answer": "2/3"
+        "answer": "2/3",
+        "options": [
+          "1/3",
+          "4/3",
+          "3/3",
+          "2/3",
+          "2/4"
+        ]
       },
       {
         "prompt": "Bir tarifte bir tepsi için 3/4 su bardağı süt kullanılıyor. 6 tepsi için kaç su bardağı süt gerekir?",
-        "answer": "4 tam 1/2 su bardağı"
+        "answer": "4 tam 1/2 su bardağı",
+        "options": [
+          "4 tam 1/2 su bardağı",
+          "4 tam 0/2 su bardağı",
+          "4 tam 2/2 su bardağı",
+          "8 tam 1/2 su bardağı",
+          "4 tam 1/3 su bardağı"
+        ]
       }
     ]
   },
@@ -365,43 +925,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "3,75 + 2,6 işleminin sonucu kaçtır?",
-        "answer": "6,35"
+        "answer": "6,35",
+        "options": [
+          "6,34",
+          "6,33",
+          "6,36",
+          "6,37",
+          "6,35"
+        ]
       },
       {
         "prompt": "10 − 4,78 işleminin sonucu kaçtır?",
-        "answer": "5,22"
+        "answer": "5,22",
+        "options": [
+          "5,23",
+          "5,20",
+          "5,22",
+          "5,21",
+          "5,24"
+        ]
       },
       {
         "prompt": "0,7 × 8 işleminin sonucu kaçtır?",
-        "answer": "5,6"
+        "answer": "5,6",
+        "options": [
+          "5,7",
+          "5,4",
+          "5,8",
+          "5,6",
+          "5,5"
+        ]
       },
       {
         "prompt": "15,6 ÷ 4 işleminin sonucu kaçtır?",
-        "answer": "3,9"
+        "answer": "3,9",
+        "options": [
+          "3,8",
+          "4,1",
+          "4,0",
+          "3,9",
+          "3,7"
+        ]
       },
       {
         "prompt": "2,45 + 0,38 işleminin sonucu kaçtır?",
-        "answer": "2,83"
+        "answer": "2,83",
+        "options": [
+          "2,83",
+          "2,84",
+          "2,85",
+          "2,81",
+          "2,82"
+        ]
       },
       {
         "prompt": "8,2 − 3,75 işleminin sonucu kaçtır?",
-        "answer": "4,45"
+        "answer": "4,45",
+        "options": [
+          "4,47",
+          "4,43",
+          "4,44",
+          "4,45",
+          "4,46"
+        ]
       },
       {
         "prompt": "0,25 × 28 işleminin sonucu kaçtır?",
-        "answer": "7"
+        "answer": "7",
+        "options": [
+          "6",
+          "7",
+          "5",
+          "8",
+          "9"
+        ]
       },
       {
         "prompt": "9,6 ÷ 0,8 işleminin sonucu kaçtır?",
-        "answer": "12"
+        "answer": "12",
+        "options": [
+          "13",
+          "10",
+          "12",
+          "14",
+          "11"
+        ]
       },
       {
         "prompt": "1,35 metre ile 75 santimetrenin toplamı kaç metredir?",
-        "answer": "2,10 metre"
+        "answer": "2,10 metre",
+        "options": [
+          "2,12 metre",
+          "2,08 metre",
+          "2,11 metre",
+          "2,09 metre",
+          "2,10 metre"
+        ]
       },
       {
         "prompt": "Her biri 2,4 metre olan 3 kumaş parçasından toplam 1,75 metre kesiliyor. Kaç metre kumaş kalır?",
-        "answer": "5,45 metre"
+        "answer": "5,45 metre",
+        "options": [
+          "5,46 metre",
+          "5,43 metre",
+          "5,47 metre",
+          "5,45 metre",
+          "5,44 metre"
+        ]
       }
     ]
   },
@@ -410,43 +1040,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "340’ın yüzde 10’u kaçtır?",
-        "answer": "34"
+        "answer": "34",
+        "options": [
+          "34",
+          "35",
+          "36",
+          "32",
+          "33"
+        ]
       },
       {
         "prompt": "96’nın yüzde 25’i kaçtır?",
-        "answer": "24"
+        "answer": "24",
+        "options": [
+          "25",
+          "22",
+          "23",
+          "26",
+          "24"
+        ]
       },
       {
         "prompt": "218’in yüzde 50’si kaçtır?",
-        "answer": "109"
+        "answer": "109",
+        "options": [
+          "111",
+          "107",
+          "109",
+          "110",
+          "108"
+        ]
       },
       {
         "prompt": "450’nin yüzde 20’si kaçtır?",
-        "answer": "90"
+        "answer": "90",
+        "options": [
+          "91",
+          "88",
+          "92",
+          "90",
+          "89"
+        ]
       },
       {
         "prompt": "72 sorunun 18’i doğru cevaplandı. Doğru cevapların yüzdesi kaçtır?",
-        "answer": "%25"
+        "answer": "%25",
+        "options": [
+          "%26",
+          "%24",
+          "%25",
+          "%27",
+          "%23"
+        ]
       },
       {
         "prompt": "3/5 kesri yüzde kaçtır?",
-        "answer": "%60"
+        "answer": "%60",
+        "options": [
+          "%60",
+          "%62",
+          "%61",
+          "%58",
+          "%59"
+        ]
       },
       {
         "prompt": "500 TL’lik bir ürüne yüzde 12 indirim yapılırsa indirimli fiyat kaç TL olur?",
-        "answer": "440 TL"
+        "answer": "440 TL",
+        "options": [
+          "442 TL",
+          "438 TL",
+          "440 TL",
+          "439 TL",
+          "441 TL"
+        ]
       },
       {
         "prompt": "160 sayısı yüzde 15 artırılırsa yeni sayı kaç olur?",
-        "answer": "184"
+        "answer": "184",
+        "options": [
+          "185",
+          "186",
+          "184",
+          "182",
+          "183"
+        ]
       },
       {
         "prompt": "Bir sepetteki kırmızı ve mavi topların oranı 2:3, toplam top sayısı 50’dir. Kırmızı top sayısı kaçtır?",
-        "answer": "20"
+        "answer": "20",
+        "options": [
+          "21",
+          "19",
+          "20",
+          "18",
+          "22"
+        ]
       },
       {
         "prompt": "Kırmızı ve mavi boncukların oranı 4:7’dir. 20 kırmızı boncuk varsa toplam kaç boncuk vardır?",
-        "answer": "55"
+        "answer": "55",
+        "options": [
+          "57",
+          "53",
+          "55",
+          "54",
+          "56"
+        ]
       }
     ]
   },
@@ -455,43 +1155,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "x + 28 = 73 ise x kaçtır?",
-        "answer": "45"
+        "answer": "45",
+        "options": [
+          "45",
+          "46",
+          "44",
+          "43",
+          "47"
+        ]
       },
       {
         "prompt": "x − 36 = 29 ise x kaçtır?",
-        "answer": "65"
+        "answer": "65",
+        "options": [
+          "65",
+          "67",
+          "63",
+          "64",
+          "66"
+        ]
       },
       {
         "prompt": "8x = 104 ise x kaçtır?",
-        "answer": "13"
+        "answer": "13",
+        "options": [
+          "13",
+          "14",
+          "15",
+          "11",
+          "12"
+        ]
       },
       {
         "prompt": "x ÷ 7 = 16 ise x kaçtır?",
-        "answer": "112"
+        "answer": "112",
+        "options": [
+          "113",
+          "110",
+          "114",
+          "112",
+          "111"
+        ]
       },
       {
         "prompt": "3x + 4 = 31 ise x kaçtır?",
-        "answer": "9"
+        "answer": "9",
+        "options": [
+          "10",
+          "7",
+          "8",
+          "11",
+          "9"
+        ]
       },
       {
         "prompt": "5(x − 2) = 35 ise x kaçtır?",
-        "answer": "9"
+        "answer": "9",
+        "options": [
+          "11",
+          "10",
+          "8",
+          "7",
+          "9"
+        ]
       },
       {
         "prompt": "2x + 7 = 25 ise x kaçtır?",
-        "answer": "9"
+        "answer": "9",
+        "options": [
+          "11",
+          "10",
+          "8",
+          "7",
+          "9"
+        ]
       },
       {
         "prompt": "6x − 15 = 33 ise x kaçtır?",
-        "answer": "8"
+        "answer": "8",
+        "options": [
+          "9",
+          "7",
+          "10",
+          "6",
+          "8"
+        ]
       },
       {
         "prompt": "4x + 3x = 56 ise x kaçtır?",
-        "answer": "8"
+        "answer": "8",
+        "options": [
+          "9",
+          "7",
+          "10",
+          "6",
+          "8"
+        ]
       },
       {
         "prompt": "(x + 5) ÷ 3 = 9 ise x kaçtır?",
-        "answer": "22"
+        "answer": "22",
+        "options": [
+          "24",
+          "20",
+          "23",
+          "21",
+          "22"
+        ]
       }
     ]
   },
@@ -500,43 +1270,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "−5 + 12 işleminin sonucu kaçtır?",
-        "answer": "7"
+        "answer": "7",
+        "options": [
+          "7",
+          "8",
+          "9",
+          "6",
+          "5"
+        ]
       },
       {
         "prompt": "4 − 13 işleminin sonucu kaçtır?",
-        "answer": "−9"
+        "answer": "−9",
+        "options": [
+          "−9",
+          "-8",
+          "-11",
+          "-10",
+          "-7"
+        ]
       },
       {
         "prompt": "−7 − 6 işleminin sonucu kaçtır?",
-        "answer": "−13"
+        "answer": "−13",
+        "options": [
+          "−13",
+          "-12",
+          "-14",
+          "-15",
+          "-11"
+        ]
       },
       {
         "prompt": "(−6) × (−8) işleminin sonucu kaçtır?",
-        "answer": "48"
+        "answer": "48",
+        "options": [
+          "47",
+          "48",
+          "46",
+          "49",
+          "50"
+        ]
       },
       {
         "prompt": "−72 ÷ 9 işleminin sonucu kaçtır?",
-        "answer": "−8"
+        "answer": "−8",
+        "options": [
+          "−8",
+          "-7",
+          "-6",
+          "-10",
+          "-9"
+        ]
       },
       {
         "prompt": "15 − (−4) işleminin sonucu kaçtır?",
-        "answer": "19"
+        "answer": "19",
+        "options": [
+          "18",
+          "19",
+          "17",
+          "21",
+          "20"
+        ]
       },
       {
         "prompt": "Hava sıcaklığı −3 °C iken 11 °C yükseliyor. Yeni sıcaklık kaç °C olur?",
-        "answer": "8 °C"
+        "answer": "8 °C",
+        "options": [
+          "7 °C",
+          "9 °C",
+          "6 °C",
+          "10 °C",
+          "8 °C"
+        ]
       },
       {
         "prompt": "Hesabında 50 TL olan biri 62 TL harcıyor. Harcama sonrası bakiye kaç TL olur?",
-        "answer": "−12 TL"
+        "answer": "−12 TL",
+        "options": [
+          "−12 TL",
+          "-10 TL",
+          "-11 TL",
+          "-13 TL",
+          "-14 TL"
+        ]
       },
       {
         "prompt": "Asansör 2. kattan 7 kat aşağı iniyor. Hangi katta durur?",
-        "answer": "−5. kat"
+        "answer": "−5. kat",
+        "options": [
+          "-3. kat",
+          "-7. kat",
+          "-6. kat",
+          "−5. kat",
+          "-4. kat"
+        ]
       },
       {
         "prompt": "−3 × (4 − 9) işleminin sonucu kaçtır?",
-        "answer": "15"
+        "answer": "15",
+        "options": [
+          "15",
+          "16",
+          "13",
+          "14",
+          "17"
+        ]
       }
     ]
   },
@@ -545,43 +1385,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "Bir otobüste 52 yolcu vardır. 19 yolcu iner, 7 yolcu biner. Otobüste kaç yolcu olur?",
-        "answer": "40"
+        "answer": "40",
+        "options": [
+          "39",
+          "38",
+          "42",
+          "41",
+          "40"
+        ]
       },
       {
         "prompt": "Tanesi 135 TL olan 4 bilet için 600 TL veriliyor. Kaç TL para üstü alınır?",
-        "answer": "60 TL"
+        "answer": "60 TL",
+        "options": [
+          "60 TL",
+          "59 TL",
+          "61 TL",
+          "62 TL",
+          "58 TL"
+        ]
       },
       {
         "prompt": "Kilogramı 32 TL olan elmadan 5 kg, kilogramı 45 TL olan armuttan 2 kg alınıyor. Toplam kaç TL ödenir?",
-        "answer": "250 TL"
+        "answer": "250 TL",
+        "options": [
+          "252 TL",
+          "251 TL",
+          "248 TL",
+          "250 TL",
+          "249 TL"
+        ]
       },
       {
         "prompt": "40 öğrencinin 3/8’i erkektir. Sınıfta kaç kız öğrenci vardır?",
-        "answer": "25"
+        "answer": "25",
+        "options": [
+          "26",
+          "23",
+          "24",
+          "25",
+          "27"
+        ]
       },
       {
         "prompt": "300 km’lik yolun 2/5’i gidildi. Gidilecek kaç kilometre kaldı?",
-        "answer": "180 km"
+        "answer": "180 km",
+        "options": [
+          "179 km",
+          "181 km",
+          "178 km",
+          "182 km",
+          "180 km"
+        ]
       },
       {
         "prompt": "2.400 TL’nin yüzde 12,5’i birikime ayrılıyor. Kaç TL biriktirilir?",
-        "answer": "300 TL"
+        "answer": "300 TL",
+        "options": [
+          "302 TL",
+          "300 TL",
+          "299 TL",
+          "301 TL",
+          "298 TL"
+        ]
       },
       {
         "prompt": "Günde 6,5 saat çalışan biri 4 günde toplam kaç saat çalışır?",
-        "answer": "26 saat"
+        "answer": "26 saat",
+        "options": [
+          "26 saat",
+          "28 saat",
+          "25 saat",
+          "24 saat",
+          "27 saat"
+        ]
       },
       {
         "prompt": "Her birinde 24 yumurta bulunan 9 kolide 7 yumurta kırılmıştır. Kaç sağlam yumurta vardır?",
-        "answer": "209"
+        "answer": "209",
+        "options": [
+          "208",
+          "207",
+          "209",
+          "211",
+          "210"
+        ]
       },
       {
         "prompt": "1.125 TL’lik hesap 5 arkadaş arasında eşit paylaşılıyor. Kişi başı kaç TL düşer?",
-        "answer": "225 TL"
+        "answer": "225 TL",
+        "options": [
+          "225 TL",
+          "224 TL",
+          "227 TL",
+          "223 TL",
+          "226 TL"
+        ]
       },
       {
         "prompt": "80 sorunun önce 3/4’ü, sonra kalan soruların yarısı çözülüyor. Çözülmeden kaç soru kalır?",
-        "answer": "10 soru"
+        "answer": "10 soru",
+        "options": [
+          "12 soru",
+          "10 soru",
+          "9 soru",
+          "11 soru",
+          "8 soru"
+        ]
       }
     ]
   },
@@ -590,43 +1500,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "142, 175 ve 283 sayılarından hangisi 5’e tam bölünür?",
-        "answer": "175"
+        "answer": "175",
+        "options": [
+          "174",
+          "173",
+          "175",
+          "177",
+          "176"
+        ]
       },
       {
         "prompt": "7, 12, 17, 22, … örüntüsünde sıradaki sayı kaçtır?",
-        "answer": "27"
+        "answer": "27",
+        "options": [
+          "29",
+          "25",
+          "26",
+          "27",
+          "28"
+        ]
       },
       {
         "prompt": "9’a tam bölünebilen en küçük üç basamaklı sayı kaçtır?",
-        "answer": "108"
+        "answer": "108",
+        "options": [
+          "108",
+          "109",
+          "107",
+          "110",
+          "106"
+        ]
       },
       {
         "prompt": "24 sayısının pozitif bölenlerinin sayısı kaçtır?",
-        "answer": "8"
+        "answer": "8",
+        "options": [
+          "6",
+          "8",
+          "7",
+          "9",
+          "10"
+        ]
       },
       {
         "prompt": "91 ÷ 7 işleminin sonucu kaçtır?",
-        "answer": "13"
+        "answer": "13",
+        "options": [
+          "12",
+          "11",
+          "14",
+          "15",
+          "13"
+        ]
       },
       {
         "prompt": "67 sayısı 8’e bölündüğünde kalan kaçtır?",
-        "answer": "3"
+        "answer": "3",
+        "options": [
+          "2",
+          "1",
+          "4",
+          "3",
+          "5"
+        ]
       },
       {
         "prompt": "3, 6, 12, 24, … örüntüsünde sıradaki sayı kaçtır?",
-        "answer": "48"
+        "answer": "48",
+        "options": [
+          "49",
+          "50",
+          "48",
+          "47",
+          "46"
+        ]
       },
       {
         "prompt": "2, 5 ve 8 rakamlarını birer kez kullanarak yazılabilecek en büyük çift üç basamaklı sayı kaçtır?",
-        "answer": "852"
+        "answer": "852",
+        "options": [
+          "852",
+          "853",
+          "851",
+          "850",
+          "854"
+        ]
       },
       {
         "prompt": "6 ve 8 sayılarının en küçük ortak katı kaçtır?",
-        "answer": "24"
+        "answer": "24",
+        "options": [
+          "25",
+          "22",
+          "24",
+          "23",
+          "26"
+        ]
       },
       {
         "prompt": "2, 3 ve 5’e tam bölünebilen en küçük üç basamaklı sayı kaçtır?",
-        "answer": "120"
+        "answer": "120",
+        "options": [
+          "119",
+          "121",
+          "118",
+          "122",
+          "120"
+        ]
       }
     ]
   },
@@ -635,43 +1615,113 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "Ardışık üç tam sayının toplamı 123’tür. Ortanca sayı kaçtır?",
-        "answer": "41"
+        "answer": "41",
+        "options": [
+          "42",
+          "43",
+          "40",
+          "41",
+          "39"
+        ]
       },
       {
         "prompt": "8 kalem 96 TL ise aynı kalemlerden 11 tane kaç TL tutar?",
-        "answer": "132 TL"
+        "answer": "132 TL",
+        "options": [
+          "132 TL",
+          "133 TL",
+          "131 TL",
+          "130 TL",
+          "134 TL"
+        ]
       },
       {
         "prompt": "240 TL’lik ürüne yüzde 20 indirim uygulanıyor. İndirimli fiyat kaç TL olur?",
-        "answer": "192 TL"
+        "answer": "192 TL",
+        "options": [
+          "191 TL",
+          "190 TL",
+          "192 TL",
+          "194 TL",
+          "193 TL"
+        ]
       },
       {
         "prompt": "Bir sayının 2/5’inin 8 fazlası 32’dir. Bu sayı kaçtır?",
-        "answer": "60"
+        "answer": "60",
+        "options": [
+          "59",
+          "60",
+          "58",
+          "62",
+          "61"
+        ]
       },
       {
         "prompt": "Bir sayı 5’e bölünüp sonuca 9 eklenince 21 bulunuyor. Başlangıçtaki sayı kaçtır?",
-        "answer": "60"
+        "answer": "60",
+        "options": [
+          "61",
+          "58",
+          "60",
+          "59",
+          "62"
+        ]
       },
       {
         "prompt": "Dikdörtgenin uzun kenarı 21 cm, kısa kenarı uzun kenarın 2/3’üdür. Dikdörtgenin çevresi kaç santimetredir?",
-        "answer": "70 cm"
+        "answer": "70 cm",
+        "options": [
+          "69 cm",
+          "70 cm",
+          "68 cm",
+          "72 cm",
+          "71 cm"
+        ]
       },
       {
         "prompt": "Üç defter ve bir kalem toplam 54 TL’dir. Bir defter 15 TL ise kalem kaç TL’dir?",
-        "answer": "9 TL"
+        "answer": "9 TL",
+        "options": [
+          "10 TL",
+          "7 TL",
+          "8 TL",
+          "11 TL",
+          "9 TL"
+        ]
       },
       {
         "prompt": "Toplamları 92 olan dört ardışık pozitif çift sayının en büyüğü kaçtır?",
-        "answer": "26"
+        "answer": "26",
+        "options": [
+          "27",
+          "25",
+          "28",
+          "24",
+          "26"
+        ]
       },
       {
         "prompt": "Her birinde 20 yumurta bulunan 6 tepsideki yumurtaların yüzde 5’i kırılmıştır. Kaç sağlam yumurta vardır?",
-        "answer": "114"
+        "answer": "114",
+        "options": [
+          "113",
+          "116",
+          "114",
+          "115",
+          "112"
+        ]
       },
       {
         "prompt": "Kapasitesi 54 litre olan bir depo 2/3 doludur. Depoya 9 litre daha eklenirse deponun ne kadarı dolu olur?",
-        "answer": "5/6 dolu"
+        "answer": "5/6 dolu",
+        "options": [
+          "6/6 dolu",
+          "4/6 dolu",
+          "5/6 dolu",
+          "-2/6 dolu",
+          "5/7 dolu"
+        ]
       }
     ]
   },
@@ -680,63 +1730,168 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "468 + 257 − 139 işleminin sonucu kaçtır?",
-        "answer": "586"
+        "answer": "586",
+        "options": [
+          "587",
+          "588",
+          "585",
+          "586",
+          "584"
+        ]
       },
       {
         "prompt": "7.053 sayısındaki yüzler basamağında hangi rakam vardır?",
-        "answer": "0"
+        "answer": "0",
+        "options": [
+          "1",
+          "-1",
+          "2",
+          "-2",
+          "0"
+        ]
       },
       {
         "prompt": "32 × 25 işleminin sonucu kaçtır?",
-        "answer": "800"
+        "answer": "800",
+        "options": [
+          "800",
+          "798",
+          "801",
+          "802",
+          "799"
+        ]
       },
       {
         "prompt": "1.176 ÷ 8 işleminin sonucu kaçtır?",
-        "answer": "147"
+        "answer": "147",
+        "options": [
+          "147",
+          "148",
+          "145",
+          "149",
+          "146"
+        ]
       },
       {
         "prompt": "90 − 6 × (8 + 3) işleminin sonucu kaçtır?",
-        "answer": "24"
+        "answer": "24",
+        "options": [
+          "25",
+          "22",
+          "26",
+          "23",
+          "24"
+        ]
       },
       {
         "prompt": "Her birinde 26 ürün bulunan 4 kutudan 17 ürün satılıyor. Kaç ürün kalır?",
-        "answer": "87"
+        "answer": "87",
+        "options": [
+          "87",
+          "85",
+          "88",
+          "89",
+          "86"
+        ]
       },
       {
         "prompt": "56’nın 3/8’i kaçtır?",
-        "answer": "21"
+        "answer": "21",
+        "options": [
+          "20",
+          "19",
+          "22",
+          "23",
+          "21"
+        ]
       },
       {
         "prompt": "2/3 + 5/12 işleminin sonucu kaçtır?",
-        "answer": "1 tam 1/12"
+        "answer": "1 tam 1/12",
+        "options": [
+          "1 tam 1/12",
+          "1 tam 2/12",
+          "1 tam 1/13",
+          "1 tam 0/12",
+          "1 tam 1/11"
+        ]
       },
       {
         "prompt": "4,8 − 1,35 işleminin sonucu kaçtır?",
-        "answer": "3,45"
+        "answer": "3,45",
+        "options": [
+          "3,46",
+          "3,43",
+          "3,45",
+          "3,44",
+          "3,47"
+        ]
       },
       {
         "prompt": "240 TL’lik ürüne yüzde 15 indirim yapılırsa indirimli fiyat kaç TL olur?",
-        "answer": "204 TL"
+        "answer": "204 TL",
+        "options": [
+          "205 TL",
+          "202 TL",
+          "204 TL",
+          "203 TL",
+          "206 TL"
+        ]
       },
       {
         "prompt": "5x − 8 = 37 ise x kaçtır?",
-        "answer": "9"
+        "answer": "9",
+        "options": [
+          "9",
+          "10",
+          "7",
+          "8",
+          "11"
+        ]
       },
       {
         "prompt": "−8 + 3 × 5 işleminin sonucu kaçtır?",
-        "answer": "7"
+        "answer": "7",
+        "options": [
+          "6",
+          "5",
+          "7",
+          "8",
+          "9"
+        ]
       },
       {
         "prompt": "Üç çocuk tanesi 85 TL olan birer kitap alıyor ve toplam 300 TL veriyor. Kaç TL para üstü alırlar?",
-        "answer": "45 TL"
+        "answer": "45 TL",
+        "options": [
+          "43 TL",
+          "45 TL",
+          "44 TL",
+          "46 TL",
+          "47 TL"
+        ]
       },
       {
         "prompt": "6’ya tam bölünebilen en küçük üç basamaklı sayı kaçtır?",
-        "answer": "102"
+        "answer": "102",
+        "options": [
+          "103",
+          "100",
+          "102",
+          "104",
+          "101"
+        ]
       },
       {
         "prompt": "72 litrelik deponun 3/4’ü doludur. 18 litre su kullanılırsa kaç litre su kalır?",
-        "answer": "36 litre"
+        "answer": "36 litre",
+        "options": [
+          "35 litre",
+          "38 litre",
+          "34 litre",
+          "36 litre",
+          "37 litre"
+        ]
       }
     ]
   },
@@ -745,63 +1900,168 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "350 sayısı yüzde 20 artırılırsa kaç olur?",
-        "answer": "420"
+        "answer": "420",
+        "options": [
+          "420",
+          "422",
+          "421",
+          "419",
+          "418"
+        ]
       },
       {
         "prompt": "905 − 478 + 36 işleminin sonucu kaçtır?",
-        "answer": "463"
+        "answer": "463",
+        "options": [
+          "463",
+          "464",
+          "462",
+          "461",
+          "465"
+        ]
       },
       {
         "prompt": "3/4 ÷ 1/2 işleminin sonucu kaçtır?",
-        "answer": "1 tam 1/2"
+        "answer": "1 tam 1/2",
+        "options": [
+          "1 tam 0/2",
+          "1 tam 2/2",
+          "1 tam 1/3",
+          "1 tam 1/2",
+          "5 tam 1/2"
+        ]
       },
       {
         "prompt": "7x + 9 = 58 ise x kaçtır?",
-        "answer": "7"
+        "answer": "7",
+        "options": [
+          "9",
+          "6",
+          "7",
+          "5",
+          "8"
+        ]
       },
       {
         "prompt": "9 yüzlük, 4 onluk ve 2 birlikten oluşan sayı kaçtır?",
-        "answer": "942"
+        "answer": "942",
+        "options": [
+          "943",
+          "944",
+          "942",
+          "941",
+          "940"
+        ]
       },
       {
         "prompt": "−12 − (−5) işleminin sonucu kaçtır?",
-        "answer": "−7"
+        "answer": "−7",
+        "options": [
+          "−7",
+          "-6",
+          "-8",
+          "-9",
+          "-5"
+        ]
       },
       {
         "prompt": "27 × 16 işleminin sonucu kaçtır?",
-        "answer": "432"
+        "answer": "432",
+        "options": [
+          "431",
+          "430",
+          "433",
+          "432",
+          "434"
+        ]
       },
       {
         "prompt": "6,25 ÷ 2,5 işleminin sonucu kaçtır?",
-        "answer": "2,5"
+        "answer": "2,5",
+        "options": [
+          "2,5",
+          "2,6",
+          "2,4",
+          "2,7",
+          "2,3"
+        ]
       },
       {
         "prompt": "200’den büyük, 9’a tam bölünebilen en küçük sayı kaçtır?",
-        "answer": "207"
+        "answer": "207",
+        "options": [
+          "209",
+          "208",
+          "205",
+          "207",
+          "206"
+        ]
       },
       {
         "prompt": "1.365 ÷ 7 işleminin sonucu kaçtır?",
-        "answer": "195"
+        "answer": "195",
+        "options": [
+          "196",
+          "197",
+          "195",
+          "193",
+          "194"
+        ]
       },
       {
         "prompt": "96’nın 5/8’i kaçtır?",
-        "answer": "60"
+        "answer": "60",
+        "options": [
+          "59",
+          "62",
+          "58",
+          "60",
+          "61"
+        ]
       },
       {
         "prompt": "96 − 7 × 8 + 36 ÷ 6 işleminin sonucu kaçtır?",
-        "answer": "46"
+        "answer": "46",
+        "options": [
+          "46",
+          "48",
+          "47",
+          "44",
+          "45"
+        ]
       },
       {
         "prompt": "420 km’lik yolun önce 3/7’si, sonra 95 km’si gidiliyor. Kaç kilometre yol kalır?",
-        "answer": "145 km"
+        "answer": "145 km",
+        "options": [
+          "147 km",
+          "143 km",
+          "145 km",
+          "144 km",
+          "146 km"
+        ]
       },
       {
         "prompt": "Her birinde 22 kalem bulunan 9 kutudan 26 kalem dağıtılıyor. Kalan kalemler 4 gruba eşit paylaştırılırsa her gruba kaç kalem düşer?",
-        "answer": "43"
+        "answer": "43",
+        "options": [
+          "43",
+          "42",
+          "44",
+          "41",
+          "45"
+        ]
       },
       {
         "prompt": "Kapasitesi 180 litre olan tankın 2/5’i doludur. Tanka 54 litre daha eklenirse tankın ne kadarı dolu olur?",
-        "answer": "7/10 dolu"
+        "answer": "7/10 dolu",
+        "options": [
+          "6/10 dolu",
+          "7/11 dolu",
+          "8/10 dolu",
+          "7/9 dolu",
+          "7/10 dolu"
+        ]
       }
     ]
   },
@@ -810,63 +2070,168 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "Hangi sayıya 284 eklenirse 700 olur?",
-        "answer": "416"
+        "answer": "416",
+        "options": [
+          "418",
+          "417",
+          "414",
+          "415",
+          "416"
+        ]
       },
       {
         "prompt": "48.763 sayısı en yakın yüzlüğe yuvarlanırsa kaç olur?",
-        "answer": "48.800"
+        "answer": "48.800",
+        "options": [
+          "48.799",
+          "48.802",
+          "48.801",
+          "48.800",
+          "48.798"
+        ]
       },
       {
         "prompt": "125 × 24 işleminin sonucu kaçtır?",
-        "answer": "3.000"
+        "answer": "3.000",
+        "options": [
+          "3.000",
+          "3.001",
+          "2.998",
+          "2.999",
+          "3.002"
+        ]
       },
       {
         "prompt": "1.008 ÷ 12 işleminin sonucu kaçtır?",
-        "answer": "84"
+        "answer": "84",
+        "options": [
+          "82",
+          "86",
+          "83",
+          "85",
+          "84"
+        ]
       },
       {
         "prompt": "(64 − 28) ÷ 4 + 9 işleminin sonucu kaçtır?",
-        "answer": "18"
+        "answer": "18",
+        "options": [
+          "17",
+          "19",
+          "16",
+          "18",
+          "20"
+        ]
       },
       {
         "prompt": "Tanesi 145 TL olan 3 bilet ve tanesi 35 TL olan 2 atıştırmalık alınıyor. 600 TL verilirse kaç TL para üstü alınır?",
-        "answer": "95 TL"
+        "answer": "95 TL",
+        "options": [
+          "96 TL",
+          "97 TL",
+          "95 TL",
+          "93 TL",
+          "94 TL"
+        ]
       },
       {
         "prompt": "42’nin 5/6’sı kaçtır?",
-        "answer": "35"
+        "answer": "35",
+        "options": [
+          "37",
+          "35",
+          "34",
+          "36",
+          "33"
+        ]
       },
       {
         "prompt": "7/8 − 1/3 işleminin sonucu kaçtır?",
-        "answer": "13/24"
+        "answer": "13/24",
+        "options": [
+          "13/25",
+          "13/24",
+          "13/23",
+          "14/24",
+          "12/24"
+        ]
       },
       {
         "prompt": "0,45 × 20 işleminin sonucu kaçtır?",
-        "answer": "9"
+        "answer": "9",
+        "options": [
+          "11",
+          "9",
+          "7",
+          "10",
+          "8"
+        ]
       },
       {
         "prompt": "5:7 oranındaki iki miktarın toplamı 96’dır. Küçük miktar kaçtır?",
-        "answer": "40"
+        "answer": "40",
+        "options": [
+          "39",
+          "41",
+          "38",
+          "40",
+          "42"
+        ]
       },
       {
         "prompt": "(x − 6) ÷ 4 = 8 ise x kaçtır?",
-        "answer": "38"
+        "answer": "38",
+        "options": [
+          "39",
+          "40",
+          "37",
+          "38",
+          "36"
+        ]
       },
       {
         "prompt": "(−9) × 4 + 6 işleminin sonucu kaçtır?",
-        "answer": "−30"
+        "answer": "−30",
+        "options": [
+          "-32",
+          "−30",
+          "-28",
+          "-29",
+          "-31"
+        ]
       },
       {
         "prompt": "1.000 sayfalık kitabın ilk üç gününde her gün 185 sayfa okunuyor. Okunmamış kaç sayfa kalır?",
-        "answer": "445 sayfa"
+        "answer": "445 sayfa",
+        "options": [
+          "444 sayfa",
+          "447 sayfa",
+          "443 sayfa",
+          "445 sayfa",
+          "446 sayfa"
+        ]
       },
       {
         "prompt": "134 sayısı 9’a bölündüğünde kalan kaçtır?",
-        "answer": "8"
+        "answer": "8",
+        "options": [
+          "8",
+          "9",
+          "7",
+          "6",
+          "10"
+        ]
       },
       {
         "prompt": "Uzun kenarı 22 cm olan bir dikdörtgenin çevresi 72 cm’dir. Kısa kenarı kaç santimetredir?",
-        "answer": "14 cm"
+        "answer": "14 cm",
+        "options": [
+          "13 cm",
+          "12 cm",
+          "14 cm",
+          "15 cm",
+          "16 cm"
+        ]
       }
     ]
   },
@@ -875,63 +2240,168 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "1.250 sayısından hangi sayı çıkarılırsa 785 kalır?",
-        "answer": "465"
+        "answer": "465",
+        "options": [
+          "465",
+          "466",
+          "463",
+          "464",
+          "467"
+        ]
       },
       {
         "prompt": "1, 4 ve 7 rakamlarını birer kez kullanarak yazılabilecek en büyük tek üç basamaklı sayı kaçtır?",
-        "answer": "741"
+        "answer": "741",
+        "options": [
+          "741",
+          "742",
+          "743",
+          "740",
+          "739"
+        ]
       },
       {
         "prompt": "48 × 125 işleminin sonucu kaçtır?",
-        "answer": "6.000"
+        "answer": "6.000",
+        "options": [
+          "5.999",
+          "5.998",
+          "6.002",
+          "6.001",
+          "6.000"
+        ]
       },
       {
         "prompt": "2.016 ÷ 16 işleminin sonucu kaçtır?",
-        "answer": "126"
+        "answer": "126",
+        "options": [
+          "127",
+          "125",
+          "128",
+          "124",
+          "126"
+        ]
       },
       {
         "prompt": "5 + 3 × (18 − 10) işleminin sonucu kaçtır?",
-        "answer": "29"
+        "answer": "29",
+        "options": [
+          "30",
+          "27",
+          "28",
+          "31",
+          "29"
+        ]
       },
       {
         "prompt": "Her birinde 15 ürün bulunan 12 paketten 68 ürün dağıtılıyor. Kaç ürün kalır?",
-        "answer": "112"
+        "answer": "112",
+        "options": [
+          "114",
+          "113",
+          "110",
+          "112",
+          "111"
+        ]
       },
       {
         "prompt": "90’ın 7/10’u kaçtır?",
-        "answer": "63"
+        "answer": "63",
+        "options": [
+          "62",
+          "64",
+          "61",
+          "65",
+          "63"
+        ]
       },
       {
         "prompt": "3/5 × 5/9 işleminin sonucu kaçtır?",
-        "answer": "1/3"
+        "answer": "1/3",
+        "options": [
+          "1/3",
+          "2/3",
+          "1/4",
+          "1/2",
+          "0/3"
+        ]
       },
       {
         "prompt": "2,7 + 0,85 işleminin sonucu kaçtır?",
-        "answer": "3,55"
+        "answer": "3,55",
+        "options": [
+          "3,54",
+          "3,53",
+          "3,55",
+          "3,56",
+          "3,57"
+        ]
       },
       {
         "prompt": "80 sayısı 100’e çıkarsa yüzde kaç artmış olur?",
-        "answer": "%25"
+        "answer": "%25",
+        "options": [
+          "%27",
+          "%23",
+          "%26",
+          "%24",
+          "%25"
+        ]
       },
       {
         "prompt": "2(x + 5) = 34 ise x kaçtır?",
-        "answer": "12"
+        "answer": "12",
+        "options": [
+          "12",
+          "14",
+          "13",
+          "10",
+          "11"
+        ]
       },
       {
         "prompt": "−4 + (−3) × 6 işleminin sonucu kaçtır?",
-        "answer": "−22"
+        "answer": "−22",
+        "options": [
+          "−22",
+          "-23",
+          "-21",
+          "-24",
+          "-20"
+        ]
       },
       {
         "prompt": "90 öğrencinin 2/3’ü bir etkinliğe katılıyor. Etkinliğe katılmayan kaç öğrenci vardır?",
-        "answer": "30"
+        "answer": "30",
+        "options": [
+          "30",
+          "31",
+          "32",
+          "28",
+          "29"
+        ]
       },
       {
         "prompt": "322, 327 ve 341 sayılarından hangisi 3’e tam bölünür?",
-        "answer": "327"
+        "answer": "327",
+        "options": [
+          "327",
+          "329",
+          "328",
+          "325",
+          "326"
+        ]
       },
       {
         "prompt": "Bir tren 240 km’lik yolun önce 3/8’ini, sonra 95 km’sini gidiyor. Kaç kilometre yolu kalır?",
-        "answer": "55 km"
+        "answer": "55 km",
+        "options": [
+          "55 km",
+          "56 km",
+          "53 km",
+          "54 km",
+          "57 km"
+        ]
       }
     ]
   },
@@ -940,63 +2410,168 @@ window.YKS_TEMEL_TESTS = window.YKS_TEMEL_TESTS || [
     "questions": [
       {
         "prompt": "576 sayısına hangi sayı eklenirse 1.000 olur?",
-        "answer": "424"
+        "answer": "424",
+        "options": [
+          "424",
+          "422",
+          "425",
+          "426",
+          "423"
+        ]
       },
       {
         "prompt": "6 binlik, 12 yüzlük, 3 onluk ve 4 birlikten oluşan sayı kaçtır?",
-        "answer": "7.234"
+        "answer": "7.234",
+        "options": [
+          "7.233",
+          "7.232",
+          "7.236",
+          "7.234",
+          "7.235"
+        ]
       },
       {
         "prompt": "75 × 16 işleminin sonucu kaçtır?",
-        "answer": "1.200"
+        "answer": "1.200",
+        "options": [
+          "1.201",
+          "1.198",
+          "1.200",
+          "1.199",
+          "1.202"
+        ]
       },
       {
         "prompt": "2.500 ÷ 25 işleminin sonucu kaçtır?",
-        "answer": "100"
+        "answer": "100",
+        "options": [
+          "101",
+          "98",
+          "102",
+          "99",
+          "100"
+        ]
       },
       {
         "prompt": "120 − (36 ÷ 3 + 8 × 4) işleminin sonucu kaçtır?",
-        "answer": "76"
+        "answer": "76",
+        "options": [
+          "75",
+          "74",
+          "76",
+          "78",
+          "77"
+        ]
       },
       {
         "prompt": "Her biri 2,4 kg olan 5 pirinç paketinden 3,5 kg kullanılıyor. Kaç kilogram pirinç kalır?",
-        "answer": "8,5 kg"
+        "answer": "8,5 kg",
+        "options": [
+          "8,5 kg",
+          "8,6 kg",
+          "8,4 kg",
+          "8,3 kg",
+          "8,7 kg"
+        ]
       },
       {
         "prompt": "144’ün 5/12’si kaçtır?",
-        "answer": "60"
+        "answer": "60",
+        "options": [
+          "59",
+          "58",
+          "62",
+          "61",
+          "60"
+        ]
       },
       {
         "prompt": "2 tam 1/4 ÷ 3/8 işleminin sonucu kaçtır?",
-        "answer": "6"
+        "answer": "6",
+        "options": [
+          "7",
+          "4",
+          "6",
+          "5",
+          "8"
+        ]
       },
       {
         "prompt": "4,5 ÷ 0,15 işleminin sonucu kaçtır?",
-        "answer": "30"
+        "answer": "30",
+        "options": [
+          "30",
+          "31",
+          "32",
+          "29",
+          "28"
+        ]
       },
       {
         "prompt": "280 sayısı yüzde 25 artırılırsa kaç olur?",
-        "answer": "350"
+        "answer": "350",
+        "options": [
+          "352",
+          "351",
+          "348",
+          "349",
+          "350"
+        ]
       },
       {
         "prompt": "9x + 2 = 83 ise x kaçtır?",
-        "answer": "9"
+        "answer": "9",
+        "options": [
+          "7",
+          "9",
+          "8",
+          "10",
+          "11"
+        ]
       },
       {
         "prompt": "7 − (−5) − 14 işleminin sonucu kaçtır?",
-        "answer": "−2"
+        "answer": "−2",
+        "options": [
+          "−2",
+          "-1",
+          "-3",
+          "-4",
+          "0"
+        ]
       },
       {
         "prompt": "500 TL ile tanesi 145 TL olan 2 bilet ve 68 TL’lik bir ürün alınıyor. Kaç TL kalır?",
-        "answer": "142 TL"
+        "answer": "142 TL",
+        "options": [
+          "141 TL",
+          "144 TL",
+          "143 TL",
+          "142 TL",
+          "140 TL"
+        ]
       },
       {
         "prompt": "5, 11, 23, 47, … sayı örüntüsünde sıradaki sayı kaçtır?",
-        "answer": "95"
+        "answer": "95",
+        "options": [
+          "95",
+          "97",
+          "96",
+          "93",
+          "94"
+        ]
       },
       {
         "prompt": "Bir kutuda 96 bilye vardır. Bilyelerin 3/8’i mavidir. Kırmızı bilyelerin 1/4’ü verildiğine göre kutuda kaç kırmızı bilye kalır?",
-        "answer": "45 bilye"
+        "answer": "45 bilye",
+        "options": [
+          "44 bilye",
+          "46 bilye",
+          "43 bilye",
+          "45 bilye",
+          "47 bilye"
+        ]
       }
     ]
   }
@@ -1486,8 +3061,14 @@ function stableShuffle(items, seedText) {
 }
 function optionsForQuestion(question, testNumber, questionIndex) {
   const correct = String(question.answer).trim();
-  if (Array.isArray(question.options) && question.options.length === 4 && question.options.every((option) => String(option).trim())) {
-    return question.options.map((text, index) => ({ text: String(text).trim(), letter: 'ABCD'[index], correct: String(text).trim() === correct }));
+  if (Array.isArray(question.options) && question.options.length >= 4 && question.options.every((option) => String(option).trim())) {
+    const customOptions = question.options.slice(0, 5).map((option) => String(option).trim());
+    if (customOptions.length === 4) {
+      const extra = questionDistractors(correct).find((candidate) => !customOptions.includes(candidate))
+        || (customOptions.includes('Diğer seçenek') ? 'Ek seçenek' : 'Diğer seçenek');
+      customOptions.push(extra);
+    }
+    return customOptions.map((text, index) => ({ text, letter: 'ABCDE'[index], correct: text === correct }));
   }
   const numericCorrect = optionNumericValue(correct);
   const distractors = [];
@@ -1500,20 +3081,20 @@ function optionsForQuestion(question, testNumber, questionIndex) {
       return numericChoice !== null && existingNumber !== null && Math.abs(numericChoice - existingNumber) < 1e-10;
     })) continue;
     distractors.push(choice);
-    if (distractors.length === 3) break;
+    if (distractors.length === 4) break;
   }
-  if (distractors.length < 3 && numericCorrect !== null) {
+  if (distractors.length < 4 && numericCorrect !== null) {
     const decimals = String(correct).match(/,(\d+)/)?.[1].length || 0;
     const step = decimals ? 10 ** -decimals : 1;
     for (const delta of [3, -3, 4, -4, 5, -5]) {
       const candidate = `${formatTurkishNumber(numericCorrect + delta * step, decimals)}${String(correct).replace(/^[−-]?[\d.,]+/, '')}`;
       if (candidate !== correct && !distractors.includes(candidate) && !distractors.some((existing) => Math.abs(optionNumericValue(existing) - (numericCorrect + delta * step)) < 1e-10)) distractors.push(candidate);
-      if (distractors.length === 3) break;
+      if (distractors.length === 4) break;
     }
   }
-  while (distractors.length < 3) distractors.push(`Seçenek ${distractors.length + 1}`);
+  while (distractors.length < 4) distractors.push(`Seçenek ${'ABCDE'[distractors.length + 1]}`);
   const shuffled = stableShuffle([correct, ...distractors], `${testNumber}:${questionIndex}:${question.prompt}`);
-  return shuffled.map((text, index) => ({ text, letter: 'ABCD'[index], correct: text === correct }));
+  return shuffled.map((text, index) => ({ text, letter: 'ABCDE'[index], correct: text === correct }));
 }
 function bundledQuestionsForTest(testNumber) {
   if (!isTemelAtmaRoute()) return null;
@@ -1605,7 +3186,7 @@ function renderQuestionTest() {
 function selectQuizAnswer(index) {
   const session = app.quizSession;
   if (!session || !Number.isInteger(index) || session.answers[session.questionIndex] !== null) return;
-  if (index < 0 || index > 3) return;
+  if (index < 0 || index > 4) return;
   session.answers[session.questionIndex] = index;
   renderQuestionTest();
 }
@@ -1918,7 +3499,7 @@ function questionRowsForManager(context) {
   return [];
 }
 function questionOptionFields(options = [], disabled = false) {
-  return `<div class="question-option-fields">${['A', 'B', 'C', 'D'].map((letter, index) => `<label>Şık ${letter}<input name="option${letter}" maxlength="240" value="${esc(options[index] || '')}" placeholder="İsteğe bağlı; dört şıkkı da doldur" ${disabled ? 'disabled' : ''}></label>`).join('')}</div>`;
+  return `<div class="question-option-fields">${['A', 'B', 'C', 'D', 'E'].map((letter, index) => `<label>Şık ${letter}<input name="option${letter}" maxlength="240" value="${esc(options[index] || '')}" placeholder="İsteğe bağlı; beş şıkkı da doldur" ${disabled ? 'disabled' : ''}></label>`).join('')}</div>`;
 }
 function renderAdminQuestionManager() {
   const context = questionManagerContext();
@@ -1933,10 +3514,11 @@ function renderAdminQuestionManager() {
   const hiddenCount = rows.length - shownCount;
   const cards = rows.map((row, index) => {
     const options = Array.isArray(row.options) ? row.options : [];
-    return `<article class="question-edit-card ${row.is_hidden ? 'is-hidden' : ''}"><div class="question-edit-top"><strong>Soru ${index + 1}</strong><span class="question-visibility">${row.is_hidden ? 'Adminler görebilir · Gizli' : 'Yayında'}</span></div><form class="question-edit-form" id="questionEdit-${esc(row.id)}" data-question-edit="${esc(row.id)}"><label>Soru metni<textarea name="prompt" required maxlength="2000" ${disabled || row.bundled ? 'disabled' : ''}>${esc(row.prompt)}</textarea></label><label>Doğru cevap<input name="answer" required maxlength="300" value="${esc(row.answer)}" ${disabled || row.bundled ? 'disabled' : ''}></label>${questionOptionFields(options, !app.questionBankAvailable || row.bundled)}<div class="question-admin-actions"><button class="small-btn" type="submit" ${disabled || row.bundled ? 'disabled' : ''}>Değişiklikleri Kaydet</button><button class="small-btn ${row.is_hidden ? '' : 'danger'}" type="button" data-question-toggle="${esc(row.id)}" ${disabled || row.bundled ? 'disabled' : ''}>${row.is_hidden ? 'Göster' : 'Gizle'}</button></div></form></article>`;
+    const deleteButton = row.created_by && !row.bundled ? `<button class="small-btn danger" type="button" data-question-delete="${esc(row.id)}">Sil</button>` : '';
+    return `<article class="question-edit-card ${row.is_hidden ? 'is-hidden' : ''}"><div class="question-edit-top"><strong>Soru ${index + 1}</strong><span class="question-visibility">${row.is_hidden ? 'Adminler görebilir · Gizli' : 'Yayında'}</span></div><form class="question-edit-form" id="questionEdit-${esc(row.id)}" data-question-edit="${esc(row.id)}"><label>Soru metni<textarea name="prompt" required maxlength="2000" ${disabled || row.bundled ? 'disabled' : ''}>${esc(row.prompt)}</textarea></label><label>Doğru cevap<input name="answer" required maxlength="300" value="${esc(row.answer)}" ${disabled || row.bundled ? 'disabled' : ''}></label>${questionOptionFields(options, !app.questionBankAvailable || row.bundled)}<div class="question-admin-actions"><button class="small-btn" type="submit" ${disabled || row.bundled ? 'disabled' : ''}>Değişiklikleri Kaydet</button><button class="small-btn ${row.is_hidden ? '' : 'danger'}" type="button" data-question-toggle="${esc(row.id)}" ${disabled || row.bundled ? 'disabled' : ''}>${row.is_hidden ? 'Göster' : 'Gizle'}</button>${deleteButton}</div></form></article>`;
   }).join('');
   const setupNote = app.questionBankAvailable
-    ? '<p class="question-manager-note">Gizlenen soru öğrencilere gösterilmez, admin listesinde kalır. Soru metni ve cevabı düzenleyebilir; dört özel şık girersen doğru cevap, cevap alanıyla aynı olmalıdır. Şıklar boş kalırsa sayısal cevaplar için sistem şık üretir.</p>'
+    ? '<p class="question-manager-note">Gizlenen soru öğrencilere gösterilmez, admin listesinde kalır. Adminin eklediği sorular silinebilir. Soru metni ve cevabı düzenleyebilir; beş özel şık girersen doğru cevap, cevap alanıyla aynı olmalıdır. Şıklar boş kalırsa sistem cevap türüne göre şık üretir.</p>'
     : '<p class="question-manager-note">Soru bankası veritabanı henüz hazır değil. Düzenleme, gizleme ve yeni soru ekleme için <strong>admin_questions.sql</strong> dosyasını Supabase SQL Editor’da bir kez çalıştır. Mevcut temel testler burada salt okunur olarak görünür.</p>';
   const addForm = `<form class="admin-form question-add-form" id="questionAddForm"><label>Yeni soru<textarea name="prompt" required minlength="3" maxlength="2000" ${disabled ? 'disabled' : ''} placeholder="Soru metnini yaz"></textarea></label><label>Doğru cevap<input name="answer" required maxlength="300" ${disabled ? 'disabled' : ''} placeholder="Doğru seçeneğin metni"></label>${questionOptionFields([], !app.questionBankAvailable)}<p class="fine">Bu seçimdeki Test ${context.testNumber} soruları: ${rows.length} · Öğrenciye açık: ${shownCount} · Gizli: ${hiddenCount}. Eklediğin soru listenin sonuna eklenir ve testte görünür.</p><button class="submit" type="submit" ${disabled ? 'disabled' : ''}>Bu teste soru ekle <span>→</span></button></form>`;
   return `<h3>Soru yönetimi</h3>${setupNote}<div class="question-manager-filters"><label>Sınav<select data-question-filter="exam"><option value="TYT" ${context.exam === 'TYT' ? 'selected' : ''}>TYT</option><option value="AYT" ${context.exam === 'AYT' ? 'selected' : ''}>AYT</option><option value="YDT" ${context.exam === 'YDT' ? 'selected' : ''}>YDT</option></select></label><label>Ders<select data-question-filter="course">${courseOptions}</select></label><label>Konu<select data-question-filter="topic">${topicOptions}</select></label><label>Seviye<select data-question-filter="difficulty">${difficultyOptions}</select></label><label>Test<select data-question-filter="testNumber">${testOptions}</select></label><button class="small-btn" type="button" data-question-refresh>Yenile</button></div><div class="question-manager-heading"><strong>${esc(context.exam)} · ${esc(context.course.title)} · ${esc(context.topic)} · ${esc(context.difficulty)} · Test ${context.testNumber}</strong><span>${shownCount} açık / ${hiddenCount} gizli · ${rows.length} soru</span></div>${addForm}<div id="questionManagerRows">${cards || '<p class="question-manager-empty">Bu testte henüz soru yok. Yukarıdaki formdan soru ekleyebilirsin.</p>'}</div>`;
@@ -2161,6 +3743,21 @@ document.addEventListener('click', async (event) => {
     } catch (error) { showToast(normalizeError(error)); }
     return;
   }
+  const questionDelete = target.closest('[data-question-delete]');
+  if (questionDelete) {
+    if (!isAdmin() || !app.questionBankAvailable) return;
+    const question = app.db.questions.find((item) => item.id === questionDelete.dataset.questionDelete);
+    if (!question?.created_by) { showToast('Yalnızca adminlerin eklediği sorular silinebilir.'); return; }
+    if (!window.confirm('Eklediğin bu soruyu kalıcı olarak silmek istiyor musun?')) return;
+    try {
+      const { error } = await app.client.from('question_bank').delete().eq('id', question.id);
+      if (error) throw error;
+      app.questionBankLoaded = false;
+      await loadAdminQuestions();
+      showToast('Eklenen soru silindi.');
+    } catch (error) { showToast(normalizeError(error)); }
+    return;
+  }
   const toggle = target.closest('[data-user-toggle]');
   if (toggle) {
     try {
@@ -2270,13 +3867,13 @@ document.addEventListener('submit', async (event) => {
       const data = new FormData(form);
       const prompt = String(data.get('prompt') || '').trim();
       const answer = String(data.get('answer') || '').trim();
-      const enteredOptions = ['A', 'B', 'C', 'D'].map((letter) => String(data.get(`option${letter}`) || '').trim());
+      const enteredOptions = ['A', 'B', 'C', 'D', 'E'].map((letter) => String(data.get(`option${letter}`) || '').trim());
       const hasOptions = enteredOptions.some(Boolean);
       let options = [];
       if (hasOptions) {
-        if (enteredOptions.some((option) => !option)) throw new Error('Özel şık ekliyorsan A, B, C ve D şıklarının hepsini doldur.');
-        if (new Set(enteredOptions).size !== 4) throw new Error('Dört şık birbirinden farklı olmalı.');
-        if (!enteredOptions.includes(answer)) throw new Error('Doğru cevap, dört şıktan biriyle aynı olmalı.');
+        if (enteredOptions.some((option) => !option)) throw new Error('Özel şık ekliyorsan A, B, C, D ve E şıklarının hepsini doldur.');
+        if (new Set(enteredOptions).size !== 5) throw new Error('Beş şık birbirinden farklı olmalı.');
+        if (!enteredOptions.includes(answer)) throw new Error('Doğru cevap, beş şıktan biriyle aynı olmalı.');
         options = enteredOptions;
       } else if (questionDistractors(answer).length < 3) {
         throw new Error('Metin tabanlı sorular için dört şıkkı da doldur.');
