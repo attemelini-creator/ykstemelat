@@ -260,6 +260,8 @@ function closeComing() {
   }
   $('#comingView').classList.remove('show');
   $('#comingView').setAttribute('aria-hidden', 'true');
+  $('#comingDescription').hidden = false;
+  $('#aboutContent').hidden = true;
   app.activeCourseMenu = null;
   app.activeCourseTopic = null;
   app.activeDifficulty = null;
@@ -269,11 +271,14 @@ function closeComing() {
 }
 function openComing(name, returnToMenuView = null) {
   const feedback = name === 'Şikayet ve Önerileriniz';
+  const about = name === 'Biz Kimiz';
   hideDrawer();
   app.courseMenuView = 'coming';
   app.returnToMenuView = returnToMenuView;
   $('#comingView').classList.remove('quiz-mode');
   $('#quizScreen').hidden = true;
+  $('#comingDescription').hidden = false;
+  $('#aboutContent').hidden = true;
   if (!returnToMenuView) {
     app.activeCourseMenu = null;
     app.activeCourseTopic = null;
@@ -284,9 +289,16 @@ function openComing(name, returnToMenuView = null) {
   $('#courseDifficultyChoices').hidden = true;
   $('#topicTestChoices').hidden = true;
   $('#comingLabel').textContent = feedback ? 'GERİ BİLDİRİM' : name.toLocaleUpperCase('tr-TR');
-  $('#comingTitle').textContent = feedback ? name : 'Çok Yakında...';
-  $('#comingDescription').textContent = feedback ? 'Şikayetini, önerini veya yaşadığın sorunu bize ilet.' : `${name} bölümü için hazırlıklarımız devam ediyor.`;
-  $('#comingSoon').hidden = feedback; $('#feedbackForm').hidden = !feedback;
+  $('#comingTitle').textContent = feedback || about ? name : 'Çok Yakında...';
+  $('#comingDescription').textContent = about ? '' : feedback ? 'Şikayetini, önerini veya yaşadığın sorunu bize ilet.' : `${name} bölümü için hazırlıklarımız devam ediyor.`;
+  $('#comingDescription').hidden = about;
+  $('#comingSoon').hidden = feedback || about;
+  $('#aboutContent').hidden = !about;
+  if (about) {
+    $$('[data-about-admin]').forEach((button) => button.setAttribute('aria-expanded', 'false'));
+    $$('.about-admin-contact').forEach((contact) => { contact.hidden = true; });
+  }
+  $('#feedbackForm').hidden = !feedback;
   $('#comingView').classList.add('show'); $('#comingView').setAttribute('aria-hidden', 'false');
 }
 function openCourseTopics(course) {
@@ -300,6 +312,8 @@ function openCourseTopics(course) {
   app.returnToMenuView = null;
   $('#comingView').classList.remove('quiz-mode');
   $('#quizScreen').hidden = true;
+  $('#comingDescription').hidden = false;
+  $('#aboutContent').hidden = true;
   const exam = course.exam || app.activeExam || 'YKS';
   $('#comingLabel').textContent = `${exam} · KONU SEÇİMİ`;
   $('#comingTitle').textContent = course.title;
@@ -326,6 +340,8 @@ function openDifficultyChoices(topic) {
   app.returnToMenuView = null;
   $('#comingView').classList.remove('quiz-mode');
   $('#quizScreen').hidden = true;
+  $('#comingDescription').hidden = false;
+  $('#aboutContent').hidden = true;
   $('#comingLabel').textContent = `${app.activeCourseMenu.exam || app.activeExam || 'YKS'} · ZORLUK SEÇİMİ`;
   $('#comingTitle').textContent = topic;
   $('#comingDescription').textContent = 'Testleri görmek için zorluk seviyesini seç.';
@@ -352,6 +368,8 @@ function openTopicTests(difficulty) {
   app.quizSession = null;
   $('#comingView').classList.remove('quiz-mode');
   $('#quizScreen').hidden = true;
+  $('#comingDescription').hidden = false;
+  $('#aboutContent').hidden = true;
   const course = app.activeCourseMenu;
   const topicKey = progressTopicKey(exam, course.groupId, course.id, app.activeCourseTopic);
   const testCount = testCountForDifficulty(exam, course.id, app.activeCourseTopic, difficulty);
@@ -500,6 +518,8 @@ function startQuestionTest(testNumber) {
   app.returnToMenuView = 'tests';
   $('#comingView').classList.add('show', 'quiz-mode');
   $('#comingView').setAttribute('aria-hidden', 'false');
+  $('#comingDescription').hidden = false;
+  $('#aboutContent').hidden = true;
   $('#comingLabel').textContent = 'TYT MATEMATİK · TEMEL ATANLAR İÇİN';
   $('#comingTitle').textContent = `Test ${testNumber}`;
   $('#comingDescription').textContent = 'Cevabını işaretledikten sonra değiştiremezsin. Sorular arasında oklarla gezebilirsin.';
@@ -959,6 +979,16 @@ document.addEventListener('click', async (event) => {
   if (courseGroup) {
     app.activeCourseGroup = app.activeCourseGroup === courseGroup.dataset.courseGroup ? null : courseGroup.dataset.courseGroup;
     renderExamPanel();
+    return;
+  }
+  const aboutAdmin = target.closest('[data-about-admin]');
+  if (aboutAdmin) {
+    const contact = aboutAdmin.parentElement.querySelector('.about-admin-contact');
+    const shouldOpen = contact.hidden;
+    $$('.about-admin-contact').forEach((item) => { item.hidden = true; });
+    $$('[data-about-admin]').forEach((button) => button.setAttribute('aria-expanded', 'false'));
+    contact.hidden = !shouldOpen;
+    aboutAdmin.setAttribute('aria-expanded', String(shouldOpen));
     return;
   }
   const coming = target.closest('[data-coming]');
