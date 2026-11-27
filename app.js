@@ -1083,9 +1083,11 @@ const app = {
   activeCourseMenu: null, activeCourseTopic: null, activeDifficulty: null,
   activeTestNumber: null, courseMenuView: null, returnToMenuView: null,
   quizSession: null, localTestResults: null,
+  questionManager: { exam: 'TYT', courseKey: 'matematik:matematik', topic: 'Temel Kavramlar', difficulty: 'Çok Kolay', testNumber: 1 },
+  questionBankLoaded: false, questionBankLoading: false, questionBankAvailable: false, questionBankError: '',
   examPanelTimers: {},
   chatLoading: false,
-  db: { users: [], feedback: [], announcements: [], audit: [], chatMessages: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
+  db: { users: [], feedback: [], announcements: [], audit: [], chatMessages: [], questions: [], settings: { registrations_open: true, maintenance: false, maintenance_message: '' } }
 };
 
 const legal = {
@@ -1484,6 +1486,9 @@ function stableShuffle(items, seedText) {
 }
 function optionsForQuestion(question, testNumber, questionIndex) {
   const correct = String(question.answer).trim();
+  if (Array.isArray(question.options) && question.options.length === 4 && question.options.every((option) => String(option).trim())) {
+    return question.options.map((text, index) => ({ text: String(text).trim(), letter: 'ABCD'[index], correct: String(text).trim() === correct }));
+  }
   const numericCorrect = optionNumericValue(correct);
   const distractors = [];
   for (const choice of questionDistractors(correct)) {
@@ -1510,10 +1515,51 @@ function optionsForQuestion(question, testNumber, questionIndex) {
   const shuffled = stableShuffle([correct, ...distractors], `${testNumber}:${questionIndex}:${question.prompt}`);
   return shuffled.map((text, index) => ({ text, letter: 'ABCD'[index], correct: text === correct }));
 }
-function startQuestionTest(testNumber) {
-  if (!isTemelAtmaRoute()) return false;
-  const test = window.YKS_TEMEL_TESTS?.find((item) => item.test === testNumber);
-  if (!test) return false;
+function bundledQuestionsForTest(testNumber) {
+  if (!isTemelAtmaRoute()) return null;
+  return window.YKS_TEMEL_TESTS?.find((item) => item.test === testNumber)?.questions || null;
+}
+function questionBankTableMissing(error) {
+  return /42P01|PGRST205|relation .* does not exist|could not find the table .* in the schema cache/i.test(error?.code + ' ' + error?.message);
+}
+async function questionsForTest(testNumber) {
+  const exam = app.activeCourseMenu?.exam || app.activeExam;
+  const course = app.activeCourseMenu;
+  const bundled = bundledQuestionsForTest(testNumber);
+  if (!app.client || !course || !exam) return bundled;
+  try {
+    const { data, error } = await app.client.from('question_bank')
+      .select('prompt,answer,options,order_index')
+      .eq('exam', exam)
+      .eq('group_id', course.groupId)
+      .eq('course_id', course.id)
+      .eq('topic', app.activeCourseTopic)
+      .eq('difficulty', app.activeDifficulty)
+      .eq('test_number', testNumber)
+      .eq('is_hidden', false)
+      .order('order_index', { ascending: true });
+    if (error) throw error;
+    return (data || []).map((question) => ({ ...question, options: Array.isArray(question.options) ? question.options : [] }));
+  } catch (error) {
+    if (questionBankTableMissing(error)) {
+      if (bundled) return bundled;
+      showToast('Soru bankası henüz kurulmamış. Yönetici soru bankası SQL dosyasını Supabase’te çalıştırmalı.');
+      return null;
+    }
+    showToast('Sorular yüklenemedi. Biraz sonra yeniden dene.');
+    return null;
+  }
+}
+async function startQuestionTest(testNumber) {
+  const questions = await questionsForTest(testNumber);
+  if (questions === null) return true;
+  if (!questions.length) {
+    if (isTemelAtmaRoute()) { showToast('Bu testte şu anda gösterilecek soru yok.'); return true; }
+    return false;
+  }
+  const exam = app.activeCourseMenu?.exam || app.activeExam || 'YKS';
+  const difficulty = app.activeDifficulty || 'Kolay';
+  const test = { test: testNumber, questions };
   hideDrawer();
   app.activeTestNumber = testNumber;
   app.quizSession = { test, questionIndex: 0, answers: Array(test.questions.length).fill(null), saving: false };
@@ -1523,7 +1569,7 @@ function startQuestionTest(testNumber) {
   $('#comingView').setAttribute('aria-hidden', 'false');
   $('#comingDescription').hidden = false;
   $('#aboutContent').hidden = true;
-  $('#comingLabel').textContent = 'TYT MATEMATİK · TEMEL ATANLAR İÇİN';
+  $('#comingLabel').textContent = `${exam} · ${difficulty.toLocaleUpperCase('tr-TR')} TESTİ`;
   $('#comingTitle').textContent = `Test ${testNumber}`;
   $('#comingDescription').textContent = 'Cevabını işaretledikten sonra değiştiremezsin. Sorular arasında oklarla gezebilirsin.';
   $('#comingSoon').hidden = true;
@@ -1573,20 +1619,22 @@ function saveLocalTestResult(topicKey, difficulty, testNumber, result) {
   try { localStorage.setItem('yks-temel-test-results', JSON.stringify(records)); } catch { /* Session memory still shows the completed result. */ }
 }
 async function saveQuestionTestResult(session, result) {
-  const topicKey = progressTopicKey('TYT', app.activeCourseMenu.groupId, app.activeCourseMenu.id, app.activeCourseTopic);
+  const exam = app.activeCourseMenu?.exam || app.activeExam || 'YKS';
+  const difficulty = app.activeDifficulty || 'Kolay';
+  const topicKey = progressTopicKey(exam, app.activeCourseMenu.groupId, app.activeCourseMenu.id, app.activeCourseTopic);
   if (app.user?.id && app.client && app.profile) {
     const progress = JSON.parse(JSON.stringify(app.profile.progress || emptyProgress()));
     progress.test_results ||= {};
     progress.test_results[topicKey] ||= {};
-    progress.test_results[topicKey][TEMEL_ATMA_DIFFICULTY] ||= {};
-    progress.test_results[topicKey][TEMEL_ATMA_DIFFICULTY][session.test.test] = result;
+    progress.test_results[topicKey][difficulty] ||= {};
+    progress.test_results[topicKey][difficulty][session.test.test] = result;
     const { error } = await app.client.from('profiles').update({ progress }).eq('id', app.user.id);
     if (!error) {
       app.profile.progress = progress;
       return 'account';
     }
   }
-  saveLocalTestResult(topicKey, TEMEL_ATMA_DIFFICULTY, session.test.test, result);
+  saveLocalTestResult(topicKey, difficulty, session.test.test, result);
   return 'device';
 }
 async function finishQuestionTest() {
@@ -1605,11 +1653,15 @@ async function finishQuestionTest() {
   const result = { completed: true, correct, wrong, blank, completed_at: now() };
   let savedTo = 'device';
   try { savedTo = await saveQuestionTestResult(session, result); }
-  catch { saveLocalTestResult(progressTopicKey('TYT', app.activeCourseMenu.groupId, app.activeCourseMenu.id, app.activeCourseTopic), TEMEL_ATMA_DIFFICULTY, session.test.test, result); }
+  catch {
+    const exam = app.activeCourseMenu?.exam || app.activeExam || 'YKS';
+    const difficulty = app.activeDifficulty || 'Kolay';
+    saveLocalTestResult(progressTopicKey(exam, app.activeCourseMenu.groupId, app.activeCourseMenu.id, app.activeCourseTopic), difficulty, session.test.test, result);
+  }
   const testNumber = session.test.test;
   app.quizSession = null;
   app.activeTestNumber = testNumber;
-  openTopicTests(TEMEL_ATMA_DIFFICULTY);
+  openTopicTests(app.activeDifficulty);
   showToast(`Test tamamlandı · ${correct} doğru, ${wrong} yanlış, ${blank} boş${savedTo === 'device' ? ' · Bu cihazda kaydedildi' : ''}.`);
 }
 function renderExamPanel() {
@@ -1833,6 +1885,81 @@ function openAdmin() {
   if (!isAdmin()) { showToast('Yönetici girişi gerekli.'); return; }
   $('#accountPop').hidden = true; app.adminTab = 'overview'; showOverlay('adminOverlay'); renderAdmin();
 }
+function questionManagerContext() {
+  const manager = app.questionManager;
+  if (!EXAM_GROUPS[manager.exam]) manager.exam = 'TYT';
+  const courses = EXAM_GROUPS[manager.exam].flatMap((group) => group.subjects.map((course) => ({ ...course, groupId: group.id, groupTitle: group.title, key: `${group.id}:${course.id}` })));
+  let course = courses.find((item) => item.key === manager.courseKey);
+  if (!course) {
+    course = courses.find((item) => manager.exam === 'TYT' && item.id === 'matematik') || courses[0];
+    manager.courseKey = course?.key || '';
+  }
+  if (!course) return null;
+  if (!course.topics.includes(manager.topic)) manager.topic = course.topics[0];
+  const difficulties = difficultiesForCourse(manager.exam, course.id);
+  if (!difficulties.includes(manager.difficulty)) manager.difficulty = difficulties[0];
+  const testCount = testCountForDifficulty(manager.exam, course.id, manager.topic, manager.difficulty);
+  if (!Number.isInteger(Number(manager.testNumber)) || Number(manager.testNumber) < 1 || Number(manager.testNumber) > testCount) manager.testNumber = 1;
+  return { exam: manager.exam, courses, course, topic: manager.topic, difficulty: manager.difficulty, testNumber: Number(manager.testNumber), testCount };
+}
+function questionRowsForManager(context) {
+  const matches = (row) => row.exam === context.exam && row.group_id === context.course.groupId
+    && row.course_id === context.course.id && row.topic === context.topic
+    && row.difficulty === context.difficulty && Number(row.test_number) === context.testNumber;
+  if (app.questionBankAvailable) return app.db.questions.filter(matches).sort((a, b) => a.order_index - b.order_index);
+  if (context.exam === 'TYT' && context.course.groupId === 'matematik' && context.course.id === 'matematik'
+    && context.topic === TEMEL_ATMA_TOPIC && context.difficulty === TEMEL_ATMA_DIFFICULTY) {
+    const test = window.YKS_TEMEL_TESTS?.find((item) => item.test === context.testNumber);
+    return (test?.questions || []).map((question, index) => ({
+      id: `bundled-${context.testNumber}-${index + 1}`, order_index: index + 1,
+      prompt: question.prompt, answer: question.answer, options: [], is_hidden: false, bundled: true
+    }));
+  }
+  return [];
+}
+function questionOptionFields(options = [], disabled = false) {
+  return `<div class="question-option-fields">${['A', 'B', 'C', 'D'].map((letter, index) => `<label>Şık ${letter}<input name="option${letter}" maxlength="240" value="${esc(options[index] || '')}" placeholder="İsteğe bağlı; dört şıkkı da doldur" ${disabled ? 'disabled' : ''}></label>`).join('')}</div>`;
+}
+function renderAdminQuestionManager() {
+  const context = questionManagerContext();
+  if (!context) return '<p class="question-manager-empty">Ders listesi yüklenemedi.</p>';
+  const disabled = app.questionBankAvailable ? '' : 'disabled';
+  const courseOptions = context.courses.map((course) => `<option value="${esc(course.key)}" ${course.key === context.course.key ? 'selected' : ''}>${esc(course.groupTitle)} · ${esc(course.title)}</option>`).join('');
+  const topicOptions = context.course.topics.map((topic) => `<option value="${esc(topic)}" ${topic === context.topic ? 'selected' : ''}>${esc(topic)}</option>`).join('');
+  const difficultyOptions = difficultiesForCourse(context.exam, context.course.id).map((difficulty) => `<option value="${esc(difficulty)}" ${difficulty === context.difficulty ? 'selected' : ''}>${esc(difficulty)}</option>`).join('');
+  const testOptions = Array.from({ length: context.testCount }, (_, index) => `<option value="${index + 1}" ${context.testNumber === index + 1 ? 'selected' : ''}>Test ${index + 1}</option>`).join('');
+  const rows = questionRowsForManager(context);
+  const shownCount = rows.filter((row) => !row.is_hidden).length;
+  const hiddenCount = rows.length - shownCount;
+  const cards = rows.map((row, index) => {
+    const options = Array.isArray(row.options) ? row.options : [];
+    return `<article class="question-edit-card ${row.is_hidden ? 'is-hidden' : ''}"><div class="question-edit-top"><strong>Soru ${index + 1}</strong><span class="question-visibility">${row.is_hidden ? 'Adminler görebilir · Gizli' : 'Yayında'}</span></div><form class="question-edit-form" id="questionEdit-${esc(row.id)}" data-question-edit="${esc(row.id)}"><label>Soru metni<textarea name="prompt" required maxlength="2000" ${disabled || row.bundled ? 'disabled' : ''}>${esc(row.prompt)}</textarea></label><label>Doğru cevap<input name="answer" required maxlength="300" value="${esc(row.answer)}" ${disabled || row.bundled ? 'disabled' : ''}></label>${questionOptionFields(options, !app.questionBankAvailable || row.bundled)}<div class="question-admin-actions"><button class="small-btn" type="submit" ${disabled || row.bundled ? 'disabled' : ''}>Değişiklikleri Kaydet</button><button class="small-btn ${row.is_hidden ? '' : 'danger'}" type="button" data-question-toggle="${esc(row.id)}" ${disabled || row.bundled ? 'disabled' : ''}>${row.is_hidden ? 'Göster' : 'Gizle'}</button></div></form></article>`;
+  }).join('');
+  const setupNote = app.questionBankAvailable
+    ? '<p class="question-manager-note">Gizlenen soru öğrencilere gösterilmez, admin listesinde kalır. Soru metni ve cevabı düzenleyebilir; dört özel şık girersen doğru cevap, cevap alanıyla aynı olmalıdır. Şıklar boş kalırsa sayısal cevaplar için sistem şık üretir.</p>'
+    : '<p class="question-manager-note">Soru bankası veritabanı henüz hazır değil. Düzenleme, gizleme ve yeni soru ekleme için <strong>admin_questions.sql</strong> dosyasını Supabase SQL Editor’da bir kez çalıştır. Mevcut temel testler burada salt okunur olarak görünür.</p>';
+  const addForm = `<form class="admin-form question-add-form" id="questionAddForm"><label>Yeni soru<textarea name="prompt" required minlength="3" maxlength="2000" ${disabled ? 'disabled' : ''} placeholder="Soru metnini yaz"></textarea></label><label>Doğru cevap<input name="answer" required maxlength="300" ${disabled ? 'disabled' : ''} placeholder="Doğru seçeneğin metni"></label>${questionOptionFields([], !app.questionBankAvailable)}<p class="fine">Bu seçimdeki Test ${context.testNumber} soruları: ${rows.length} · Öğrenciye açık: ${shownCount} · Gizli: ${hiddenCount}. Eklediğin soru listenin sonuna eklenir ve testte görünür.</p><button class="submit" type="submit" ${disabled ? 'disabled' : ''}>Bu teste soru ekle <span>→</span></button></form>`;
+  return `<h3>Soru yönetimi</h3>${setupNote}<div class="question-manager-filters"><label>Sınav<select data-question-filter="exam"><option value="TYT" ${context.exam === 'TYT' ? 'selected' : ''}>TYT</option><option value="AYT" ${context.exam === 'AYT' ? 'selected' : ''}>AYT</option><option value="YDT" ${context.exam === 'YDT' ? 'selected' : ''}>YDT</option></select></label><label>Ders<select data-question-filter="course">${courseOptions}</select></label><label>Konu<select data-question-filter="topic">${topicOptions}</select></label><label>Seviye<select data-question-filter="difficulty">${difficultyOptions}</select></label><label>Test<select data-question-filter="testNumber">${testOptions}</select></label><button class="small-btn" type="button" data-question-refresh>Yenile</button></div><div class="question-manager-heading"><strong>${esc(context.exam)} · ${esc(context.course.title)} · ${esc(context.topic)} · ${esc(context.difficulty)} · Test ${context.testNumber}</strong><span>${shownCount} açık / ${hiddenCount} gizli · ${rows.length} soru</span></div>${addForm}<div id="questionManagerRows">${cards || '<p class="question-manager-empty">Bu testte henüz soru yok. Yukarıdaki formdan soru ekleyebilirsin.</p>'}</div>`;
+}
+async function loadAdminQuestions() {
+  if (!isAdmin() || !app.client || app.questionBankLoading) return;
+  app.questionBankLoading = true;
+  try {
+    const { data, error } = await app.client.from('question_bank').select('*').order('test_number').order('order_index');
+    if (error) throw error;
+    app.db.questions = data || [];
+    app.questionBankAvailable = true;
+    app.questionBankError = '';
+  } catch (error) {
+    app.db.questions = [];
+    app.questionBankAvailable = false;
+    app.questionBankError = error?.message || 'Soru tablosu erişilemiyor.';
+  } finally {
+    app.questionBankLoaded = true;
+    app.questionBankLoading = false;
+    if (app.adminTab === 'questions' && !$('#adminOverlay').hidden) renderAdmin();
+  }
+}
 function renderAdmin() {
   if (!isAdmin()) return;
   $$('[data-admin-tab]').forEach((button) => button.classList.toggle('active', button.dataset.adminTab === app.adminTab));
@@ -1854,6 +1981,9 @@ function renderAdmin() {
     panel.innerHTML = `<h3>Admin sohbeti</h3><p class="fine">Bu alan yalnızca yöneticilere açıktır. Mesajlar ortak olarak saklanır.</p><div class="admin-chat-messages" id="adminChatMessages" aria-live="polite"></div><form class="admin-chat-form" id="adminChatForm"><label>Mesajın<textarea name="message" required maxlength="2000" rows="2" placeholder="Yöneticilere mesaj yaz..."></textarea></label><button class="submit" type="submit">Gönder <span>→</span></button></form>`;
     renderAdminChatMessages();
     loadAdminChat(false);
+  } else if (app.adminTab === 'questions') {
+    panel.innerHTML = renderAdminQuestionManager();
+    if (!app.questionBankLoaded && !app.questionBankLoading) loadAdminQuestions();
   } else if (app.adminTab === 'security' && isPrimaryAdmin()) {
     panel.innerHTML = `<h3>Yönetici kullanıcı adı</h3><form class="admin-form" id="adminUsernameForm"><label>Yeni kullanıcı adı<input name="username" required minlength="3" maxlength="24" value="${esc(app.profile?.username || '')}" autocomplete="username"></label><button class="submit">Kullanıcı adını güncelle →</button></form><h3>Yönetici şifresini değiştir</h3><form class="admin-form" id="passwordForm"><label>Yeni şifre<input name="next" type="password" required minlength="10" autocomplete="new-password"></label><button class="submit">Şifreyi güncelle →</button></form><p class="fine">Şifre Supabase Auth tarafından yönetilir. Yönetici yetkisi veritabanında tutulur.</p>`;
   } else {
@@ -1965,7 +2095,7 @@ document.addEventListener('click', async (event) => {
   const startTest = target.closest('[data-start-test]');
   if (startTest) {
     const testNumber = Number(startTest.dataset.startTest);
-    if (startQuestionTest(testNumber)) return;
+    if (await startQuestionTest(testNumber)) return;
     const courseTitle = app.activeCourseMenu?.title || '';
     openComing(`${courseTitle} · ${app.activeCourseTopic} · ${app.activeDifficulty} · Test ${testNumber}`, 'tests');
     return;
@@ -2010,6 +2140,27 @@ document.addEventListener('click', async (event) => {
   }
   const adminTab = target.closest('[data-admin-tab]');
   if (adminTab) { app.adminTab = adminTab.dataset.adminTab; renderAdmin(); return; }
+  if (target.closest('[data-question-refresh]')) {
+    if (!isAdmin()) { showToast('Yönetici girişi gerekli.'); return; }
+    app.questionBankLoaded = false;
+    app.questionBankAvailable = false;
+    renderAdmin();
+    return;
+  }
+  const questionVisibility = target.closest('[data-question-toggle]');
+  if (questionVisibility) {
+    if (!isAdmin() || !app.questionBankAvailable) return;
+    const question = app.db.questions.find((item) => item.id === questionVisibility.dataset.questionToggle);
+    if (!question) return;
+    try {
+      const { error } = await app.client.from('question_bank').update({ is_hidden: !question.is_hidden }).eq('id', question.id);
+      if (error) throw error;
+      app.questionBankLoaded = false;
+      await loadAdminQuestions();
+      showToast(question.is_hidden ? 'Soru öğrencilere gösteriliyor.' : 'Soru gizlendi; adminlerde görünmeye devam edecek.');
+    } catch (error) { showToast(normalizeError(error)); }
+    return;
+  }
   const toggle = target.closest('[data-user-toggle]');
   if (toggle) {
     try {
@@ -2049,6 +2200,37 @@ document.addEventListener('click', async (event) => {
 });
 
 document.addEventListener('change', async (event) => {
+  const questionFilter = event.target.closest('[data-question-filter]');
+  if (questionFilter) {
+    if (!isAdmin()) return;
+    const manager = app.questionManager;
+    const field = questionFilter.dataset.questionFilter;
+    if (field === 'exam') {
+      manager.exam = questionFilter.value;
+      const courses = EXAM_GROUPS[manager.exam].flatMap((group) => group.subjects.map((course) => ({ ...course, groupId: group.id })));
+      const course = courses.find((item) => item.id === 'matematik') || courses[0];
+      manager.courseKey = `${course.groupId}:${course.id}`;
+      manager.topic = course.topics[0];
+      manager.difficulty = difficultiesForCourse(manager.exam, course.id)[0];
+      manager.testNumber = 1;
+    } else if (field === 'course') {
+      manager.courseKey = questionFilter.value;
+      const context = questionManagerContext();
+      manager.topic = context.course.topics[0];
+      manager.difficulty = difficultiesForCourse(context.exam, context.course.id)[0];
+      manager.testNumber = 1;
+    } else if (field === 'topic') {
+      manager.topic = questionFilter.value;
+      manager.testNumber = 1;
+      questionManagerContext();
+    } else if (field === 'difficulty') {
+      manager.difficulty = questionFilter.value;
+      manager.testNumber = 1;
+      questionManagerContext();
+    } else if (field === 'testNumber') manager.testNumber = Number(questionFilter.value);
+    renderAdmin();
+    return;
+  }
   const status = event.target.closest('[data-feedback-status]');
   if (status) {
     try {
@@ -2077,10 +2259,56 @@ document.addEventListener('input', (event) => {
 
 document.addEventListener('submit', async (event) => {
   const form = event.target;
-  if (!['loginForm', 'registerForm', 'feedbackForm', 'announcementForm', 'maintenanceForm', 'passwordForm', 'adminUsernameForm', 'adminChatForm'].includes(form.id)) return;
+  const questionAddForm = form.id === 'questionAddForm';
+  const questionEditForm = form.hasAttribute('data-question-edit');
+  if (!['loginForm', 'registerForm', 'feedbackForm', 'announcementForm', 'maintenanceForm', 'passwordForm', 'adminUsernameForm', 'adminChatForm'].includes(form.id) && !questionAddForm && !questionEditForm) return;
   event.preventDefault();
   try {
     const client = await requireClient();
+    if (questionAddForm || questionEditForm) {
+      if (!isAdmin() || !app.questionBankAvailable) throw new Error('Soru bankası SQL kurulumu yapılmalı ve admin girişi açık olmalı.');
+      const data = new FormData(form);
+      const prompt = String(data.get('prompt') || '').trim();
+      const answer = String(data.get('answer') || '').trim();
+      const enteredOptions = ['A', 'B', 'C', 'D'].map((letter) => String(data.get(`option${letter}`) || '').trim());
+      const hasOptions = enteredOptions.some(Boolean);
+      let options = [];
+      if (hasOptions) {
+        if (enteredOptions.some((option) => !option)) throw new Error('Özel şık ekliyorsan A, B, C ve D şıklarının hepsini doldur.');
+        if (new Set(enteredOptions).size !== 4) throw new Error('Dört şık birbirinden farklı olmalı.');
+        if (!enteredOptions.includes(answer)) throw new Error('Doğru cevap, dört şıktan biriyle aynı olmalı.');
+        options = enteredOptions;
+      } else if (questionDistractors(answer).length < 3) {
+        throw new Error('Metin tabanlı sorular için dört şıkkı da doldur.');
+      }
+      if (prompt.length < 3 || prompt.length > 2000 || !answer || answer.length > 300) throw new Error('Soru metni 3–2000, cevap en fazla 300 karakter olmalı.');
+      const payload = { prompt, answer, options };
+      if (questionAddForm) {
+        const context = questionManagerContext();
+        const existing = questionRowsForManager(context);
+        const orderIndex = existing.reduce((max, question) => Math.max(max, Number(question.order_index) || 0), 0) + 1;
+        Object.assign(payload, {
+          exam: context.exam,
+          group_id: context.course.groupId,
+          course_id: context.course.id,
+          topic: context.topic,
+          difficulty: context.difficulty,
+          test_number: context.testNumber,
+          order_index: orderIndex,
+          is_hidden: false,
+          created_by: app.user?.id || null
+        });
+        const { error } = await client.from('question_bank').insert(payload);
+        if (error) throw error;
+      } else {
+        const { error } = await client.from('question_bank').update(payload).eq('id', form.dataset.questionEdit);
+        if (error) throw error;
+      }
+      app.questionBankLoaded = false;
+      await loadAdminQuestions();
+      showToast(questionAddForm ? 'Soru teste eklendi.' : 'Soru güncellendi.');
+      return;
+    }
     if (form.id === 'loginForm') {
       const data = new FormData(form), email = String(data.get('identity')).trim().toLowerCase(), password = String(data.get('password'));
       if (!email.includes('@')) throw new Error('Giriş için e-posta adresini kullan.');
