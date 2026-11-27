@@ -200,6 +200,27 @@
     .quiz-nav-button.quiz-finish{min-width:180px}
     @media(max-width:700px){.view.quiz-mode{padding:10px}.quiz-mode .coming{width:100%;max-height:calc(100dvh - 20px);padding:58px 14px 16px}.quiz-screen{margin-top:16px}.quiz-card{padding:14px 12px}.quiz-question{font-size:20px}.quiz-option{grid-template-columns:34px minmax(0,1fr) 18px;min-height:54px;gap:9px;padding:9px}.quiz-option-letter{width:31px;height:31px;font-size:14px}.quiz-option-text{font-size:13px}.quiz-nav-button{min-width:0;flex:1;min-height:46px;padding:9px 10px;font-size:11px}.quiz-nav-button.quiz-finish{min-width:0}}
   </style>
+  <style>
+    .about-content{margin:19px 0 8px}
+    .about-story{display:grid;gap:13px}
+    .about-story p{margin:0;color:#c5c5c0;font-size:13px;line-height:1.8}
+    .about-story p:first-child,.about-story p:last-child{color:var(--white);font-family:var(--serif);font-size:16px;line-height:1.7}
+    .about-admins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:25px}
+    .about-admin-card{overflow:hidden;border:1px solid rgba(245,245,242,.16);border-radius:13px;background:#111}
+    .about-admin-toggle{display:flex;justify-content:center;align-items:center;gap:9px;width:100%;min-height:58px;padding:12px;border:0;background:transparent;color:var(--white);font-family:var(--serif);font-size:16px;text-align:center;transition:background .18s ease}
+    .about-admin-toggle:hover,.about-admin-toggle[aria-expanded="true"]{background:#202020}
+    .about-admin-icon{font-family:initial;font-size:17px}
+    .about-admin-chevron{color:#aaa;font-family:initial;font-size:17px;transition:transform .18s ease}
+    .about-admin-toggle[aria-expanded="true"] .about-admin-chevron{transform:rotate(180deg)}
+    .about-admin-contact{padding:0 12px 12px}
+    .about-admin-profile-head{gap:10px;margin:3px 0 11px;padding:10px;border-color:#303030;border-radius:11px}
+    .about-admin-profile-head .profile-avatar{width:48px;height:48px;font-size:23px}
+    .about-admin-profile-head h3{font-size:16px}
+    .about-admin-profile-head p{font-size:10px;line-height:1.45}
+    .about-admin-contact a{display:flex;justify-content:center;align-items:center;min-height:42px;border:1px solid #e9e9e4;border-radius:999px;background:#e9e9e4;color:#111;font-size:12px;font-weight:600;text-decoration:none;transition:background .18s ease}
+    .about-admin-contact a:hover{background:#cfcfc9}
+    @media(max-width:700px){.about-story{gap:11px}.about-story p{font-size:12px;line-height:1.75}.about-story p:first-child,.about-story p:last-child{font-size:15px}.about-admins{gap:8px;margin-top:21px}.about-admin-toggle{min-height:54px;gap:6px;padding:8px;font-size:14px}.about-admin-contact{padding:0 8px 8px}.about-admin-profile-head{align-items:center;gap:7px;padding:8px}.about-admin-profile-head .profile-avatar{width:40px;height:40px;font-size:20px}.about-admin-profile-head h3{font-size:14px}.about-admin-profile-head p{font-size:9px}}
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -237,6 +258,19 @@
   <section class="view" id="comingView" aria-hidden="true">
     <div class="coming"><button class="view-back" id="viewBack" aria-label="Pencereyi kapat">×</button><p class="eyebrow" id="comingLabel">YAKINDA</p><h1 id="comingTitle">Çok Yakında...</h1><p id="comingDescription">Bu alan için hazırlıklarımız devam ediyor.</p>
       <div class="coming-soon" id="comingSoon"><strong>Çok Yakında...</strong><span>Hazırlıklarımız devam ediyor.</span></div>
+      <section class="about-content" id="aboutContent" aria-label="Biz Kimiz" hidden>
+        <div class="about-story">
+          <p>Selam! Biz, tıpkı senin gibi YKS maratonunda ter döken iki yol arkadaşıyız.</p>
+          <p>Bu siteyi kurma hikayemiz aslında kendi yaşadığımız bir tıkanıklıkla başladı. Sınava hazırlanırken fark ettik ki, özellikle sayısal derslerde temelimiz pek sağlam değildi. Piyasadaki kaynakların çoğu konuyu zaten biliyormuşuz gibi anlatıyor, en baştan pratik yapabileceğimiz sade bir alan bulmakta çok zorlanıyorduk. Evet, piyasada bazı temel atma kitapları var ama biz herkesin ücret ödemeden, tek tıkla ve kolayca ulaşabileceği bir sistem olsun istedik. "Madem bizim aradığımız gibi ücretsiz ve sade bir yer yok, o zaman biz yapalım!" dedik ve kolları sıvadık.</p>
+          <p>Amacımız çok net: Karmaşık formüllerin, göz korkutan yeni nesil soruların arasında kaybolmadan; önce temeli sağlamlaştırmak, "ben de yapabiliyormuşum" özgüvenini kazandırmak. Kendi eksiklerimizi kapatmak için çıktığımız bu yolda, öğrendiklerimizi ve hazırladığımız bu sistemi aynı yollardan geçen diğer arkadaşlarımızla da paylaşmak istedik.</p>
+          <p>Kısacası biz büyük bir yayın devi ya da kurumsal bir ekip değiliz. Biz, kütüphane köşelerinde dirsek çürüten, bazen bir soruya saatlerce bakıp bazen çözdüğünde dünyalar kadar sevinen, seninle aynı sıralardan geçen iki öğrenciyiz.</p>
+          <p>Sen de temelden başlamak istiyor ama nereden tutacağını bilemiyorsan doğru yerdesin. Gel, bu temeli birlikte atalım!</p>
+        </div>
+        <div class="about-admins" aria-label="Yöneticiler">
+          <article class="about-admin-card"><button class="about-admin-toggle" type="button" data-about-admin aria-expanded="false"><span class="about-admin-icon" aria-hidden="true">🛠️</span><span>Yiğit</span><span class="about-admin-chevron" aria-hidden="true">⌄</span></button><div class="about-admin-contact" hidden><div class="profile-head about-admin-profile-head"><div class="profile-avatar" aria-hidden="true">🛠️</div><div><h3>Yiğit</h3><p>YKS Temelini At yöneticisi</p></div></div><a href="mailto:attemelini@gmail.com">Mail Gönder</a></div></article>
+          <article class="about-admin-card"><button class="about-admin-toggle" type="button" data-about-admin aria-expanded="false"><span class="about-admin-icon" aria-hidden="true">🛠️</span><span>Furkan</span><span class="about-admin-chevron" aria-hidden="true">⌄</span></button><div class="about-admin-contact" hidden><div class="profile-head about-admin-profile-head"><div class="profile-avatar" aria-hidden="true">🛠️</div><div><h3>Furkan</h3><p>YKS Temelini At yöneticisi</p></div></div><a href="mailto:attemelini@gmail.com">Mail Gönder</a></div></article>
+        </div>
+      </section>
       <div class="course-topic-choices" id="courseTopicChoices" hidden></div>
       <div class="course-topic-choices" id="courseDifficultyChoices" hidden></div>
       <div class="topic-test-choices" id="topicTestChoices" hidden></div>
