@@ -140,6 +140,7 @@
     .center-note{z-index:2;gap:6px;padding:13px 21px;border:1px solid rgba(245,245,242,.16);border-radius:15px;background:rgba(9,9,9,.98);box-shadow:0 12px 34px rgba(0,0,0,.5);opacity:1}
     .center-note span:first-child{color:#c4c4bf}
     .center-note span:last-child{color:var(--white)}
+    .bottom-note{bottom:24px;color:#c4c4bf;font-family:var(--serif);font-size:clamp(16px,1.8vw,21px);letter-spacing:.015em;white-space:nowrap;opacity:.92}
     .exam-content{width:min(100%,1040px);max-height:0;margin-inline:auto;padding:0 clamp(18px,3vw,38px);overflow:hidden;opacity:0;transform:translateY(-9px);pointer-events:none;animation:none;transition:max-height .44s cubic-bezier(.2,.75,.25,1),opacity .28s ease,transform .44s cubic-bezier(.2,.75,.25,1),padding-bottom .44s ease}
     .exam-content.is-open{max-height:3600px;padding-bottom:34px;opacity:1;transform:translateY(0);pointer-events:auto}
     .coming{width:min(100%,680px)}
@@ -162,7 +163,7 @@
     .legal-copy ul{margin:8px 0 16px;padding-left:21px}
     .legal-copy li{margin:0 0 8px;padding-left:3px}
     .legal-copy strong{color:var(--white)}
-    @media(max-width:700px){.topic-test-open{min-height:54px;font-size:16px}.topic-test-stats span{font-size:9px}.topic-test-stats strong{font-size:15px}.topic-test-start{min-height:58px;font-size:13px}.center-note{padding:11px 14px;gap:4px}.center-note span:first-child{font-size:8px;letter-spacing:.13em}.center-note span:last-child{font-size:clamp(13px,3.7vw,16px)}}
+    @media(max-width:700px){.topic-test-open{min-height:54px;font-size:16px}.topic-test-stats span{font-size:9px}.topic-test-stats strong{font-size:15px}.topic-test-start{min-height:58px;font-size:13px}.center-note{padding:11px 14px;gap:4px}.center-note span:first-child{font-size:8px;letter-spacing:.13em}.bottom-note{bottom:16px;font-size:clamp(15px,4vw,18px);letter-spacing:0}}
     @media(max-width:700px){.landing.exam-open:not(.exam-open-ayt){grid-template-columns:minmax(0,1fr) minmax(0,0fr)}.landing.exam-open.exam-open-ayt{grid-template-columns:minmax(0,0fr) minmax(0,1fr)}.exam-content{padding-inline:12px}.exam-content.is-open{padding-bottom:25px}.course-topic-choice{min-height:50px;padding:12px;font-size:12px}.coming{padding:25px 18px}}
   </style>
 </head>
@@ -185,8 +186,8 @@
         <button class="side" type="button" data-exam-toggle="AYT" aria-expanded="false" aria-controls="examContentAYT"><span class="side-content"><span class="side-label">AYT</span><span class="side-caption">Alan Yeterlilik Testleri</span><span class="enter-mark" aria-hidden="true">↗</span></span></button>
         <div class="exam-content" id="examContentAYT" hidden><div class="exam-groups" id="examGroupsAYT"></div></div>
       </div>
-      <div class="center-note" aria-hidden="true"><span>Yolculuğuna buradan başla</span><span>Birlikte başaracağız.</span></div>
-      <p class="bottom-note">KENDİ TEMELİNİ KENDİ TEMPOYLA KUR</p>
+      <div class="center-note" aria-hidden="true"><span>Yolculuğuna buradan başla</span></div>
+      <p class="bottom-note">Birlikte başaracağız.</p>
     </section>
   </main>
 
