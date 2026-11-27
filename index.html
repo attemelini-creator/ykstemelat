@@ -219,7 +219,25 @@
     .about-admin-profile-head p{font-size:10px;line-height:1.45}
     .about-admin-contact a{display:flex;justify-content:center;align-items:center;min-height:42px;border:1px solid #e9e9e4;border-radius:999px;background:#e9e9e4;color:#111;font-size:12px;font-weight:600;text-decoration:none;transition:background .18s ease}
     .about-admin-contact a:hover{background:#cfcfc9}
+    .question-manager-note{margin:0 0 12px;padding:12px;border:1px solid rgba(245,245,242,.14);border-radius:12px;color:#bdbdb7;font-size:11px;line-height:1.6}
+    .question-manager-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+    .question-manager-filters label,.question-edit-form label,.question-add-form label{display:block;min-width:0;color:#aaa;font-size:10px}
+    .question-manager-filters select,.question-edit-form input,.question-edit-form textarea,.question-add-form input,.question-add-form textarea,.question-add-form select{width:100%;min-height:40px;margin-top:5px;padding:9px;border:1px solid #444;border-radius:9px;background:#0b0b0b;color:var(--white);font:inherit;font-size:12px}
+    .question-manager-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:16px 0 9px;color:var(--white);font-size:12px}
+    .question-manager-heading span{color:#aaa;font-size:10px;font-weight:400}
+    .question-edit-card{margin:0 0 10px;padding:12px;border:1px solid #303030;border-radius:12px;background:#0d0d0d}
+    .question-edit-card.is-hidden{border-color:rgba(215,153,91,.42);background:rgba(112,70,28,.1)}
+    .question-edit-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+    .question-edit-top strong{font-size:11px;font-weight:500}
+    .question-visibility{color:#d8b087;font-size:10px}
+    .question-edit-form,.question-add-form{display:grid;gap:9px}
+    .question-edit-form textarea,.question-add-form textarea{min-height:72px;resize:vertical;line-height:1.5}
+    .question-option-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .question-admin-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .question-admin-actions button{min-height:38px}
+    .question-manager-empty{padding:18px;border:1px dashed #383838;border-radius:12px;color:#aaa;text-align:center;font-size:11px;line-height:1.6}
     @media(max-width:700px){.about-story{gap:11px}.about-story p{font-size:12px;line-height:1.75}.about-story p:first-child,.about-story p:last-child{font-size:15px}.about-admins{gap:8px;margin-top:21px}.about-admin-toggle{min-height:54px;gap:6px;padding:8px;font-size:14px}.about-admin-contact{padding:0 8px 8px}.about-admin-profile-head{align-items:center;gap:7px;padding:8px}.about-admin-profile-head .profile-avatar{width:40px;height:40px;font-size:20px}.about-admin-profile-head h3{font-size:14px}.about-admin-profile-head p{font-size:9px}}
+    @media(max-width:700px){.question-manager-filters{grid-template-columns:minmax(0,1fr);gap:7px}.question-option-fields{gap:6px}.question-edit-card{padding:9px}.question-manager-heading{align-items:flex-start;flex-direction:column}}
   </style>
 </head>
 <body>
@@ -297,7 +315,7 @@
 
   <div class="overlay" id="legalOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="legalTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">BİLGİLENDİRME</p><h2 id="legalTitle"></h2><div class="legal-copy" id="legalCopy"></div><button class="outline" data-close>Kapat</button></section></div>
 
-  <div class="overlay" id="adminOverlay" hidden><section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="adminTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">YÖNETİM</p><h2 id="adminTitle">Kontrol paneli</h2><nav class="admin-tabs" id="adminTabs"><button class="active" data-admin-tab="overview">Genel Bakış</button><button data-admin-tab="users">Kullanıcılar</button><button data-admin-tab="feedback">Geri Bildirimler</button><button data-admin-tab="announcements">Duyurular</button><button data-admin-tab="chat">Admin Sohbeti</button><button data-admin-tab="settings">Site Ayarları</button><button data-admin-tab="security" hidden>Güvenlik</button><button data-admin-tab="audit">İşlem Geçmişi</button></nav><div class="admin-panel" id="adminPanel"></div></section></div>
+  <div class="overlay" id="adminOverlay" hidden><section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="adminTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">YÖNETİM</p><h2 id="adminTitle">Kontrol paneli</h2><nav class="admin-tabs" id="adminTabs"><button class="active" data-admin-tab="overview">Genel Bakış</button><button data-admin-tab="users">Kullanıcılar</button><button data-admin-tab="feedback">Geri Bildirimler</button><button data-admin-tab="announcements">Duyurular</button><button data-admin-tab="chat">Admin Sohbeti</button><button data-admin-tab="questions">Soru Yönetimi</button><button data-admin-tab="settings">Site Ayarları</button><button data-admin-tab="security" hidden>Güvenlik</button><button data-admin-tab="audit">İşlem Geçmişi</button></nav><div class="admin-panel" id="adminPanel"></div></section></div>
 
   <div class="overlay" id="profileOverlay" hidden><section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="profileTitle"><button class="close modal-close" data-close aria-label="Kapat">×</button><p class="modal-kicker">ÖĞRENCİ ALANI</p><h2 id="profileTitle">Profilim</h2><div id="profileContent"></div></section></div>
 
